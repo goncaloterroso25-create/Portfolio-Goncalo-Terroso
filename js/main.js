@@ -47,12 +47,15 @@ navLinks.forEach(link=>{
   });
 });
 
+const topnavEl = document.querySelector('.topnav');
+
 function onScroll(){
   const doc = document.documentElement;
   const scrollTop = doc.scrollTop || document.body.scrollTop;
   const scrollH = doc.scrollHeight - doc.clientHeight;
   const pct = scrollH>0 ? scrollTop/scrollH : 0;
   if(progressEl) progressEl.style.width = (pct*100)+'%';
+  if(topnavEl) topnavEl.classList.toggle('is-scrolled', scrollTop > 24);
 
   let idx = 0;
   sections.forEach((sec,i)=>{
