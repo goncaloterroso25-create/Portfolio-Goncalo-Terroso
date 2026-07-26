@@ -150,10 +150,10 @@ a:focus-visible, button:focus-visible{
 .intro-skip:hover{ color:var(--text); }
 .intro.reveal .intro-skip{ opacity:0; pointer-events:none; }
 
-/* while the intro is on screen the page behind must not scroll */
+/* while the intro is on screen the page behind must not scroll.
+   Horizontal clipping for the rest of the time is handled once, at the
+   end of css/mobile.css, so the two rules can't fight each other. */
 body.intro-active{ overflow:hidden; }
-/* paired with the failsafe above: scrolling returns even without JS */
-body:not(.intro-active){ overflow-x:hidden; }
 
 @media (prefers-reduced-motion: reduce){
   .intro{ display:none; }
@@ -207,7 +207,10 @@ body.studio-mode .grain{ opacity:.06; }
 }
 
 /* ---------- LAYOUT HELPERS ---------- */
-.wrap{ max-width:1220px; margin:0 auto; padding:0 clamp(18px,4vw,32px); }
+/* --wrap-pad is reused by the mobile full-bleed shelves so they line up
+   with the page gutter exactly at any width, instead of assuming 18px. */
+:root{ --wrap-pad: clamp(18px,4vw,32px); }
+.wrap{ max-width:1220px; margin:0 auto; padding:0 var(--wrap-pad); }
 section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 .eyebrow{
   font-family:'IBM Plex Mono'; font-size:12px; letter-spacing:0.18em;

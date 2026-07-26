@@ -35,6 +35,7 @@
     overlay.classList.add('open');
     toggle.classList.add('active');
     toggle.setAttribute('aria-expanded','true');
+    toggle.setAttribute('aria-label', toggle.dataset.labelClose || 'Fechar menu');
     overlay.setAttribute('aria-hidden','false');
     document.body.classList.add('nav-open');
     // let the wipe start before moving focus, so screen readers and
@@ -46,12 +47,21 @@
     overlay.classList.remove('open');
     toggle.classList.remove('active');
     toggle.setAttribute('aria-expanded','false');
+    toggle.setAttribute('aria-label', toggle.dataset.labelOpen || 'Abrir menu');
     overlay.setAttribute('aria-hidden','true');
     document.body.classList.remove('nav-open');
     if(lastFocused && lastFocused.focus) lastFocused.focus({preventScroll:true});
   }
 
   toggle.addEventListener('click', ()=> isOpen() ? closeMenu() : openMenu());
+
+  // Tapping the empty backdrop closes too — a secondary convenience.
+  // The X in the top bar stays the obvious, primary way out.
+  const backdrop = overlay.querySelector('.nav-overlay-bg');
+  if(backdrop) backdrop.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', (e)=>{
+    if(e.target === overlay) closeMenu();
+  });
 
   document.addEventListener('keydown', (e)=>{
     if(!isOpen()) return;

@@ -47,16 +47,33 @@
   /* ---- menu trigger: two lines that cross into an X ---- */
   .nav-toggle{
     display:flex; flex-direction:column; justify-content:center; align-items:center; gap:6px;
-    width:42px; height:42px; border:1px solid var(--glass-border); border-radius:12px;
+    width:44px; height:44px; border:1px solid var(--glass-border); border-radius:12px;
     background:var(--glass-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    cursor:pointer; flex-shrink:0; padding:0; position:relative; z-index:170;
+    cursor:pointer; flex-shrink:0; padding:0; position:relative;
   }
   .nav-toggle span{
     display:block; width:16px; height:1.5px; background:var(--text); border-radius:1px;
-    transition:transform .35s var(--ease-glass), width .35s var(--ease-glass);
+    transition:transform .35s var(--ease-glass), width .35s var(--ease-glass), background .3s ease;
   }
   .nav-toggle.active span:nth-child(1){ transform:translateY(3.75px) rotate(45deg); }
   .nav-toggle.active span:nth-child(2){ transform:translateY(-3.75px) rotate(-45deg); }
+
+  /* The trigger lives inside .topnav, which has its own z-index and so
+     forms a stacking context — a z-index on the button alone can never
+     lift it above the overlay. Raising the whole bar while the menu is
+     open is what actually keeps the X clickable and on top. */
+  body.nav-open .topnav{ z-index:200; }
+  /* ...and with the bar on top, its glass pill would float over the
+     menu, so it steps back to just the brand and the X. */
+  body.nav-open .topnav-inner{
+    background:transparent; border-color:transparent; box-shadow:none;
+    backdrop-filter:none; -webkit-backdrop-filter:none;
+  }
+  body.nav-open .nav-progress{ opacity:0; }
+  body.nav-open .nav-toggle{
+    background:transparent; border-color:var(--glass-border-strong);
+  }
+  body.nav-open .nav-toggle span{ background:var(--paper); }
 
   /* ================= FULLSCREEN MENU =================
      A typographic takeover rather than a slide-out drawer. The panel
@@ -88,7 +105,7 @@
   .nav-overlay-inner{
     position:relative; z-index:2; height:100%;
     display:flex; flex-direction:column; justify-content:center;
-    padding:calc(76px + env(safe-area-inset-top)) 26px max(26px, env(safe-area-inset-bottom));
+    padding:calc(84px + env(safe-area-inset-top)) 26px max(26px, env(safe-area-inset-bottom));
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
   .nav-overlay-eyebrow{
@@ -171,16 +188,29 @@
   .hero{
     padding-top:88px; padding-bottom:40px;
     min-height:auto; justify-content:flex-start;
+    overflow-x:clip;
   }
-  .hero-grid{ display:flex; flex-direction:column; gap:0; }
+  .hero-grid{ display:flex; flex-direction:column; gap:0; width:100%; max-width:100%; }
+  /* every direct child must be allowed to shrink: without min-width:0 a
+     flex item defaults to min-content and can push past the container */
+  .hero-grid > *{ min-width:0; max-width:100%; }
 
-  /* photo first: a 16:9 establishing frame instead of a portrait card */
+  /* photo first: a 16:10 establishing frame instead of a portrait card.
+     `align-self:stretch` + `width:auto` makes it match the container
+     exactly, which is steadier than a percentage width once padding,
+     borders and margins are in play. */
   .hero-grid > .pip{
-    order:-1; width:100%; margin-bottom:26px;
+    order:-1;
+    width:auto; max-width:100%; align-self:stretch;
+    margin:0 0 26px;
     padding:8px 8px 12px; border-radius:14px;
   }
   .pip-frame{ aspect-ratio:16/10; }
   .pip-bar{ padding:2px 4px 8px; }
+  /* the two metadata labels sit at opposite ends — let them shrink and
+     ellipsis rather than push the card wider */
+  .pip-code{ gap:12px; }
+  .pip-code span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   .hero-eyebrow{ margin-bottom:14px; font-size:11px; letter-spacing:.14em; }
   .hero h1{ font-size:clamp(46px,15vw,74px); }
@@ -188,7 +218,7 @@
 
   /* tags scroll sideways instead of wrapping into four cramped rows */
   .hero-tags{
-    margin:22px -18px 0; padding:0 18px 4px;
+    margin:22px calc(var(--wrap-pad) * -1) 0; padding:0 var(--wrap-pad) 4px;
     flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none;
     -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity;
   }
@@ -297,7 +327,7 @@
   .featured-row,
   .destaque-video-row{
     display:flex; flex-wrap:nowrap;
-    gap:12px; margin-left:-18px; margin-right:-18px; padding:2px 18px 14px;
+    gap:12px; margin-left:calc(var(--wrap-pad) * -1); margin-right:calc(var(--wrap-pad) * -1); padding:2px var(--wrap-pad) 14px;
     overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none;
     -webkit-overflow-scrolling:touch;
   }
@@ -325,7 +355,7 @@
   /* artists: a shelf too, so all six are reachable in one gesture */
   .artist-grid{
     display:flex; flex-wrap:nowrap; gap:10px;
-    margin-left:-18px; margin-right:-18px; padding:0 18px 10px;
+    margin-left:calc(var(--wrap-pad) * -1); margin-right:calc(var(--wrap-pad) * -1); padding:0 var(--wrap-pad) 10px;
     overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none;
   }
   .artist-grid::-webkit-scrollbar{ display:none; }
@@ -394,5 +424,17 @@
 /* =========================================================
    8. SAFETY NET
    No horizontal overflow at any width, whatever the shelves do.
+
+   Deliberately NOT `overflow-x:hidden` on <html>: setting it there
+   propagates to the viewport and makes a scroll container, which some
+   mobile engines then use to resolve `position:fixed` — that's what
+   leaves a fixed top bar sized to the overflow rather than the screen.
+   `clip` does the same clipping without creating a scroll container,
+   so fixed elements keep sizing to the viewport. `hidden` stays as the
+   fallback for browsers without `clip`.
    ========================================================= */
-html, body{ max-width:100%; overflow-x:hidden; }
+html, body{ max-width:100%; }
+body{ overflow-x:hidden; }
+@supports (overflow:clip){
+  body{ overflow-x:clip; }
+}

@@ -13,7 +13,8 @@
     intro_skip: "Skip",
     nav_inicio: "Home", nav_destaques: "Highlights", nav_projetos: "Projects",
     nav_sobre: "About", nav_contacto: "Contact",
-    cv_btn: "View CV", menu_eyebrow: "Navigation", nav_toggle_open: "Open menu",
+    cv_btn: "View CV", menu_eyebrow: "Navigation",
+    nav_toggle_open: "Open menu", nav_toggle_close: "Close menu",
 
     hero_eyebrow: "AUDIOVISUAL PORTFOLIO",
     hero_role: "<b>Multimedia Producer</b> with experience in music and audiovisual production.",
@@ -113,7 +114,8 @@
     intro_skip: "Saltar",
     nav_inicio: "Inicio", nav_destaques: "Destacados", nav_projetos: "Proyectos",
     nav_sobre: "Sobre mí", nav_contacto: "Contacto",
-    cv_btn: "Ver CV", menu_eyebrow: "Navegación", nav_toggle_open: "Abrir menú",
+    cv_btn: "Ver CV", menu_eyebrow: "Navegación",
+    nav_toggle_open: "Abrir menú", nav_toggle_close: "Cerrar menú",
 
     hero_eyebrow: "PORTFOLIO AUDIOVISUAL",
     hero_role: "<b>Multimedia Producer</b> con experiencia en producción musical y audiovisual.",
@@ -213,7 +215,8 @@
     intro_skip: "Passer",
     nav_inicio: "Accueil", nav_destaques: "Sélection", nav_projetos: "Projets",
     nav_sobre: "À propos", nav_contacto: "Contact",
-    cv_btn: "Voir le CV", menu_eyebrow: "Navigation", nav_toggle_open: "Ouvrir le menu",
+    cv_btn: "Voir le CV", menu_eyebrow: "Navigation",
+    nav_toggle_open: "Ouvrir le menu", nav_toggle_close: "Fermer le menu",
 
     hero_eyebrow: "PORTFOLIO AUDIOVISUEL",
     hero_role: "<b>Multimedia Producer</b> avec une expérience en production musicale et audiovisuelle.",
@@ -364,6 +367,18 @@
       });
       const code = document.getElementById('langCurrentCode');
       if(code) code.textContent = lang.toUpperCase();
+
+      // the menu button swaps its own label between open/closed states,
+      // so it needs both strings rather than a single aria-label
+      const toggle = document.getElementById('navToggle');
+      if(toggle){
+        const openLbl  = (dict && dict.nav_toggle_open)  || 'Abrir menu';
+        const closeLbl = (dict && dict.nav_toggle_close) || 'Fechar menu';
+        toggle.dataset.labelOpen  = openLbl;
+        toggle.dataset.labelClose = closeLbl;
+        toggle.setAttribute('aria-label',
+          toggle.getAttribute('aria-expanded') === 'true' ? closeLbl : openLbl);
+      }
     };
 
     // A short cross-fade keeps the swap from feeling like a page reload.
