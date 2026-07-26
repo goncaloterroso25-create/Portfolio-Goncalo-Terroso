@@ -117,6 +117,14 @@
         </ul>
       </div>
 
+      <!-- Atmosphere: shifts the ambient light only, never the identity -->
+      <div class="atmos" id="atmos" role="group" aria-label="Atmosfera">
+        <button type="button" class="atmos-btn active" data-atmos="0"   style="--swatch:#8c09ad" aria-label="Atmosfera original"></button>
+        <button type="button" class="atmos-btn"        data-atmos="70"  style="--swatch:#0a7d5a" aria-label="Atmosfera fria"></button>
+        <button type="button" class="atmos-btn"        data-atmos="150" style="--swatch:#b8862a" aria-label="Atmosfera quente"></button>
+        <button type="button" class="atmos-btn"        data-atmos="235" style="--swatch:#1c4fd8" aria-label="Atmosfera noturna"></button>
+      </div>
+
       <!-- CV: reachable from every section, never covering content -->
       <a class="cv-btn" href="assets/cv/CV-Goncalo-Terroso.pdf" target="_blank" rel="noopener" data-cursor="PDF">
         <span class="cv-btn-icon" aria-hidden="true">
@@ -159,6 +167,12 @@
         </span>
         <span class="cv-btn-text" data-i18n="cv_btn">Ver CV</span>
       </a>
+      <div class="atmos" role="group" aria-label="Atmosfera">
+        <button type="button" class="atmos-btn active" data-atmos="0"   style="--swatch:#8c09ad" aria-label="Atmosfera original"></button>
+        <button type="button" class="atmos-btn"        data-atmos="70"  style="--swatch:#0a7d5a" aria-label="Atmosfera fria"></button>
+        <button type="button" class="atmos-btn"        data-atmos="150" style="--swatch:#b8862a" aria-label="Atmosfera quente"></button>
+        <button type="button" class="atmos-btn"        data-atmos="235" style="--swatch:#1c4fd8" aria-label="Atmosfera noturna"></button>
+      </div>
       <div class="nav-overlay-langs" role="group" aria-label="Idioma / Language">
         <button type="button" class="lang-opt active" data-lang="pt">PT</button>
         <button type="button" class="lang-opt" data-lang="en">EN</button>
@@ -840,26 +854,31 @@
 </div>
 
 <nav class="section-nav" aria-label="Navegação por secções" id="sectionNav">
-  <button class="section-nav-item" data-target="#hero" type="button">
-    <span class="section-nav-label" data-i18n="nav_inicio">Início</span>
-    <span class="section-nav-bar" aria-hidden="true"></span>
-  </button>
-  <button class="section-nav-item" data-target="#destaques" type="button">
-    <span class="section-nav-label" data-i18n="nav_destaques">Destaques</span>
-    <span class="section-nav-bar" aria-hidden="true"></span>
-  </button>
-  <button class="section-nav-item" data-target="#projetos" type="button">
-    <span class="section-nav-label" data-i18n="nav_projetos">Projetos</span>
-    <span class="section-nav-bar" aria-hidden="true"></span>
-  </button>
-  <button class="section-nav-item" data-target="#sobre" type="button">
-    <span class="section-nav-label" data-i18n="nav_sobre">Sobre</span>
-    <span class="section-nav-bar" aria-hidden="true"></span>
-  </button>
-  <button class="section-nav-item" data-target="#contacto" type="button">
-    <span class="section-nav-label" data-i18n="nav_contacto">Contacto</span>
-    <span class="section-nav-bar" aria-hidden="true"></span>
-  </button>
+  <ul class="section-nav-items">
+    <li><button class="section-nav-item" data-target="#hero" type="button">
+      <span class="section-nav-label" data-i18n="nav_inicio">Início</span>
+      <span class="section-nav-dot" aria-hidden="true"></span>
+    </button></li>
+    <li><button class="section-nav-item" data-target="#destaques" type="button">
+      <span class="section-nav-label" data-i18n="nav_destaques">Destaques</span>
+      <span class="section-nav-dot" aria-hidden="true"></span>
+    </button></li>
+    <li><button class="section-nav-item" data-target="#projetos" type="button">
+      <span class="section-nav-label" data-i18n="nav_projetos">Projetos</span>
+      <span class="section-nav-dot" aria-hidden="true"></span>
+    </button></li>
+    <li><button class="section-nav-item" data-target="#sobre" type="button">
+      <span class="section-nav-label" data-i18n="nav_sobre">Sobre</span>
+      <span class="section-nav-dot" aria-hidden="true"></span>
+    </button></li>
+    <li><button class="section-nav-item" data-target="#contacto" type="button">
+      <span class="section-nav-label" data-i18n="nav_contacto">Contacto</span>
+      <span class="section-nav-dot" aria-hidden="true"></span>
+    </button></li>
+  </ul>
+  <div class="section-nav-rail" aria-hidden="true">
+    <span class="section-nav-head"></span>
+  </div>
 </nav>
 
 <div class="cursor-ring" id="cursorRing" aria-hidden="true"><span class="cursor-label" id="cursorLabel"></span></div>

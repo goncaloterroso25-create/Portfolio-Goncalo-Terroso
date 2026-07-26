@@ -19,13 +19,12 @@
 
   // Mark the section the visitor is currently in, so the menu doubles
   // as a "you are here" indicator rather than a plain list of links.
+  // Uses the same helper as the top bar and the side rail (main.js), so
+  // all three can never disagree.
   function syncActive(){
-    const ids = ['#hero','#destaques','#projetos','#sobre','#contacto'];
-    let current = ids[0];
-    ids.forEach(id=>{
-      const sec = document.querySelector(id);
-      if(sec && sec.getBoundingClientRect().top < window.innerHeight * 0.5) current = id;
-    });
+    const current = (typeof currentSectionHref === 'function')
+      ? currentSectionHref()
+      : '#hero';
     links.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === current));
   }
 

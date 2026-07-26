@@ -42,6 +42,9 @@
   #navLinks,
   #langSelect,
   .nav-actions .cv-btn{ display:none; }
+  /* the atmosphere dial moves into the fullscreen menu on mobile,
+     where there's room for it beside the language codes */
+  #atmos{ display:none; }
   .nav-actions{ gap:0; }
 
   /* ---- menu trigger: two lines that cross into an X ---- */
@@ -154,6 +157,8 @@
   .nav-overlay.open .nav-overlay-foot{ opacity:1; transform:translateY(0); }
   .cv-btn--overlay{ font-size:11px; padding:12px 20px; }
   .nav-overlay-langs{ display:flex; gap:4px; }
+  .nav-overlay .atmos{ display:flex; gap:8px; margin-top:18px; }
+  .nav-overlay .atmos-btn{ width:22px; height:22px; }
   .nav-overlay-langs button{
     background:none; border:1px solid transparent; cursor:pointer; border-radius:8px;
     padding:8px 10px; font-family:'IBM Plex Mono'; font-size:11.5px; letter-spacing:.06em;
@@ -424,18 +429,22 @@
 
 /* =========================================================
    8. SAFETY NET
-   No horizontal overflow at any width, whatever the shelves do.
+   No horizontal overflow from the swipeable shelves.
 
-   Deliberately NOT `overflow-x:hidden` on <html>: setting it there
-   propagates to the viewport and makes a scroll container, which some
-   mobile engines then use to resolve `position:fixed` — that's what
-   leaves a fixed top bar sized to the overflow rather than the screen.
-   `clip` does the same clipping without creating a scroll container,
-   so fixed elements keep sizing to the viewport. `hidden` stays as the
-   fallback for browsers without `clip`.
+   Scoped to the mobile breakpoint on purpose. `overflow:clip` clips
+   descendants including position:fixed ones, so leaving it unscoped
+   took out the desktop section rail. The shelves only exist below
+   860px, so the guard belongs there too.
+
+   Deliberately NOT on <html>: setting it there propagates to the
+   viewport and makes a scroll container, which some mobile engines
+   then use to resolve position:fixed — that's what leaves a fixed top
+   bar sized to the overflow rather than the screen.
    ========================================================= */
-html, body{ max-width:100%; }
-body{ overflow-x:hidden; }
-@supports (overflow:clip){
-  body{ overflow-x:clip; }
+@media (max-width:860px){
+  html, body{ max-width:100%; }
+  body{ overflow-x:hidden; }
+  @supports (overflow:clip){
+    body{ overflow-x:clip; }
+  }
 }

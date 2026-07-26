@@ -297,51 +297,118 @@
   });
 })();
 
-// ---- 5. The name, re-rendered ----------------------------------------
-// Clicking TERROSO re-resolves it letter by letter, the way type lands
-// in a motion graphics build. It runs once per click, restores the exact
-// original string, and ignores repeat clicks while it's mid-flight.
+// ---- 5. TERROSO → kinetic type ---------------------------------------
+// The centrepiece interaction. Each letter is its own element and
+// responds to how close the cursor is and how fast it's moving: near
+// letters lift toward the viewer, stretch in weight and widen their
+// tracking, while their neighbours ease off in proportion. Nothing
+// snaps — every value is spring-eased on its own frame loop, so
+// sweeping across it feels like dragging a hand through water.
+//
+// The letters never move far enough to break the word, and the whole
+// thing settles back to a clean, legible wordmark the moment the
+// cursor leaves. On touch it becomes a one-shot ripple instead.
 (function(){
-  const el = document.querySelector('.hero h1 .accent');
-  if(!el) return;
+  const host = document.querySelector('.hero h1 .accent');
+  if(!host) return;
 
-  const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const original = el.textContent;
-  let running = false;
+  const word = host.textContent.trim();
+  const canHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  el.style.cursor = 'pointer';
-  el.setAttribute('role', 'button');
-  el.setAttribute('tabindex', '0');
-  el.setAttribute('aria-label', original);
+  // rebuild as individual letters, keeping the word readable to
+  // screen readers and to anything that copies the text
+  host.textContent = '';
+  host.setAttribute('aria-label', word);
+  const letters = word.split('').map((ch, i)=>{
+    const el = document.createElement('span');
+    el.className = 'kt';
+    el.textContent = ch;
+    el.setAttribute('aria-hidden', 'true');
+    el.style.setProperty('--i', i);
+    host.appendChild(el);
+    return { el, i, cur:0, target:0 };
+  });
 
-  function run(){
-    if(running) return;
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    running = true;
-
-    const chars = original.split('');
-    const settleAt = chars.map((_, i)=> 6 + i * 3);   // frames until each letter locks
-    let f = 0;
-    const total = Math.max.apply(null, settleAt) + 2;
-
-    (function step(){
-      el.textContent = chars.map((c, i)=>
-        f >= settleAt[i] ? c : GLYPHS[(Math.random() * GLYPHS.length) | 0]
-      ).join('');
-      f++;
-      if(f <= total){
-        requestAnimationFrame(step);
-      } else {
-        el.textContent = original;   // always end on the real string
-        running = false;
-      }
-    })();
+  if(reduce){
+    // keep the letters (they're the markup now) but no continuous motion
+    host.classList.add('kt-static');
+    return;
   }
 
-  el.addEventListener('click', run);
-  el.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); run(); }
-  });
+  let raf = null, active = false;
+  let pointerX = -1, lastX = -1, speed = 0;
+
+  function frame(){
+    let moving = false;
+    const rect = host.getBoundingClientRect();
+
+    letters.forEach(L=>{
+      if(active && pointerX >= 0){
+        const b = L.el.getBoundingClientRect();
+        const cx = b.left + b.width/2;
+        // falloff: 1 at the cursor, easing to 0 about 170px away
+        const d = Math.abs(pointerX - cx);
+        L.target = Math.max(0, 1 - d / 170);
+      } else {
+        L.target = 0;
+      }
+      // spring toward the target rather than jumping — this is what
+      // makes a fast sweep leave a trailing wave behind the cursor
+      L.cur += (L.target - L.cur) * 0.16;
+      if(Math.abs(L.target - L.cur) > 0.001) moving = true;
+
+      const v = L.cur;
+      if(v > 0.002){
+        // weight and width ride the falloff; the lift is deliberately
+        // small so the baseline still reads as a single word
+        L.el.style.setProperty('--v', v.toFixed(3));
+        L.el.style.setProperty('--lift', (-v * 14).toFixed(2) + 'px');
+        L.el.style.setProperty('--track', (v * 5).toFixed(2) + 'px');
+        // a touch of extra scale when the cursor is moving quickly
+        L.el.style.setProperty('--sc', (1 + v * (0.10 + speed * 0.035)).toFixed(3));
+      } else {
+        L.el.style.setProperty('--v', '0');
+        L.el.style.setProperty('--lift', '0px');
+        L.el.style.setProperty('--track', '0px');
+        L.el.style.setProperty('--sc', '1');
+      }
+    });
+
+    speed *= 0.88;
+    void rect;
+
+    if(moving || active){
+      raf = requestAnimationFrame(frame);
+    } else {
+      raf = null;
+    }
+  }
+  function kick(){ if(!raf) raf = requestAnimationFrame(frame); }
+
+  if(canHover){
+    host.addEventListener('pointerenter', ()=>{ active = true; host.classList.add('kt-live'); kick(); });
+    host.addEventListener('pointermove', (e)=>{
+      if(lastX >= 0) speed = Math.min(3, speed + Math.abs(e.clientX - lastX) * 0.06);
+      lastX = e.clientX;
+      pointerX = e.clientX;
+      active = true;
+      kick();
+    });
+    host.addEventListener('pointerleave', ()=>{
+      active = false; pointerX = -1; lastX = -1;
+      host.classList.remove('kt-live');
+      kick();   // let the spring settle everything back to zero
+    });
+  } else {
+    // touch: a single ripple travelling through the word on tap
+    host.style.cursor = 'pointer';
+    host.addEventListener('click', ()=>{
+      if(host.classList.contains('kt-ripple')) return;
+      host.classList.add('kt-ripple');
+      setTimeout(()=> host.classList.remove('kt-ripple'), 1100);
+    });
+  }
 })();
 
 // ---- 6. A note in the console ----------------------------------------

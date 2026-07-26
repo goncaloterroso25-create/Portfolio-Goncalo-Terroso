@@ -31,11 +31,10 @@ document.querySelectorAll('[data-jump]').forEach(link=>{
 });
 
 // ---- Nav: smooth scroll + active link + progress bar ----
-// NOTE: `.navlinks a` matches links in BOTH the desktop inline nav
-// (#navLinks) and the mobile drawer nav (#navDrawer .navlinks) — see
-// js/mobile.js for the hamburger/drawer open-close behaviour, which is
-// otherwise fully independent from this file.
-const navLinks = document.querySelectorAll('.navlinks a');
+// NOTE: matches links in BOTH the desktop inline nav (#navLinks) and
+// the fullscreen mobile menu (#navOverlay) — see js/mobile.js for the
+// open/close behaviour, which is otherwise fully independent from this file.
+const navLinks = document.querySelectorAll('.navlinks a, .nav-overlay-links a, .brand[data-target]');
 const sections = ['#hero','#destaques','#projetos','#sobre','#contacto'].map(s=>document.querySelector(s));
 const progressEl = document.getElementById('navProgress');
 
@@ -72,65 +71,56 @@ function onScroll(){
     if(heroScopeEl) heroScopeEl.style.transform = `translateY(${past*-24}px)`;
   }
 
-  let idx = 0;
-  sections.forEach((sec,i)=>{
-    if(sec && sec.getBoundingClientRect().top < window.innerHeight*0.5) idx = i;
-  });
-  // Match by target href rather than list position: with two nav-link
-  // lists (desktop + mobile drawer) sharing the same selector, a plain
-  // index comparison would only ever highlight the first list correctly.
-  const activeHref = sections[idx] ? ('#' + sections[idx].id) : null;
+  const activeHref = currentSectionHref();
   navLinks.forEach(l=> l.classList.toggle('active', l.getAttribute('href') === activeHref));
 }
 document.addEventListener('scroll', onScroll, {passive:true});
 onScroll();
 
-// ---- Signature interaction: vertical timeline scrubber ----
+// ---- Single source of truth for "which section am I in?" ----
+// The top bar, the mobile menu and the side rail all read from this,
+// so the three can never disagree about the active section.
+function currentSectionHref(){
+  let idx = 0;
+  sections.forEach((sec,i)=>{
+    if(sec && sec.getBoundingClientRect().top < window.innerHeight*0.5) idx = i;
+  });
+  return sections[idx] ? ('#' + sections[idx].id) : null;
+}
+function scrollProgress(){
+  const doc = document.documentElement;
+  const scrollH = doc.scrollHeight - doc.clientHeight;
+  return scrollH > 0 ? Math.min(1, Math.max(0, (doc.scrollTop || document.body.scrollTop) / scrollH)) : 0;
+}
+
+// ---- Contextual section navigation (desktop rail) ----
+// Three jobs: shows where you are, how far through you are, and jumps
+// you there on click.
 (function(){
-  const scrubber = document.getElementById('timelineScrubber');
-  const track = document.getElementById('timelineTrack');
-  const playhead = document.getElementById('timelinePlayhead');
-  if(!scrubber || !track || !playhead) return;
+  const nav = document.getElementById('sectionNav');
+  if(!nav) return;
+  const items = Array.from(nav.querySelectorAll('.section-nav-item'));
 
-  const ticks = Array.from(track.querySelectorAll('.timeline-tick'));
-
-  function layout(){
-    const doc = document.documentElement;
-    const scrollH = doc.scrollHeight - doc.clientHeight;
-    if(scrollH <= 0) return;
-    ticks.forEach(tick=>{
-      const sec = document.querySelector(tick.dataset.target);
-      if(!sec) return;
-      const pct = Math.min(1, Math.max(0, sec.offsetTop / scrollH));
-      tick.style.top = (pct*100) + '%';
-    });
-  }
-
-  function updatePlayhead(){
-    const doc = document.documentElement;
-    const scrollTop = doc.scrollTop || document.body.scrollTop;
-    const scrollH = doc.scrollHeight - doc.clientHeight;
-    const pct = scrollH>0 ? Math.min(1, scrollTop/scrollH) : 0;
-    playhead.style.top = (pct*100) + '%';
-
-    // whichever tick's section is currently active (mirrors navLinks logic above)
-    let idx = 0;
-    sections.forEach((sec,i)=>{ if(sec && sec.getBoundingClientRect().top < window.innerHeight*0.5) idx = i; });
-    const activeHref = sections[idx] ? ('#'+sections[idx].id) : null;
-    ticks.forEach(t=> t.classList.toggle('active', t.dataset.target === activeHref));
-  }
-
-  ticks.forEach(tick=>{
-    tick.addEventListener('click', ()=>{
-      const target = document.querySelector(tick.dataset.target);
+  items.forEach(item=>{
+    item.addEventListener('click', ()=>{
+      const target = document.querySelector(item.dataset.target);
       if(target) target.scrollIntoView({behavior:'smooth'});
     });
   });
 
-  layout();
-  window.addEventListener('resize', layout);
-  document.addEventListener('scroll', updatePlayhead, {passive:true});
-  updatePlayhead();
+  function update(){
+    nav.style.setProperty('--progress', (scrollProgress()*100).toFixed(2) + '%');
+    const activeHref = currentSectionHref();
+    items.forEach(item=>{
+      const on = item.dataset.target === activeHref;
+      item.classList.toggle('active', on);
+      item.setAttribute('aria-current', on ? 'true' : 'false');
+    });
+  }
+
+  document.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+  update();
 })();
 
 // ---- Lightbox: fullscreen photo viewer with zoom + pan (no quality loss, no cropping) ----

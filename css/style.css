@@ -230,7 +230,27 @@ body.lang-swapping [data-i18n]{ opacity:0; }
 .pip-code span[role="button"]:hover{ color:var(--video); border-bottom-color:currentColor; }
 
 /* --- vinyl: silent, hand-driven --- */
-.single-vinyl{ touch-action:pan-y; user-select:none; -webkit-user-select:none; }
+.single-vinyl{
+  touch-action:pan-y; user-select:none; -webkit-user-select:none;
+  transition:border-color .35s ease, box-shadow .35s ease, scale .4s var(--ease-glass);
+}
+/* hover gives it presence before any click: it lifts off the card and
+   turns slowly, which is what tells you it's grabbable at all.
+   `scale` is a separate property from `transform`, so it composes with
+   the rotation JS writes every frame instead of fighting it. */
+@media (hover:hover) and (pointer:fine){
+  .single-vinyl:hover{
+    scale:1.08;
+    border-color:var(--video);
+    box-shadow:0 10px 26px -10px rgba(0,0,0,.7), 0 0 0 1px rgba(75,184,196,.35);
+  }
+  /* only idles when it isn't already being driven by the pointer */
+  .single-card:not(.vinyl-live) .single-vinyl:hover{
+    animation:vinylIdle 9s linear infinite;
+  }
+}
+@keyframes vinylIdle{ to{ rotate:360deg; } }
+
 /* a marker near the rim — without it the concentric grooves look static */
 .single-vinyl::before{
   content:''; position:absolute; top:5px; left:50%; margin-left:-2px;
@@ -241,8 +261,11 @@ body.lang-swapping [data-i18n]{ opacity:0; }
 .single-card.vinyl-live .single-vinyl{
   border-color:var(--music);
   box-shadow:0 0 0 1px rgba(140,9,173,.5), 0 0 20px -4px var(--music);
+  scale:1.08;
 }
-.single-vinyl{ transition:border-color .35s ease, box-shadow .35s ease; }
+@media (prefers-reduced-motion: reduce){
+  .single-vinyl:hover{ animation:none; }
+}
 
 /* --- studio mode --- */
 body.studio-mode .hero-scope{ opacity:1; animation:studioHue 3.2s linear infinite; }
@@ -269,14 +292,46 @@ body.studio-mode .grain{ opacity:.07; }
 }
 @keyframes vuBounce{ from{ height:7px; } to{ height:var(--vu-max); } }
 
-/* --- the name, re-rendered --- */
-.hero h1 .accent{ cursor:pointer; }
-
 @media (prefers-reduced-motion: reduce){
   .vf, .vf-corner, .vf-reticle, .vf-tc, .vf-meta{ transition:none; }
   body.studio-mode .hero-scope{ animation:none; }
   .vu-meter span{ animation:none; height:24px; }
   .vu-meter{ transition:opacity .2s ease; transform:none; }
+}
+
+/* --- TERROSO → kinetic type ---
+   Each letter is its own inline-block so it can lift, scale and open
+   its tracking independently. All driven by --v (0..1 proximity),
+   written per-frame from js/easter.js. Only transform/opacity-class
+   properties animate, so it stays on the GPU. */
+.hero h1 .accent{ display:inline-block; cursor:pointer; }
+.hero h1 .kt{
+  display:inline-block; will-change:transform;
+  transform:translateY(var(--lift,0px)) scale(var(--sc,1));
+  letter-spacing:var(--track,0px);
+  /* the closer the cursor, the brighter and heavier the letter reads */
+  color:color-mix(in srgb, var(--music) calc(100% - var(--v,0) * 45%), var(--paper));
+  text-shadow:0 calc(var(--v,0) * 10px) calc(var(--v,0) * 26px) rgba(140,9,173, calc(var(--v,0) * 0.55));
+}
+/* browsers without color-mix keep the plain accent colour */
+@supports not (color: color-mix(in srgb, red, blue)){
+  .hero h1 .kt{ color:var(--music); }
+}
+.hero h1 .accent.kt-live{ cursor:none; }
+.hero h1 .accent.kt-static .kt{ transform:none; letter-spacing:0; color:var(--music); text-shadow:none; }
+
+/* touch fallback: one ripple travelling left to right through the word */
+.hero h1 .accent.kt-ripple .kt{
+  animation:ktRipple .85s var(--ease-glass) both;
+  animation-delay:calc(var(--i) * 0.045s);
+}
+@keyframes ktRipple{
+  0%{ transform:translateY(0) scale(1); }
+  40%{ transform:translateY(-13px) scale(1.1); }
+  100%{ transform:translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce){
+  .hero h1 .accent.kt-ripple .kt{ animation:none; }
 }
 
 /* ---------- GRAIN ---------- */
@@ -394,6 +449,21 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 .lang-menu .lang-name{ font-size:11px; opacity:.7; }
 .lang-menu button.active .lang-code{ color:var(--music); }
 
+/* ---------- ATMOSPHERE DIAL ----------
+   A four-step control, not a free slider: unlimited hue would let a
+   visitor land somewhere that reads as broken rather than intentional.
+   Four curated moods keep every state deliberate, and it only ever
+   moves the ambient light — never the accents or the type. */
+.atmos{ display:flex; align-items:center; gap:5px; }
+.atmos-btn{
+  width:15px; height:15px; border-radius:50%; cursor:pointer; padding:0;
+  border:1px solid var(--glass-border); background:var(--swatch);
+  opacity:.5; transition:opacity .3s ease, transform .35s var(--ease-glass), border-color .3s ease;
+}
+.atmos-btn:hover{ opacity:.9; transform:scale(1.15); }
+.atmos-btn.active{ opacity:1; transform:scale(1.2); border-color:var(--paper); }
+.atmos-btn:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; }
+
 /* ---------- CV BUTTON (persistent, in the nav) ---------- */
 .cv-btn{
   display:inline-flex; align-items:center; gap:9px; text-decoration:none; cursor:pointer;
@@ -430,53 +500,220 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
     radial-gradient(ellipse 1000px 800px at 88% 10%, #4bb8c49c, transparent 60%),
     radial-gradient(ellipse 1200px 1000px at 6% 92%, rgba(197, 26, 240, 0.507), transparent 60%);
   animation: heroDrift 24s ease-in-out infinite alternate;
+  /* --atmos rotates only these two ambient glows (see the atmosphere
+     dial). The accents, type and UI colours are untouched by design:
+     the identity has to survive whatever the visitor picks. */
+  filter:hue-rotate(var(--atmos, 0deg));
+  transition:filter .8s var(--ease-glass);
 }
 .hero-grid{ position:relative; z-index:1; }
 
 /* ---------- CONTEXTUAL SECTION NAV ----------
-   A vertical rail that always answers one question: "where am I?".
-   Collapsed it shows a progress line and one dot per section; the
-   current section's name is always legible, the others reveal on
-   hover. Clicking any of them jumps there. Desktop only — on mobile
-   the same information lives in the fullscreen menu instead. */
+   Three jobs in one component: where am I (active label), how far
+   through am I (the rail fills as you scroll), and take me there
+   (every row is a button). Desktop only — on mobile the same
+   information lives in the fullscreen menu. */
 .section-nav{
-  position:fixed; right:30px; top:50%; transform:translateY(-50%); z-index:90;
-  display:flex; flex-direction:column; gap:2px;
+  position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:90;
+  display:flex; align-items:stretch; gap:14px;
+  padding:4px 0;
+}
+
+/* the continuous progress rail, drawn once for the whole component */
+.section-nav-rail{
+  position:relative; width:2px; border-radius:2px; flex-shrink:0;
+  background:var(--line-strong); order:2;
+}
+.section-nav-rail::after{
+  content:''; position:absolute; left:0; right:0; top:0; border-radius:2px;
+  height:var(--progress, 0%);
+  background:linear-gradient(to bottom, var(--music), var(--video));
+  transition:height .12s linear;
+}
+/* the playhead: a small marker riding the rail at the exact scroll position */
+.section-nav-head{
+  position:absolute; left:50%; top:var(--progress, 0%);
+  width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%;
+  background:var(--paper); box-shadow:0 0 0 3px rgba(140,9,173,.28);
+  transition:top .12s linear;
+}
+
+.section-nav-items{
+  display:flex; flex-direction:column; justify-content:space-between;
+  order:1; gap:2px; list-style:none; margin:0; padding:0;
 }
 .section-nav-item{
-  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:12px;
-  background:none; border:none; padding:9px 0; cursor:pointer;
-  font-family:'IBM Plex Mono'; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:10px;
+  background:none; border:none; padding:7px 0; cursor:pointer; width:100%;
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
   color:var(--text-faint); text-align:right;
   transition:color .3s var(--ease-glass);
 }
 .section-nav-label{
-  opacity:0; transform:translateX(6px);
-  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass), color .3s ease;
+  opacity:.32; transform:translateX(4px);
+  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass);
   white-space:nowrap;
 }
-/* the rail itself: a short line per section that grows when active */
-.section-nav-bar{
-  position:relative; width:26px; height:2px; border-radius:2px;
-  background:var(--line-strong); overflow:hidden; flex-shrink:0;
-  transition:width .4s var(--ease-glass), background .3s ease;
+/* a dot per section, sitting against the rail */
+.section-nav-dot{
+  width:5px; height:5px; border-radius:50%; flex-shrink:0;
+  background:var(--line-strong);
+  transition:background .3s ease, transform .35s var(--ease-glass), box-shadow .3s ease;
 }
-.section-nav-bar::after{
-  content:''; position:absolute; inset:0; border-radius:2px;
-  background:var(--music); transform:scaleX(0); transform-origin:left;
-  transition:transform .45s var(--ease-glass);
-}
-/* current section: name always visible, bar extended and filled */
+/* current section: full-contrast label, dot lit in the accent */
 .section-nav-item.active{ color:var(--text); }
 .section-nav-item.active .section-nav-label{ opacity:1; transform:translateX(0); }
-.section-nav-item.active .section-nav-bar{ width:44px; background:var(--line-strong); }
-.section-nav-item.active .section-nav-bar::after{ transform:scaleX(1); }
-/* hovering any other section previews its name without stealing focus */
-.section-nav:hover .section-nav-label{ opacity:.55; transform:translateX(0); }
+.section-nav-item.active .section-nav-dot{
+  background:var(--music); transform:scale(1.5);
+  box-shadow:0 0 0 3px rgba(140,9,173,.2);
+}
+/* hovering the component previews every label at once */
+.section-nav:hover .section-nav-label{ opacity:.7; transform:translateX(0); }
 .section-nav-item:hover{ color:var(--text); }
 .section-nav-item:hover .section-nav-label{ opacity:1; }
-.section-nav-item:hover .section-nav-bar{ width:44px; }
-.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:4px; border-radius:3px; }
+.section-nav-item:hover .section-nav-dot{ background:var(--text); transform:scale(1.3); }
+.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; border-radius:3px; }
+
+@media (max-width:1180px), (hover:none){
+  .section-nav{ display:none; }
+}
+
+/* ---------- SIGNATURE ANIMATION — live waveform ----------
+   A single continuous line, drawn on canvas, behaves like a monitored
+   audio signal: idle ambient motion, and a gentle ripple that follows
+   the cursor. It's the one purely decorative element on the page, so
+   it stays quiet (low opacity, thin stroke) and sits behind all text. */
+.hero-scope{
+  position:absolute; left:0; right:0; bottom:0; height:46%; z-index:0;
+  pointer-events:none; opacity:.55;
+  -webkit-mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
+  mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
+}
+.hero-scope canvas{ width:100%; height:100%; display:block; }
+
+/* ---------- CUSTOM CURSOR (desktop, fine pointer only) ----------
+   Never blurs, never hides content. The ring answers "what happens if
+   I click here?" before the click: it grows over a link, fills into a
+   labelled pill over a project, and becomes an open grab ring over the
+   discs. Every state is transform/opacity only. */
+.cursor-dot, .cursor-ring{
+  position:fixed; top:0; left:0; z-index:400; pointer-events:none;
+  border-radius:50%; will-change:transform; opacity:0;
+  transition:opacity .25s ease, width .3s var(--ease-glass), height .3s var(--ease-glass),
+    border-color .25s ease, background .25s ease, border-width .25s ease;
+}
+.cursor-dot{ width:6px; height:6px; background:var(--paper); margin:0; }
+.cursor-ring{
+  width:26px; height:26px; margin:0;
+  border:1px solid rgba(243,236,221,.45);
+  display:flex; align-items:center; justify-content:center;
+}
+.cursor-label{
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ink); white-space:nowrap; opacity:0; transform:scale(.6);
+  transition:opacity .2s ease, transform .25s var(--ease-glass);
+}
+body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring{ opacity:1; }
+@media (hover:hover) and (pointer:fine){
+  body.cursor-ready, body.cursor-ready a, body.cursor-ready button{ cursor:none; }
+}
+
+/* --- link / button: ring opens up and brightens, dot stays as the
+       precise click point so aim is never ambiguous --- */
+body.cursor-ready.cursor-hover .cursor-ring{
+  width:40px; height:40px; border-color:var(--paper); border-width:1.5px;
+}
+body.cursor-ready.cursor-hover .cursor-dot{ width:4px; height:4px; }
+
+/* --- labelled element (a project, a contact): the ring becomes a
+       solid pill carrying the action word --- */
+body.cursor-ready.cursor-label-active .cursor-ring{
+  width:auto; height:auto; min-width:62px; padding:11px 18px; border-radius:999px;
+  background:var(--music); border-color:transparent;
+}
+body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:scale(1); }
+body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
+
+/* --- draggable disc: a dashed open ring reads as "grab this" --- */
+body.cursor-ready.cursor-drag .cursor-ring{
+  width:48px; height:48px; border-style:dashed; border-color:var(--video); border-width:1.5px;
+}
+body.cursor-ready.cursor-drag .cursor-dot{ opacity:0; }
+
+/* --- pressed: everything contracts a touch, so the click registers
+       visually even before the page responds --- */
+body.cursor-ready.cursor-down .cursor-ring{ transform-origin:center; filter:brightness(1.2); }
+body.cursor-ready.cursor-down .cursor-dot{ width:9px; height:9px; }
+
+@media (hover:none), (pointer:coarse){
+  .cursor-dot, .cursor-ring, .cursor-label{ display:none; }
+}
+
+/* ---------- CONTEXTUAL SECTION NAV ----------
+   Three jobs in one component: where am I (active label), how far
+   through am I (the rail fills as you scroll), and take me there
+   (every row is a button). Desktop only — on mobile the same
+   information lives in the fullscreen menu. */
+.section-nav{
+  position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:90;
+  display:flex; align-items:stretch; gap:14px;
+  padding:4px 0;
+}
+
+/* the continuous progress rail, drawn once for the whole component */
+.section-nav-rail{
+  position:relative; width:2px; border-radius:2px; flex-shrink:0;
+  background:var(--line-strong); order:2;
+}
+.section-nav-rail::after{
+  content:''; position:absolute; left:0; right:0; top:0; border-radius:2px;
+  height:var(--progress, 0%);
+  background:linear-gradient(to bottom, var(--music), var(--video));
+  transition:height .12s linear;
+}
+/* the playhead: a small marker riding the rail at the exact scroll position */
+.section-nav-head{
+  position:absolute; left:50%; top:var(--progress, 0%);
+  width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%;
+  background:var(--paper); box-shadow:0 0 0 3px rgba(140,9,173,.28);
+  transition:top .12s linear;
+}
+
+.section-nav-items{
+  display:flex; flex-direction:column; justify-content:space-between;
+  order:1; gap:2px; list-style:none; margin:0; padding:0;
+}
+.section-nav-item{
+  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:10px;
+  background:none; border:none; padding:7px 0; cursor:pointer; width:100%;
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-faint); text-align:right;
+  transition:color .3s var(--ease-glass);
+}
+.section-nav-label{
+  opacity:.32; transform:translateX(4px);
+  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass);
+  white-space:nowrap;
+}
+/* a dot per section, sitting against the rail */
+.section-nav-dot{
+  width:5px; height:5px; border-radius:50%; flex-shrink:0;
+  background:var(--line-strong);
+  transition:background .3s ease, transform .35s var(--ease-glass), box-shadow .3s ease;
+}
+/* current section: full-contrast label, dot lit in the accent */
+.section-nav-item.active{ color:var(--text); }
+.section-nav-item.active .section-nav-label{ opacity:1; transform:translateX(0); }
+.section-nav-item.active .section-nav-dot{
+  background:var(--music); transform:scale(1.5);
+  box-shadow:0 0 0 3px rgba(140,9,173,.2);
+}
+/* hovering the component previews every label at once */
+.section-nav:hover .section-nav-label{ opacity:.7; transform:translateX(0); }
+.section-nav-item:hover{ color:var(--text); }
+.section-nav-item:hover .section-nav-label{ opacity:1; }
+.section-nav-item:hover .section-nav-dot{ background:var(--text); transform:scale(1.3); }
+.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; border-radius:3px; }
 
 @media (max-width:1180px), (hover:none){
   .section-nav{ display:none; }

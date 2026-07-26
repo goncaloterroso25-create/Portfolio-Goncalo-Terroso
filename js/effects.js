@@ -154,22 +154,44 @@
   }
   requestAnimationFrame(ringLoop);
 
-  const hoverTargets = 'a, button, .js-lightbox, input, textarea, [data-cursor]';
+  // Contextual states, from least to most specific. The point is that
+  // the cursor should answer "what happens if I click here?" before the
+  // visitor clicks — so a link, a project and a draggable disc each get
+  // a visibly different cursor rather than one generic blob.
+  const LINK    = 'a, button, .lang-opt, .track-btn, .section-nav-item, input, textarea';
+  const DRAG    = '.single-vinyl';
+  const LABELLED = '[data-cursor]';
+
+  function clearStates(){
+    document.body.classList.remove('cursor-hover','cursor-label-active','cursor-drag','cursor-text');
+  }
+
   document.addEventListener('mouseover', (e)=>{
-    const labelTarget = e.target.closest('[data-cursor]');
-    const plainTarget = e.target.closest(hoverTargets);
-    if(labelTarget){
-      label.textContent = labelTarget.dataset.cursor;
+    const labelled = e.target.closest(LABELLED);
+    const drag = e.target.closest(DRAG);
+    const link = e.target.closest(LINK);
+
+    clearStates();
+    if(drag){
+      document.body.classList.add('cursor-drag');
+    } else if(labelled){
+      label.textContent = labelled.dataset.cursor;
       document.body.classList.add('cursor-label-active');
-      document.body.classList.remove('cursor-hover');
-    } else if(plainTarget){
+    } else if(link){
       document.body.classList.add('cursor-hover');
     }
   });
   document.addEventListener('mouseout', (e)=>{
-    if(e.target.closest('[data-cursor]')) document.body.classList.remove('cursor-label-active');
-    if(e.target.closest(hoverTargets)) document.body.classList.remove('cursor-hover');
+    // only clear when actually leaving an interactive element, so moving
+    // between two children of the same button doesn't flicker the cursor
+    if(e.relatedTarget && e.relatedTarget.closest &&
+       (e.relatedTarget.closest(LABELLED) || e.relatedTarget.closest(DRAG) || e.relatedTarget.closest(LINK))) return;
+    clearStates();
   });
+
+  // pressing down gives a small, immediate confirmation of the click
+  document.addEventListener('pointerdown', ()=> document.body.classList.add('cursor-down'));
+  document.addEventListener('pointerup',   ()=> document.body.classList.remove('cursor-down'));
 
   window.addEventListener('mouseleave', ()=> document.body.classList.remove('cursor-ready'));
   window.addEventListener('mouseenter', ()=> document.body.classList.add('cursor-ready'));
@@ -207,4 +229,28 @@
       card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
     });
   });
+})();
+
+// ---------------------------------------------------------------
+// ATMOSPHERE DIAL
+// Rotates the hue of the two ambient glows behind the hero, and
+// nothing else. Four fixed steps rather than a free slider, so every
+// state stays deliberate. The choice persists for the session.
+// ---------------------------------------------------------------
+(function(){
+  const btns = Array.from(document.querySelectorAll('.atmos-btn'));
+  if(!btns.length) return;
+
+  function apply(deg, remember){
+    document.documentElement.style.setProperty('--atmos', deg + 'deg');
+    // both copies of the dial (nav + mobile overlay) reflect the choice
+    btns.forEach(b=> b.classList.toggle('active', b.dataset.atmos === String(deg)));
+    if(remember){ try { sessionStorage.setItem('gt-atmos', String(deg)); } catch(e){} }
+  }
+
+  btns.forEach(b=> b.addEventListener('click', ()=> apply(Number(b.dataset.atmos), true)));
+
+  let saved = null;
+  try { saved = sessionStorage.getItem('gt-atmos'); } catch(e){}
+  if(saved !== null && btns.some(b=> b.dataset.atmos === saved)) apply(Number(saved), false);
 })();
