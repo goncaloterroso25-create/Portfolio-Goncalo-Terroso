@@ -31,11 +31,10 @@ document.querySelectorAll('[data-jump]').forEach(link=>{
 });
 
 // ---- Nav: smooth scroll + active link + progress bar ----
-// NOTE: `.navlinks a` matches links in BOTH the desktop inline nav
-// (#navLinks) and the mobile drawer nav (#navDrawer .navlinks) — see
-// js/mobile.js for the hamburger/drawer open-close behaviour, which is
-// otherwise fully independent from this file.
-const navLinks = document.querySelectorAll('.navlinks a');
+// NOTE: matches links in BOTH the desktop inline nav (#navLinks) and
+// the fullscreen mobile menu (#navOverlay) — see js/mobile.js for the
+// open/close behaviour, which is otherwise fully independent from this file.
+const navLinks = document.querySelectorAll('.navlinks a, .nav-overlay-links a, .brand[data-target]');
 const sections = ['#hero','#destaques','#projetos','#sobre','#contacto'].map(s=>document.querySelector(s));
 const progressEl = document.getElementById('navProgress');
 
@@ -48,6 +47,10 @@ navLinks.forEach(link=>{
 });
 
 const topnavEl = document.querySelector('.topnav');
+const heroEl = document.getElementById('hero');
+const pipFrameEl = document.querySelector('.pip-frame');
+const heroScopeEl = document.querySelector('.hero-scope');
+const reduceMotionMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 function onScroll(){
   const doc = document.documentElement;
@@ -56,6 +59,17 @@ function onScroll(){
   const pct = scrollH>0 ? scrollTop/scrollH : 0;
   if(progressEl) progressEl.style.width = (pct*100)+'%';
   if(topnavEl) topnavEl.classList.toggle('is-scrolled', scrollTop > 24);
+
+  // subtle depth: as the hero scrolls away, the photo drifts a little
+  // slower than the page (classic parallax) and the waveform drifts
+  // the other way — a quiet cue of depth, not a visual effect on its own
+  if(heroEl && !reduceMotionMQ.matches){
+    const heroRect = heroEl.getBoundingClientRect();
+    const heroHeight = heroRect.height || 1;
+    const past = Math.min(1, Math.max(0, -heroRect.top / heroHeight));
+    if(pipFrameEl) pipFrameEl.style.transform = `translateY(${past*36}px)`;
+    if(heroScopeEl) heroScopeEl.style.transform = `translateY(${past*-24}px)`;
+  }
 
   let idx = 0;
   sections.forEach((sec,i)=>{
@@ -69,6 +83,38 @@ function onScroll(){
 }
 document.addEventListener('scroll', onScroll, {passive:true});
 onScroll();
+
+// ---- Contextual section navigation (desktop rail) ----
+// Answers "where am I?" at a glance: the current section's name stays
+// visible, the rest reveal on hover, and clicking jumps there.
+(function(){
+  const nav = document.getElementById('sectionNav');
+  if(!nav) return;
+  const items = Array.from(nav.querySelectorAll('.section-nav-item'));
+
+  items.forEach(item=>{
+    item.addEventListener('click', ()=>{
+      const target = document.querySelector(item.dataset.target);
+      if(target) target.scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  function update(){
+    let idx = 0;
+    sections.forEach((sec,i)=>{
+      if(sec && sec.getBoundingClientRect().top < window.innerHeight*0.5) idx = i;
+    });
+    const activeHref = sections[idx] ? ('#'+sections[idx].id) : null;
+    items.forEach(item=>{
+      const on = item.dataset.target === activeHref;
+      item.classList.toggle('active', on);
+      item.setAttribute('aria-current', on ? 'true' : 'false');
+    });
+  }
+
+  document.addEventListener('scroll', update, {passive:true});
+  update();
+})();
 
 // ---- Lightbox: fullscreen photo viewer with zoom + pan (no quality loss, no cropping) ----
 (function(){
@@ -182,34 +228,71 @@ onScroll();
   });
 })();
 
-// ---- Smooth entrance animations: fade/rise cards into view as you scroll ----
+// ---- Movement language: different parts of the page move differently ----
 (function(){
-  const groupSelectors = [
+  // grids that alternate origin by index — reads as being assembled
+  const sideSelectors = [
     '.artist-grid > .artist-card',
     '.destaque-video-row > .feat-card',
     '.featured-row > .single-card',
     '.grid-row > .clip-card',
-    '.gallery-grid > .gallery-item',
+    '.gallery-grid > .gallery-item'
+  ];
+  // simple rows — small repeated items, kept calm on purpose
+  const riseGroupSelectors = [
     '.skill-groups > .skill-group',
     '.contact-grid > .contact-card',
     '.stat-strip > .stat'
   ];
-  const singleSelectors = [
-    '.section-head', '.about-quote', '.about-text > p', '.feat-music-panel',
-    '.subhead', '.discreet-note'
-  ];
+  // standalone feature panels — confident scale-in, like a cut in an edit
+  const scaleSelectors = ['.about-quote', '.feat-music-panel'];
+  // plain rise, no stagger needed
+  const riseSelectors = ['.about-text > p', '.subhead', '.discreet-note'];
+  // heading mask-wipe (see .reveal-text in CSS)
+  const textSelectors = ['h2.reveal-text > *'];
+  // thumbnails that wipe open under a curtain instead of fading
+  const curtainSelectors = ['.clip-thumb'];
 
   const els = new Set();
-  groupSelectors.forEach(sel=>{
+
+  sideSelectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach((el,i)=>{
+      el.classList.add('reveal-side');
+      if(i % 2 === 1) el.classList.add('from-right');
+      el.style.animationDelay = Math.min(i,8) * 70 + 'ms';
+      els.add(el);
+    });
+  });
+  riseGroupSelectors.forEach(sel=>{
     document.querySelectorAll(sel).forEach((el,i)=>{
       el.classList.add('reveal');
       el.style.animationDelay = Math.min(i,8) * 60 + 'ms';
       els.add(el);
     });
   });
-  singleSelectors.forEach(sel=>{
+  scaleSelectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      el.classList.add('reveal-scale');
+      els.add(el);
+    });
+  });
+  riseSelectors.forEach(sel=>{
     document.querySelectorAll(sel).forEach(el=>{
       el.classList.add('reveal');
+      els.add(el);
+    });
+  });
+  textSelectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      // .reveal-text sits on the parent h2 (it's the clip boundary);
+      // the observer just needs to watch that parent
+      const parent = el.closest('.reveal-text');
+      if(parent) els.add(parent);
+    });
+  });
+  curtainSelectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      el.classList.add('reveal-curtain');
       els.add(el);
     });
   });

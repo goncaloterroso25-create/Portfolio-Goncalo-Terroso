@@ -1,69 +1,83 @@
 // =========================================================
 // GONÇALO TERROSO — PORTFÓLIO
-// MOBILE NAV — hamburger drawer
+// MOBILE MENU — fullscreen typographic takeover
 //
-// Fully independent from js/main.js: the drawer (#navDrawer), its
-// scrim (#navScrim) and its trigger (#navToggle) are their own markup
-// block in index.html, not a repositioned copy of the desktop nav.
-// That's what makes this reliable across screen sizes/zoom levels —
-// there's no CSS fighting over where the same element should sit.
-//
-// This script is safe to include on any screen size: on desktop the
-// trigger button is hidden (see css/mobile.css) so nothing here ever
-// gets triggered by a user, but the listeners themselves are harmless.
+// Independent from js/main.js: the overlay (#navOverlay) and its
+// trigger (#navToggle) are their own markup block in index.html, not
+// a repositioned copy of the desktop nav. Safe to load at any screen
+// size — on desktop the trigger is hidden, so nothing here fires.
 // =========================================================
 (function(){
-  const toggle = document.getElementById('navToggle');
-  const drawer = document.getElementById('navDrawer');
-  const scrim  = document.getElementById('navScrim');
+  const toggle  = document.getElementById('navToggle');
+  const overlay = document.getElementById('navOverlay');
+  if(!toggle || !overlay) return;
 
-  if(!toggle || !drawer || !scrim) return;
+  const links = Array.from(overlay.querySelectorAll('.nav-overlay-links a'));
+  let lastFocused = null;
 
-  function isOpen(){
-    return drawer.classList.contains('open');
+  function isOpen(){ return overlay.classList.contains('open'); }
+
+  // Mark the section the visitor is currently in, so the menu doubles
+  // as a "you are here" indicator rather than a plain list of links.
+  function syncActive(){
+    const ids = ['#hero','#destaques','#projetos','#sobre','#contacto'];
+    let current = ids[0];
+    ids.forEach(id=>{
+      const sec = document.querySelector(id);
+      if(sec && sec.getBoundingClientRect().top < window.innerHeight * 0.5) current = id;
+    });
+    links.forEach(a=> a.classList.toggle('active', a.getAttribute('href') === current));
   }
 
-  function openDrawer(){
-    drawer.classList.add('open');
-    scrim.classList.add('active');
+  function openMenu(){
+    syncActive();
+    lastFocused = document.activeElement;
+    overlay.classList.add('open');
     toggle.classList.add('active');
-    toggle.setAttribute('aria-expanded', 'true');
-    drawer.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded','true');
+    overlay.setAttribute('aria-hidden','false');
     document.body.classList.add('nav-open');
+    // let the wipe start before moving focus, so screen readers and
+    // sighted users land at the same moment
+    setTimeout(()=>{ if(links[0]) links[0].focus({preventScroll:true}); }, 260);
   }
 
-  function closeDrawer(){
-    drawer.classList.remove('open');
-    scrim.classList.remove('active');
+  function closeMenu(){
+    overlay.classList.remove('open');
     toggle.classList.remove('active');
-    toggle.setAttribute('aria-expanded', 'false');
-    drawer.setAttribute('aria-hidden', 'true');
+    toggle.setAttribute('aria-expanded','false');
+    overlay.setAttribute('aria-hidden','true');
     document.body.classList.remove('nav-open');
+    if(lastFocused && lastFocused.focus) lastFocused.focus({preventScroll:true});
   }
 
-  function toggleDrawer(){
-    if(isOpen()) closeDrawer();
-    else openDrawer();
-  }
-
-  toggle.addEventListener('click', toggleDrawer);
-  scrim.addEventListener('click', closeDrawer);
+  toggle.addEventListener('click', ()=> isOpen() ? closeMenu() : openMenu());
 
   document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && isOpen()) closeDrawer();
+    if(!isOpen()) return;
+    if(e.key === 'Escape'){ closeMenu(); return; }
+    // keep tabbing inside the overlay while it's open
+    if(e.key === 'Tab'){
+      const focusables = overlay.querySelectorAll('a, button');
+      if(!focusables.length) return;
+      const first = focusables[0];
+      const last  = focusables[focusables.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
   });
 
-  // Tapping a link inside the drawer should close it — the actual
-  // smooth-scrolling to the target section is handled generically for
-  // every `.navlinks a` (desktop + drawer alike) in js/main.js.
-  drawer.querySelectorAll('a').forEach(link=>{
-    link.addEventListener('click', closeDrawer);
-  });
+  // Tapping a link closes the menu; the smooth scroll itself is handled
+  // generically for every `.navlinks a, .nav-overlay-links a` in main.js.
+  links.forEach(link=> link.addEventListener('click', closeMenu));
 
-  // If the window is resized/rotated back past the mobile breakpoint
-  // while the drawer happens to be open, close it so it can't get
-  // stuck open behind the (now visible) desktop nav.
+  document.addEventListener('scroll', ()=>{ if(!isOpen()) syncActive(); }, {passive:true});
+
+  // If rotated/resized back past the mobile breakpoint while open, close
+  // it so it can't get stuck over the (now visible) desktop nav.
   window.addEventListener('resize', ()=>{
-    if(window.innerWidth > 760 && isOpen()) closeDrawer();
+    if(window.innerWidth > 760 && isOpen()) closeMenu();
   });
+
+  syncActive();
 })();

@@ -80,6 +80,125 @@ a:focus-visible, button:focus-visible{
   outline:2px solid var(--paper); outline-offset:3px; border-radius:2px;
 }
 
+/* ---------- INTRO / LOADING ----------
+   Reads as a title card being cut together, not a spinner: the
+   disciplines flip past, the name lands, then two panels wipe apart
+   like a matte opening on the hero underneath. Total run under 2s. */
+.intro{
+  position:fixed; inset:0; z-index:600; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:auto;
+  /* Safety net: if js/intro.js never runs (blocked, failed, slow), this
+     clears the intro on its own so the page is never unreachable. JS
+     normally finishes well before this and removes the element outright. */
+  animation:introFailsafe .01s linear 4s forwards;
+}
+@keyframes introFailsafe{ to{ opacity:0; visibility:hidden; pointer-events:none; } }
+.intro.done{ display:none; }
+/* the two halves that split apart to reveal the page */
+.intro-panel{
+  position:absolute; left:0; right:0; height:50.5%; background:var(--ink);
+  transition:transform .85s cubic-bezier(.76,0,.24,1);
+}
+.intro-panel--top{ top:0; }
+.intro-panel--bottom{ bottom:0; }
+.intro.reveal .intro-panel--top{ transform:translateY(-100%); }
+.intro.reveal .intro-panel--bottom{ transform:translateY(100%); }
+
+.intro-content{
+  position:relative; z-index:2; text-align:center; padding:0 24px;
+  transition:opacity .35s ease, transform .5s var(--ease-glass);
+}
+.intro.reveal .intro-content{ opacity:0; transform:scale(1.04); }
+
+/* the discipline list — one visible at a time, swapped from JS */
+.intro-words{ position:relative; height:1.25em; margin-bottom:14px; }
+.intro-word{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono'; font-size:clamp(11px,2.6vw,14px);
+  letter-spacing:.34em; text-transform:uppercase; color:var(--video);
+  opacity:0; transform:translateY(8px);
+  transition:opacity .16s ease, transform .16s ease;
+}
+.intro-word.on{ opacity:1; transform:translateY(0); }
+
+.intro-name{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  font-family:'Big Shoulders Display'; font-weight:900; text-transform:uppercase;
+  font-size:clamp(44px,11vw,104px); line-height:.9; color:var(--text);
+}
+.intro-name span{ display:block; opacity:0; transform:translateY(18px); }
+.intro-name .accent{ color:var(--music); }
+.intro.name-in .intro-name span{ animation:introNameIn .55s var(--ease-glass) both; }
+.intro.name-in .intro-name span:nth-child(2){ animation-delay:.08s; }
+@keyframes introNameIn{ to{ opacity:1; transform:translateY(0); } }
+
+/* a thin accent rule that draws itself under the name */
+.intro-line{
+  width:min(280px,54vw); height:1px; margin:22px auto 0;
+  background:var(--music); transform:scaleX(0); transform-origin:center;
+}
+.intro.name-in .intro-line{ animation:introLine .6s var(--ease-glass) .22s both; }
+@keyframes introLine{ to{ transform:scaleX(1); } }
+
+.intro-skip{
+  position:absolute; z-index:3; bottom:26px; right:26px;
+  background:none; border:none; cursor:pointer;
+  font-family:'IBM Plex Mono'; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-faint); padding:8px 10px; transition:color .25s ease, opacity .3s ease;
+}
+.intro-skip:hover{ color:var(--text); }
+.intro.reveal .intro-skip{ opacity:0; pointer-events:none; }
+
+/* while the intro is on screen the page behind must not scroll */
+body.intro-active{ overflow:hidden; }
+/* paired with the failsafe above: scrolling returns even without JS */
+body:not(.intro-active){ overflow-x:hidden; }
+
+@media (prefers-reduced-motion: reduce){
+  .intro{ display:none; }
+}
+
+/* ---------- LANGUAGE SWAP ----------
+   A brief cross-fade over the text only: the layout, scroll position
+   and images stay put, so the visitor never loses their place. */
+body.lang-swapping [data-i18n]{ opacity:0; }
+[data-i18n]{ transition:opacity .18s ease; }
+@media (prefers-reduced-motion: reduce){
+  body.lang-swapping [data-i18n], [data-i18n]{ opacity:1; transition:none; }
+}
+
+/* ---------- HIDDEN INTERACTIONS (see js/easter.js) ----------
+   Deliberately quiet: none of this is discoverable by accident, and
+   none of it changes layout or blocks anything. */
+.egg-toast{
+  position:fixed; left:50%; bottom:30px; z-index:520;
+  transform:translate(-50%, 14px); opacity:0;
+  font-family:'IBM Plex Mono'; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text); padding:11px 20px; border-radius:999px;
+  background:var(--glass-bg-active); border:1px solid var(--glass-border-strong);
+  backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur));
+  box-shadow:0 1px 0 0 var(--glass-sheen) inset, 0 20px 40px -22px rgba(0,0,0,.7);
+  transition:opacity .3s ease, transform .4s var(--ease-glass);
+  pointer-events:none; white-space:nowrap; max-width:90vw;
+}
+.egg-toast.in{ opacity:1; transform:translate(-50%, 0); }
+
+/* studio mode: the accents come up like faders being pushed */
+body.studio-mode .hero-scope{ opacity:.95; }
+body.studio-mode .rec-dot{ animation-duration:.5s; }
+body.studio-mode .hero::before{ filter:saturate(1.5) brightness(1.12); }
+body.studio-mode .grain{ opacity:.06; }
+.hero-scope, .hero::before, .grain{ transition:opacity .6s ease, filter .6s ease; }
+
+/* the REC label while a timecode is actually rolling */
+.pip-label.rolling{ color:#ff2d2d; }
+.pip-label.rolling .rec-dot{ animation-duration:.6s; }
+
+@media (prefers-reduced-motion: reduce){
+  .egg-toast{ transition:opacity .2s ease; transform:translate(-50%,0); }
+}
+
 /* ---------- GRAIN ---------- */
 .grain{
   position:fixed; inset:0; pointer-events:none; z-index:250;
@@ -136,6 +255,7 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 .brand{
   font-family:'Big Shoulders Display'; font-weight:800; font-size:19px;
   letter-spacing:0.02em; text-transform:uppercase; white-space:nowrap;
+  text-decoration:none; color:var(--text); flex-shrink:0;
 }
 .brand span{ color:var(--music); }
 .navlinks{ display:flex; gap:clamp(14px,2.4vw,30px); list-style:none; }
@@ -152,24 +272,66 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 .navlinks a.active::after{ transform:scaleX(1); }
 .nav-progress{ position:absolute; left:0; bottom:-1px; height:2px; background:var(--music); width:0%; transition:width .1s linear; }
 
-.lang-switch{
-  display:flex; align-items:center; gap:6px;
-  font-family:'IBM Plex Mono'; font-size:11.5px; letter-spacing:0.06em;
-  flex-shrink:0;
+.nav-actions{ display:flex; align-items:center; gap:12px; flex-shrink:0; }
+
+/* ---------- LANGUAGE SELECTOR (no flags, just codes) ---------- */
+.lang-select{ position:relative; }
+.lang-current{
+  display:flex; align-items:center; gap:7px; cursor:pointer;
+  font-family:'IBM Plex Mono'; font-size:11.5px; letter-spacing:.08em;
+  color:var(--text-dim); background:none; border:none; padding:6px 2px;
+  transition:color .25s ease;
 }
-.lang-sep{ color:var(--text-dim); opacity:.5; }
-.lang-btn{
-  background:none; border:none; padding:2px 3px; cursor:pointer;
-  color:var(--text-dim); font-family:inherit; font-size:inherit; letter-spacing:inherit;
-  transition:color .2s ease; position:relative;
+.lang-current:hover, .lang-select.open .lang-current{ color:var(--text); }
+.lang-caret{
+  width:5px; height:5px; border-right:1.2px solid currentColor; border-bottom:1.2px solid currentColor;
+  transform:rotate(45deg) translateY(-1px); transition:transform .3s var(--ease-glass);
 }
-.lang-btn::after{
-  content:''; position:absolute; left:0; right:0; bottom:-2px; height:1.5px;
-  background:var(--music); transform:scaleX(0); transform-origin:left; transition:transform .25s ease;
+.lang-select.open .lang-caret{ transform:rotate(-135deg) translateY(-1px); }
+.lang-menu{
+  position:absolute; top:calc(100% + 12px); right:0; z-index:60; list-style:none;
+  min-width:150px; padding:6px; border-radius:14px;
+  background:var(--glass-bg-active); border:1px solid var(--glass-border);
+  backdrop-filter:blur(var(--glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.4);
+  box-shadow:0 1px 0 0 var(--glass-sheen) inset, 0 24px 48px -24px rgba(0,0,0,.7);
+  opacity:0; visibility:hidden; transform:translateY(-8px) scale(.97);
+  transition:opacity .25s ease, transform .3s var(--ease-glass), visibility .25s ease;
 }
-.lang-btn.active{ color:var(--text); font-weight:600; }
-.lang-btn.active::after{ transform:scaleX(1); }
-.lang-btn:hover{ color:var(--text); }
+.lang-select.open .lang-menu{ opacity:1; visibility:visible; transform:translateY(0) scale(1); }
+.lang-menu button{
+  width:100%; display:flex; align-items:center; gap:11px; cursor:pointer;
+  background:none; border:none; padding:9px 11px; border-radius:9px; text-align:left;
+  font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--text-dim);
+  transition:background .2s ease, color .2s ease;
+}
+.lang-menu button:hover{ background:rgba(255,255,255,.06); color:var(--text); }
+.lang-menu button.active{ color:var(--text); }
+.lang-menu .lang-code{ letter-spacing:.08em; min-width:20px; }
+.lang-menu .lang-name{ font-size:11px; opacity:.7; }
+.lang-menu button.active .lang-code{ color:var(--music); }
+
+/* ---------- CV BUTTON (persistent, in the nav) ---------- */
+.cv-btn{
+  display:inline-flex; align-items:center; gap:9px; text-decoration:none; cursor:pointer;
+  font-family:'IBM Plex Mono'; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--text); padding:9px 16px; border-radius:999px; position:relative; overflow:hidden;
+  border:1px solid var(--glass-border-strong); background:var(--glass-bg);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  transition:color .3s ease, border-color .3s ease, transform .3s var(--ease-glass);
+}
+/* the accent sweeps in from the left on hover, and the arrow nudges down —
+   a small nod to "downloading" without resorting to an emoji */
+.cv-btn::before{
+  content:''; position:absolute; inset:0; z-index:-1; background:var(--music);
+  transform:scaleX(0); transform-origin:left; transition:transform .4s var(--ease-glass);
+}
+.cv-btn:hover{ color:#fff; border-color:var(--music); transform:translateY(-2px); }
+.cv-btn:hover::before{ transform:scaleX(1); }
+.cv-btn-icon{ display:flex; width:14px; height:14px; flex-shrink:0; }
+.cv-btn-icon svg{ width:100%; height:100%; transition:transform .35s var(--ease-glass); }
+.cv-btn:hover .cv-btn-icon svg{ transform:translateY(2px); }
+@media (hover:none){ .cv-btn:hover{ transform:none; } }
 
 /* ---------- HERO ---------- */
 .hero{
@@ -188,6 +350,55 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 }
 .hero-grid{ position:relative; z-index:1; }
 
+/* ---------- CONTEXTUAL SECTION NAV ----------
+   A vertical rail that always answers one question: "where am I?".
+   Collapsed it shows a progress line and one dot per section; the
+   current section's name is always legible, the others reveal on
+   hover. Clicking any of them jumps there. Desktop only — on mobile
+   the same information lives in the fullscreen menu instead. */
+.section-nav{
+  position:fixed; right:30px; top:50%; transform:translateY(-50%); z-index:90;
+  display:flex; flex-direction:column; gap:2px;
+}
+.section-nav-item{
+  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:12px;
+  background:none; border:none; padding:9px 0; cursor:pointer;
+  font-family:'IBM Plex Mono'; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-faint); text-align:right;
+  transition:color .3s var(--ease-glass);
+}
+.section-nav-label{
+  opacity:0; transform:translateX(6px);
+  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass), color .3s ease;
+  white-space:nowrap;
+}
+/* the rail itself: a short line per section that grows when active */
+.section-nav-bar{
+  position:relative; width:26px; height:2px; border-radius:2px;
+  background:var(--line-strong); overflow:hidden; flex-shrink:0;
+  transition:width .4s var(--ease-glass), background .3s ease;
+}
+.section-nav-bar::after{
+  content:''; position:absolute; inset:0; border-radius:2px;
+  background:var(--music); transform:scaleX(0); transform-origin:left;
+  transition:transform .45s var(--ease-glass);
+}
+/* current section: name always visible, bar extended and filled */
+.section-nav-item.active{ color:var(--text); }
+.section-nav-item.active .section-nav-label{ opacity:1; transform:translateX(0); }
+.section-nav-item.active .section-nav-bar{ width:44px; background:var(--line-strong); }
+.section-nav-item.active .section-nav-bar::after{ transform:scaleX(1); }
+/* hovering any other section previews its name without stealing focus */
+.section-nav:hover .section-nav-label{ opacity:.55; transform:translateX(0); }
+.section-nav-item:hover{ color:var(--text); }
+.section-nav-item:hover .section-nav-label{ opacity:1; }
+.section-nav-item:hover .section-nav-bar{ width:44px; }
+.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:4px; border-radius:3px; }
+
+@media (max-width:1180px), (hover:none){
+  .section-nav{ display:none; }
+}
+
 /* ---------- SIGNATURE ANIMATION — live waveform ----------
    A single continuous line, drawn on canvas, behaves like a monitored
    audio signal: idle ambient motion, and a gentle ripple that follows
@@ -201,29 +412,48 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 }
 .hero-scope canvas{ width:100%; height:100%; display:block; }
 
-/* ---------- CUSTOM CURSOR (desktop, fine pointer only) ---------- */
+/* ---------- CUSTOM CURSOR (desktop, fine pointer only) ----------
+   No blur, ever — the content under the cursor must stay perfectly
+   legible. Two things move: a small dot, and a thin ring that grows
+   and brightens over anything clickable. A short label appears only
+   over elements that opted in via [data-cursor], to say what will
+   happen ("Ver", "Ouvir", "Abrir"). */
 .cursor-dot, .cursor-ring{
   position:fixed; top:0; left:0; z-index:400; pointer-events:none;
   border-radius:50%; will-change:transform; opacity:0;
-  transition:opacity .3s ease, background .3s ease, border-color .3s ease, width .25s var(--ease-glass), height .25s var(--ease-glass);
+  transition:opacity .25s ease, width .3s var(--ease-glass), height .3s var(--ease-glass),
+    border-color .25s ease, background .25s ease;
 }
 .cursor-dot{
-  width:7px; height:7px; background:var(--music); margin:-3.5px 0 0 -3.5px;
+  width:6px; height:6px; background:var(--paper); margin:0;
 }
 .cursor-ring{
-  width:34px; height:34px; margin:-17px 0 0 -17px;
+  width:30px; height:30px; margin:0;
   border:1px solid var(--glass-border-strong);
-  background:var(--glass-sheen);
-  backdrop-filter:blur(2px);
+  display:flex; align-items:center; justify-content:center;
+}
+.cursor-label{
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ink); white-space:nowrap; opacity:0; transform:scale(.6);
+  transition:opacity .2s ease, transform .25s var(--ease-glass);
 }
 body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring{ opacity:1; }
 @media (hover:hover) and (pointer:fine){
   body.cursor-ready, body.cursor-ready a, body.cursor-ready button{ cursor:none; }
 }
-body.cursor-ready.cursor-hover .cursor-ring{ width:52px; height:52px; margin:-26px 0 0 -26px; border-color:var(--dot,var(--music)); }
-body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); }
+/* clickable but plain — ring grows, dot steps back a little */
+body.cursor-ready.cursor-hover .cursor-ring{ width:46px; height:46px; margin:-23px 0 0 -23px; border-color:var(--dot,var(--music)); }
+body.cursor-ready.cursor-hover .cursor-dot{ opacity:0; }
+/* elements that opt in to a contextual label: ring becomes a solid
+   pill filled with the accent colour, label fades in on top of it */
+body.cursor-ready.cursor-label-active .cursor-ring{
+  width:auto; height:auto; min-width:64px; padding:11px 18px; border-radius:999px;
+  background:var(--dot,var(--music)); border-color:transparent;
+}
+body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:scale(1); }
+body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
 @media (hover:none), (pointer:coarse){
-  .cursor-dot, .cursor-ring{ display:none; }
+  .cursor-dot, .cursor-ring, .cursor-label{ display:none; }
 }
 @keyframes heroDrift{
   0%{ transform:translate(0,0) scale(1); }
@@ -280,10 +510,11 @@ body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); 
   font-family:'IBM Plex Mono'; font-size:12.5px; letter-spacing:0.04em;
   padding:14px 26px; border-radius:var(--radius-sm); text-decoration:none; cursor:pointer;
   display:inline-flex; align-items:center; gap:10px; border:1px solid transparent;
-  transition:transform .2s ease, background .2s ease, border-color .2s ease;
+  transform:translate(var(--mx,0px), var(--my,0px));
+  transition:transform .2s var(--ease-glass), background .2s ease, border-color .2s ease;
 }
 .btn-primary{ background:var(--music); color:#000000; font-weight:600; position:relative; overflow:hidden; }
-.btn-primary:hover{ transform:translateY(-2px); background:#4bb8c49c; }
+.btn-primary:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); background:#4bb8c49c; }
 .btn-primary::after{
   content:''; position:absolute; top:0; left:-60%; width:35%; height:100%;
   background:linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
@@ -291,12 +522,24 @@ body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); 
 }
 .btn-primary:hover::after{ left:130%; }
 .btn-ghost{ border-color:var(--line-strong); color:var(--text); }
-.btn-ghost:hover{ transform:translateY(-2px); border-color:var(--video); color:var(--video); }
+.btn-ghost:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); border-color:var(--video); color:var(--video); }
+
+/* ---------- CHEVRON — replaces every ▸ glyph across the site.
+   One small, consistent, animated indicator for "this goes somewhere". ---------- */
+.chev{
+  display:inline-block; width:6px; height:6px; flex-shrink:0;
+  border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor;
+  transform:rotate(-45deg) translateX(0);
+  transition:transform .35s var(--ease-glass), opacity .35s ease;
+  opacity:.75;
+}
+a:hover .chev, button:hover .chev{ transform:rotate(-45deg) translateX(4px); opacity:1; }
+@media (hover:none){ a:hover .chev{ transform:rotate(-45deg); } }
 .btn-sm{ padding:9px 15px; font-size:11px; }
 .btn-spotify{ background:#1DB954; color:#06210f; font-weight:600; border-color:#1DB954; }
-.btn-spotify:hover{ transform:translateY(-2px); background:#22e560; }
+.btn-spotify:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); background:#22e560; }
 .btn-youtube{ background:#FF0000; color:#fff; font-weight:600; border-color:#FF0000; }
-.btn-youtube:hover{ transform:translateY(-2px); background:#ff2d2d; }
+.btn-youtube:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); background:#ff2d2d; }
 
 /* monitor / photo card */
 .pip{
@@ -495,8 +738,9 @@ body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); 
 .track-btn svg{ width:17px; height:17px; color:var(--dot); flex-shrink:0; transition:transform .3s var(--ease-glass); }
 .track-btn .tag{ font-weight:700; color:inherit; }
 .track-btn .count{ font-size:11px; color:var(--text-dim); background:rgba(255,255,255,0.07); border-radius:999px; padding:2px 8px; transition:background .3s ease, color .3s ease; }
+.track-btn{ transform:translate(var(--mx,0px), var(--my,0px)); }
 .track-btn:hover{
-  color:var(--text); border-color:var(--glass-border-strong); transform:translateY(-3px);
+  color:var(--text); border-color:var(--glass-border-strong); transform:translate(var(--mx,0px), calc(var(--my,0px) - 3px));
   background:var(--glass-bg-hover);
 }
 .track-btn:hover::after{ opacity:.14; }
@@ -504,7 +748,7 @@ body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); 
 .track-btn.active{
   color:var(--text); border-color:var(--dot); background:var(--glass-bg-active);
   box-shadow:0 1px 0 0 var(--glass-sheen) inset, 0 16px 34px -16px var(--dot);
-  transform:translateY(-1px);
+  transform:translate(var(--mx,0px), calc(var(--my,0px) - 1px));
 }
 .track-btn.active::after{ opacity:.22; }
 .track-btn.active .count{ color:var(--text); background:rgba(255,255,255,0.16); }
@@ -513,8 +757,11 @@ body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); 
 }
 
 .track-panel{ display:none; }
-.track-panel.active{ display:block; animation:fadein .4s ease; }
-@keyframes fadein{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+.track-panel.active{ display:block; animation:fadein .5s var(--ease-glass); }
+@keyframes fadein{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+@media (prefers-reduced-motion: reduce){
+  .track-panel.active{ animation:none; }
+}
 
 /* subsection inside a panel */
 .subhead{ display:flex; align-items:center; gap:12px; margin:44px 0 22px; }
@@ -579,7 +826,7 @@ body.cursor-ready.cursor-hover .cursor-dot{ background:var(--dot,var(--music)); 
 /* clickable thumbnails that jump straight to an external link */
 .clip-thumb.linked{ display:block; cursor:pointer; }
 .thumb-go{
-  position:absolute; inset:0; z-index:3; display:flex; align-items:center; justify-content:center;
+  position:absolute; inset:0; z-index:3; display:flex; align-items:center; justify-content:center; gap:6px;
   background:rgba(20,18,15,0.74); color:var(--paper); font-family:'IBM Plex Mono'; font-size:12px;
   letter-spacing:0.06em; opacity:0; transition:opacity .2s ease; text-align:center; padding:10px;
 }
@@ -646,16 +893,38 @@ img.js-lightbox{ cursor:zoom-in; }
 }
 .contact h2{ font-size:clamp(38px,6.6vw,74px); }
 .contact-sub{ color:var(--text-dim); max-width:520px; margin-top:16px; font-size:15px; line-height:1.7; }
-.contact-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:42px; }
+.contact-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(min(230px,100%),1fr)); gap:14px; margin-top:42px; }
 .contact-card{
   border:1px solid var(--line); border-radius:var(--radius); padding:22px;
-  display:flex; flex-direction:column; gap:14px; text-decoration:none; color:var(--text);
-  background:var(--ink-3); transition:transform .2s ease, border-color .2s ease;
+  display:flex; flex-direction:column; gap:12px; text-decoration:none; color:var(--text);
+  background:var(--ink-3); position:relative; overflow:hidden; isolation:isolate;
+  transition:transform .3s var(--ease-glass), border-color .3s ease, box-shadow .3s var(--ease-glass);
 }
-.contact-card:hover{ transform:translateY(-5px); border-color:var(--music); }
-.contact-icon{ width:34px; height:34px; }
+/* a wash of the accent rises from the bottom on hover, and the chevron
+   slides in from the left edge — the same "this goes somewhere" cue
+   used everywhere else on the page */
+.contact-card::before{
+  content:''; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(to top, rgba(140,9,173,.18), transparent 65%);
+  opacity:0; transition:opacity .35s ease;
+}
+.contact-card:hover{ transform:translateY(-5px); border-color:var(--music); box-shadow:0 20px 40px -26px var(--music); }
+.contact-card:hover::before{ opacity:1; }
+.contact-icon{ width:30px; height:30px; color:var(--text-dim); transition:color .3s ease, transform .35s var(--ease-glass); }
+.contact-card:hover .contact-icon{ color:var(--music); transform:translateY(-2px); }
 .contact-label{ font-family:'IBM Plex Mono'; font-size:10.5px; color:var(--text-dim); letter-spacing:0.1em; text-transform:uppercase; }
-.contact-value{ font-family:'Big Shoulders Display'; font-weight:700; font-size:18px; word-break:break-word; }
+.contact-value{ font-family:'Big Shoulders Display'; font-weight:700; font-size:17px; word-break:break-word; line-height:1.15; }
+.contact-go{
+  position:absolute; right:18px; bottom:18px; color:var(--music);
+  opacity:0; transform:translateX(-6px); transition:opacity .3s ease, transform .35s var(--ease-glass);
+}
+.contact-card:hover .contact-go{ opacity:1; transform:translateX(0); }
+/* email is the primary route in, so it gets the full width on wide grids */
+.contact-card--primary{ border-color:var(--line-strong); }
+@media (hover:none){
+  .contact-card:hover{ transform:none; }
+  .contact-go{ opacity:.7; transform:none; }
+}
 
 footer{ padding:34px 0 48px; text-align:center; font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--text-dim); }
 footer b{ color:var(--text); }
@@ -691,20 +960,56 @@ footer b{ color:var(--text); }
   white-space:nowrap; max-width:90vw; text-overflow:ellipsis; overflow:hidden;
 }
 
-/* ---------- SMOOTH ENTRANCE ANIMATIONS (reveal on scroll) ---------- */
-/* uses @keyframes (not `transition`) so it never fights with each
-   card's own hover transition on the same `transform` property */
+/* ---------- MOVEMENT LANGUAGE ----------
+   Different parts of the page move differently on purpose: headings
+   wipe into view line by line, project cards alternate from left/right
+   as if being slotted into a bin, feature panels scale in like a cut
+   in an edit, and thumbnails reveal under a curtain. Numbers already
+   count up (see main.js). Everything here is opacity/transform only. */
+
 .reveal{ opacity:0; }
-.reveal.is-visible{
-  animation: revealRise .7s cubic-bezier(.16,.84,.44,1) both;
-}
+.reveal.is-visible{ animation: revealRise .7s cubic-bezier(.16,.84,.44,1) both; }
 @keyframes revealRise{
   from{ opacity:0; transform:translateY(20px); }
   to{ opacity:1; transform:translateY(0); }
 }
 
+/* project / gallery grids — alternate origin by column so the grid
+   feels like it's being assembled, not just fading in uniformly */
+.reveal-side{ opacity:0; }
+.reveal-side.is-visible{ animation: revealSideL .75s var(--ease-glass) both; }
+.reveal-side.from-right.is-visible{ animation-name: revealSideR; }
+@keyframes revealSideL{ from{ opacity:0; transform:translate(-26px,10px) rotate(-1.2deg); } to{ opacity:1; transform:translate(0,0) rotate(0); } }
+@keyframes revealSideR{ from{ opacity:0; transform:translate(26px,10px) rotate(1.2deg); } to{ opacity:1; transform:translate(0,0) rotate(0); } }
+
+/* feature panels — a confident scale-in, like footage cutting in */
+.reveal-scale{ opacity:0; }
+.reveal-scale.is-visible{ animation: revealScale .8s var(--ease-glass) both; }
+@keyframes revealScale{ from{ opacity:0; transform:scale(.94) translateY(14px); } to{ opacity:1; transform:scale(1) translateY(0); } }
+
+/* headings — a line-wipe text reveal. The heading's own text sits
+   inside an overflow-hidden mask so it appears to rise out from
+   behind the baseline rather than simply fading. */
+.reveal-text{ overflow:hidden; display:block; }
+.reveal-text > *{ display:inline-block; opacity:0; transform:translateY(115%); }
+.reveal-text.is-visible > *{ animation: revealText .85s var(--ease-glass) both; }
+@keyframes revealText{ to{ opacity:1; transform:translateY(0); } }
+
+/* thumbnails — a curtain wipes away to reveal the image beneath,
+   rather than a plain fade; reads as intentional, editorial motion */
+.reveal-curtain{ position:relative; overflow:hidden; }
+.reveal-curtain::before{
+  content:''; position:absolute; inset:0; z-index:4; background:var(--ink-2);
+  transform-origin:right center; transition:transform .8s var(--ease-glass);
+}
+.reveal-curtain.is-visible::before{ transform:scaleX(0); }
+.reveal-curtain img, .reveal-curtain video{ opacity:0; transition:opacity .3s ease .35s; }
+.reveal-curtain.is-visible img, .reveal-curtain.is-visible video{ opacity:1; }
+
 @media (prefers-reduced-motion: reduce){
-  .reveal{ opacity:1; animation:none; }
+  .reveal, .reveal-side, .reveal-scale, .reveal-text > *{ opacity:1; animation:none; transform:none; }
+  .reveal-curtain::before{ display:none; }
+  .reveal-curtain img, .reveal-curtain video{ opacity:1; }
   .hero::before{ animation:none; }
   .btn-primary::after{ display:none; }
 }

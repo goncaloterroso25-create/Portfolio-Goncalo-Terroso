@@ -61,12 +61,37 @@
 </head>
 <body>
 
+<!-- ================= INTRO =================
+     A short typographic sequence: the disciplines flip past like a
+     shot list, the name resolves, then two panels wipe apart to reveal
+     the hero already in place behind them. Skippable, shortened on
+     repeat visits within a session, and skipped entirely for anyone
+     who prefers reduced motion. See js/intro.js. -->
+<div class="intro" id="intro" role="presentation">
+  <div class="intro-panel intro-panel--top" aria-hidden="true"></div>
+  <div class="intro-panel intro-panel--bottom" aria-hidden="true"></div>
+  <div class="intro-content">
+    <div class="intro-words" id="introWords" aria-hidden="true">
+      <span class="intro-word">MOTION DESIGN</span>
+      <span class="intro-word">VIDEO EDITING</span>
+      <span class="intro-word">SOUND DESIGN</span>
+      <span class="intro-word">MUSIC PRODUCTION</span>
+      <span class="intro-word">MULTIMEDIA</span>
+    </div>
+    <div class="intro-name" id="introName" aria-hidden="true">
+      <span>GONÇALO</span><span class="accent">TERROSO</span>
+    </div>
+    <div class="intro-line" aria-hidden="true"></div>
+  </div>
+  <button type="button" class="intro-skip" id="introSkip" data-i18n="intro_skip">Saltar</button>
+</div>
+
 <div class="grain"></div>
 
 <!-- NAV -->
 <nav class="topnav">
   <div class="topnav-inner">
-    <div class="brand">GONÇALO<span>·</span>TERROSO</div>
+    <a class="brand" href="#hero" data-target="#hero">GONÇALO<span>·</span>TERROSO</a>
 
     <!-- Desktop inline nav — hidden on mobile, see css/mobile.css -->
     <ul class="navlinks" id="navLinks">
@@ -77,36 +102,70 @@
       <li><a href="#contacto" data-target="#contacto" data-i18n="nav_contacto">Contacto</a></li>
     </ul>
 
-    <div class="lang-switch" id="langSwitch" role="group" aria-label="Language selector / Seletor de idioma">
-      <button type="button" class="lang-btn active" data-lang="pt" aria-pressed="true">PT</button>
-      <span class="lang-sep">/</span>
-      <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+    <div class="nav-actions">
+      <!-- Language selector: a compact menu, no flags. See js/i18n.js -->
+      <div class="lang-select" id="langSelect">
+        <button type="button" class="lang-current" id="langCurrent" aria-haspopup="listbox" aria-expanded="false">
+          <span id="langCurrentCode">PT</span>
+          <span class="lang-caret" aria-hidden="true"></span>
+        </button>
+        <ul class="lang-menu" id="langMenu" role="listbox" aria-label="Idioma / Language">
+          <li><button type="button" class="lang-opt active" data-lang="pt" role="option" aria-selected="true"><span class="lang-code">PT</span><span class="lang-name">Português</span></button></li>
+          <li><button type="button" class="lang-opt" data-lang="en" role="option" aria-selected="false"><span class="lang-code">EN</span><span class="lang-name">English</span></button></li>
+          <li><button type="button" class="lang-opt" data-lang="es" role="option" aria-selected="false"><span class="lang-code">ES</span><span class="lang-name">Español</span></button></li>
+          <li><button type="button" class="lang-opt" data-lang="fr" role="option" aria-selected="false"><span class="lang-code">FR</span><span class="lang-name">Français</span></button></li>
+        </ul>
+      </div>
+
+      <!-- CV: reachable from every section, never covering content -->
+      <a class="cv-btn" href="assets/cv/CV-Goncalo-Terroso.pdf" target="_blank" rel="noopener" data-cursor="PDF">
+        <span class="cv-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 19h16"/></svg>
+        </span>
+        <span class="cv-btn-text" data-i18n="cv_btn">Ver CV</span>
+      </a>
     </div>
 
-    <!-- Mobile hamburger trigger — hidden on desktop, see css/mobile.css -->
-    <button type="button" class="nav-toggle" id="navToggle" aria-label="Abrir menu" data-i18n-aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
-      <span></span><span></span><span></span>
+    <!-- Mobile menu trigger — hidden on desktop, see css/mobile.css -->
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Abrir menu" data-i18n-aria-label="nav_toggle_open" aria-expanded="false" aria-controls="navOverlay">
+      <span></span><span></span>
     </button>
   </div>
   <div class="nav-progress" id="navProgress"></div>
 </nav>
 
-<!-- Mobile nav drawer — a self-contained duplicate of the nav above, built
-     independently so mobile behaviour never depends on repositioning the
-     desktop nav via CSS. See css/mobile.css + js/mobile.js. -->
-<div class="nav-scrim" id="navScrim"></div>
-<div class="nav-drawer" id="navDrawer" aria-hidden="true">
-  <ul class="navlinks">
-    <li><a href="#hero" data-target="#hero" class="active" data-i18n="nav_inicio">Início</a></li>
-    <li><a href="#destaques" data-target="#destaques" data-i18n="nav_destaques">Destaques</a></li>
-    <li><a href="#projetos" data-target="#projetos" data-i18n="nav_projetos">Projetos</a></li>
-    <li><a href="#sobre" data-target="#sobre" data-i18n="nav_sobre">Sobre</a></li>
-    <li><a href="#contacto" data-target="#contacto" data-i18n="nav_contacto">Contacto</a></li>
-  </ul>
-  <div class="lang-switch lang-switch--drawer" role="group" aria-label="Language selector / Seletor de idioma">
-    <button type="button" class="lang-btn active" data-lang="pt" aria-pressed="true">PT</button>
-    <span class="lang-sep">/</span>
-    <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+<!-- ================= MOBILE MENU (fullscreen) =================
+     Not a drawer: a full-screen typographic takeover. Each entry is a
+     large display-type line that flies in on its own beat, numbered by
+     section, with the current one marked. Built as its own markup block
+     so nothing depends on repositioning the desktop nav. -->
+<div class="nav-overlay" id="navOverlay" aria-hidden="true">
+  <div class="nav-overlay-bg" aria-hidden="true"></div>
+  <div class="nav-overlay-inner">
+    <div class="nav-overlay-head">
+      <span class="nav-overlay-eyebrow" data-i18n="menu_eyebrow">Navegação</span>
+    </div>
+    <ul class="nav-overlay-links">
+      <li><a href="#hero" data-target="#hero" class="active"><span class="nol-idx">01</span><span class="nol-text" data-i18n="nav_inicio">Início</span></a></li>
+      <li><a href="#destaques" data-target="#destaques"><span class="nol-idx">02</span><span class="nol-text" data-i18n="nav_destaques">Destaques</span></a></li>
+      <li><a href="#projetos" data-target="#projetos"><span class="nol-idx">03</span><span class="nol-text" data-i18n="nav_projetos">Projetos</span></a></li>
+      <li><a href="#sobre" data-target="#sobre"><span class="nol-idx">04</span><span class="nol-text" data-i18n="nav_sobre">Sobre</span></a></li>
+      <li><a href="#contacto" data-target="#contacto"><span class="nol-idx">05</span><span class="nol-text" data-i18n="nav_contacto">Contacto</span></a></li>
+    </ul>
+    <div class="nav-overlay-foot">
+      <a class="cv-btn cv-btn--overlay" href="assets/cv/CV-Goncalo-Terroso.pdf" target="_blank" rel="noopener">
+        <span class="cv-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 19h16"/></svg>
+        </span>
+        <span class="cv-btn-text" data-i18n="cv_btn">Ver CV</span>
+      </a>
+      <div class="nav-overlay-langs" role="group" aria-label="Idioma / Language">
+        <button type="button" class="lang-opt active" data-lang="pt">PT</button>
+        <button type="button" class="lang-opt" data-lang="en">EN</button>
+        <button type="button" class="lang-opt" data-lang="es">ES</button>
+        <button type="button" class="lang-opt" data-lang="fr">FR</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -128,7 +187,7 @@
         <span class="hero-tag" data-i18n="tag_design">Design Gráfico</span>
       </div>
       <div class="hero-cta">
-        <a href="#destaques" class="btn btn-primary" data-i18n="hero_cta_destaques">▸ Ver destaques</a>
+        <a href="#destaques" class="btn btn-primary"><span data-i18n="hero_cta_destaques">Ver destaques</span><span class="chev" aria-hidden="true"></span></a>
         <a href="#contacto" class="btn btn-ghost" data-i18n="nav_contacto">Contacto</a>
       </div>
 
@@ -153,7 +212,7 @@
         <div class="pip-dots"><span></span><span></span><span></span></div>
         <div class="pip-label"><span class="rec-dot"></span>REC</div>
       </div>
-      <div class="pip-frame"><img class="js-lightbox" src="assets/images/profile/eu2.jpg" alt="Gonçalo Terroso" data-i18n-alt="Gonçalo Terroso" /></div>
+      <div class="pip-frame"><img class="js-lightbox" data-cursor="Ver" src="assets/images/profile/eu2.jpg" alt="Gonçalo Terroso" data-i18n-alt="Gonçalo Terroso" /></div>
       <div class="pip-code">
         <span>CAM_01</span><span>PORTO, PT</span>
       </div>
@@ -169,7 +228,7 @@
     <div class="section-head">
       <div>
         <div class="eyebrow" data-i18n="destaques_eyebrow">Os meus melhores projetos</div>
-        <h2 data-i18n="destaques_h2">Destaques</h2>
+        <h2 class="reveal-text"><span data-i18n="destaques_h2">Destaques</span></h2>
       </div>
       <p class="section-note" data-i18n="destaques_note">O melhor do meu trabalho em produção musical e em vídeo/imagem.</p>
     </div>
@@ -221,7 +280,7 @@
         </a>
       </div>
       <div class="fmp-foot">
-        <a class="btn btn-primary" href="#projetos" data-jump="musica" data-i18n="ver_toda_musica">▸ Ver toda a produção musical</a>
+        <a class="btn btn-primary" href="#projetos" data-jump="musica"><span data-i18n="ver_toda_musica">Ver toda a produção musical</span><span class="chev" aria-hidden="true"></span></a>
       </div>
     </div>
 
@@ -266,7 +325,7 @@
     <div class="destaque-video-row">
       <div class="feat-card">
         <div class="feat-media" style="aspect-ratio:1/1;">
-          <img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-white.jpg" alt="Logótipo INVERNØ" data-i18n-alt="INVERNØ logo">
+          <img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-white.jpg" alt="Logótipo INVERNØ" data-i18n-alt="INVERNØ logo">
         </div>
         <div class="feat-body">
           <div class="feat-badge" data-i18n="badge_design_identidade">Design Gráfico · Identidade Visual</div>
@@ -275,13 +334,13 @@
           <div class="tool-badges">
             <span class="tool-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 17V7h3.2a3 3 0 0 1 0 6H8"/></svg>Photoshop</span>
           </div>
-          <a class="mini-link" href="#projetos" data-jump="design" style="margin-top:12px; color:#000000;" data-i18n="ver_projeto_completo">▸ Ver projeto completo</a>
+          <a class="mini-link" href="#projetos" data-jump="design" style="margin-top:12px; color:#000000;"><span data-i18n="ver_projeto_completo">Ver projeto completo</span><span class="chev" aria-hidden="true"></span></a>
         </div>
       </div>
 
       <div class="feat-card">
         <div class="feat-media" style="aspect-ratio:3/4;">
-          <img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Fotografia de capa da banda INVERNØ" data-i18n-alt="INVERNØ band cover photo">
+          <img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Fotografia de capa da banda INVERNØ" data-i18n-alt="INVERNØ band cover photo">
         </div>
         <div class="feat-body">
           <div class="feat-badge" data-i18n="badge_design_identidade">Design Gráfico · Identidade Visual</div>
@@ -291,7 +350,7 @@
             <span class="tool-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 17V7h3.2a3 3 0 0 1 0 6H8"/></svg>Photoshop</span>
             <span class="tool-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 6v12h6"/></svg>Lightroom</span>
           </div>
-          <a class="mini-link" href="#projetos" data-jump="design" style="margin-top:12px; color:#000000;" data-i18n="ver_projeto_completo">▸ Ver projeto completo</a>
+          <a class="mini-link" href="#projetos" data-jump="design" style="margin-top:12px; color:#000000;"><span data-i18n="ver_projeto_completo">Ver projeto completo</span><span class="chev" aria-hidden="true"></span></a>
         </div>
       </div>
     </div>
@@ -304,7 +363,7 @@
     <div class="section-head">
       <div>
         <div class="eyebrow" data-i18n="portfolio">Portfólio</div>
-        <h2 data-i18n="projetos_h2">Projetos</h2>
+        <h2 class="reveal-text"><span data-i18n="projetos_h2">Projetos</span></h2>
       </div>
       <p class="section-note" data-i18n="projetos_note">Projetos realizados em diferentes áreas da produção audiovisual.</p>
     </div>
@@ -327,7 +386,7 @@
     <!-- MÚSICA -->
     <div class="track-panel active" id="panel-musica" style="--card-accent:var(--music)">
 
-      <p class="section-note" style="max-width:none; margin:26px 0 18px;" data-i18n="faixas_destaque">▸ FAIXAS EM DESTAQUE</p>
+      <p class="section-note" style="max-width:none; margin:26px 0 18px;" data-i18n="faixas_destaque">FAIXAS EM DESTAQUE</p>
       <div class="featured-row">
         <div class="single-card">
           <div class="single-vinyl"></div>
@@ -372,44 +431,44 @@
       <div class="subhead"><span class="dot" style="--dot:var(--music)"></span><h3 data-i18n="creditos_composicoes">Créditos & composições originais</h3><span class="subhead-line"></span></div>
       <div class="grid-row">
         <div class="clip-card" style="--card-accent:var(--music)">
-          <a class="clip-thumb linked" style="aspect-ratio:643/347;" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64?si=b0b9accb32f34a90" target="_blank" rel="noopener" aria-label="Abrir playlist completa no Spotify" data-i18n-aria-label="Open full playlist on Spotify">
+          <a class="clip-thumb linked" data-cursor="Abrir" style="aspect-ratio:643/347;" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64?si=b0b9accb32f34a90" target="_blank" rel="noopener" aria-label="Abrir playlist completa no Spotify" data-i18n-aria-label="Open full playlist on Spotify">
             <img src="assets/images/musica/gonjay.jpg" alt="Freestyle 03 no Spotify" data-i18n-alt="Freestyle 03 on Spotify">
             <span class="clip-code">A1_01</span>
-            <span class="thumb-go">Spotify ▸</span>
+            <span class="thumb-go">Spotify<span class="chev" aria-hidden="true"></span></span>
           </a>
           <div class="clip-body">
             <div class="clip-title" data-i18n="creditos_prod_musical">Créditos de Produção Musical</div>
             <p class="clip-desc" data-i18n="desc_creditos_musical">Produção para vários artistas a nível internacional, como <b>Thxuzz</b>, <b>PL Quest</b> e <b>Kevin O Chris</b>, entre outros. Mais de <b>3 milhões de streams/visualizações</b> nas plataformas de streaming.</p>
             <div class="clip-tools"><span>FL Studio</span></div>
-            <a class="clip-link" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64?si=b0b9accb32f34a90" target="_blank" rel="noopener" data-i18n="ver_playlist_completa">▸ Ver playlist completa</a>
+            <a class="clip-link" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64?si=b0b9accb32f34a90" target="_blank" rel="noopener"><span data-i18n="ver_playlist_completa">Ver playlist completa</span><span class="chev" aria-hidden="true"></span></a>
           </div>
         </div>
 
         <div class="clip-card" style="--card-accent:var(--music)">
-          <a class="clip-thumb linked" style="aspect-ratio:1/1;" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" aria-label="Abrir Cidade Vazia no Instagram" data-i18n-aria-label="Open Cidade Vazia on Instagram">
+          <a class="clip-thumb linked" data-cursor="Abrir" style="aspect-ratio:1/1;" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" aria-label="Abrir Cidade Vazia no Instagram" data-i18n-aria-label="Open Cidade Vazia on Instagram">
             <img src="assets/images/musica/inverno-audiobook.jpg" alt="INVERNØ - Cidade Vazia">
             <span class="clip-code">A1_02</span>
-            <span class="thumb-go">Instagram ▸</span>
+            <span class="thumb-go">Instagram<span class="chev" aria-hidden="true"></span></span>
           </a>
           <div class="clip-body">
             <div class="clip-title">Cidade Vazia - Rui T</div>
             <p class="clip-desc" data-i18n="desc_cidade_vazia">Poema musical <b>"Cidade Vazia"</b> de Rui T, em âmbito de um futuro audiobook. Composição melódica, captação de voz, edição e pós-produção feita por mim.</p>
             <div class="clip-tools"><span>FL Studio</span></div>
-            <a class="clip-link" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" data-i18n="ver_no_instagram">▸ Ver no Instagram</a>
+            <a class="clip-link" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener"><span data-i18n="ver_no_instagram">Ver no Instagram</span><span class="chev" aria-hidden="true"></span></a>
           </div>
         </div>
 
         <div class="clip-card" style="--card-accent:var(--music)">
-          <a class="clip-thumb linked" style="aspect-ratio:1/1;" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" aria-label="Abrir Amor em Tempo de Guerra no Instagram" data-i18n-aria-label="Open Amor em Tempo de Guerra on Instagram">
+          <a class="clip-thumb linked" data-cursor="Abrir" style="aspect-ratio:1/1;" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" aria-label="Abrir Amor em Tempo de Guerra no Instagram" data-i18n-aria-label="Open Amor em Tempo de Guerra on Instagram">
             <img src="assets/images/musica/inverno-audiobook.jpg" alt="Amor em Tempo de Guerra">
             <span class="clip-code">A1_03</span>
-            <span class="thumb-go">Instagram ▸</span>
+            <span class="thumb-go">Instagram<span class="chev" aria-hidden="true"></span></span>
           </a>
           <div class="clip-body">
             <div class="clip-title">Amor em Tempo de Guerra - Rui T</div>
             <p class="clip-desc" data-i18n="desc_amor_guerra">Poema musical <b>"Amor em Tempo de Guerra"</b> de Rui T, em âmbito de um futuro audiobook. Composição melódica, captação de voz, edição e pós-produção feita por mim.</p>
             <div class="clip-tools"><span>FL Studio</span></div>
-            <a class="clip-link" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" data-i18n="ver_no_instagram">▸ Ver no Instagram</a>
+            <a class="clip-link" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener"><span data-i18n="ver_no_instagram">Ver no Instagram</span><span class="chev" aria-hidden="true"></span></a>
           </div>
         </div>
       </div>
@@ -495,7 +554,7 @@
             <div class="clip-title">Roadshow PlurALL</div>
             <p class="clip-desc" data-i18n="desc_plurall">Evento de abertura do roadshow do <b>PlurALL</b>, no Porto Innovation Center (PORTIC). Montagem e teste de equipamentos, apoio na realização audiovisual ao vivo, edição e pós-produção completa.</p>
             <div class="clip-tools"><span>Premiere Pro</span></div>
-            <a class="clip-link" href="https://youtu.be/heCjs818U0E" target="_blank" rel="noopener" data-i18n="ver_no_youtube">▸ Ver no YouTube</a>
+            <a class="clip-link" href="https://youtu.be/heCjs818U0E" target="_blank" rel="noopener"><span data-i18n="ver_no_youtube">Ver no YouTube</span><span class="chev" aria-hidden="true"></span></a>
           </div>
         </div>
 
@@ -511,7 +570,7 @@
             <div class="clip-title">Universidade Técnica do Porto</div>
             <p class="clip-desc" data-i18n="desc_utp">Evento de abertura no Auditório Magno do ISEP, com a participação do presidente do P.PORTO, Ministro da Educação, Ciência e Inovação, e o <b>Primeiro-Ministro Luís Montenegro</b>. Staff, montagem de equipamentos e apoio na realização ao vivo.</p>
             <div class="clip-tools"><span data-i18n="producao_ao_vivo">Produção ao vivo</span></div>
-            <a class="clip-link" href="https://www.youtube.com/live/gW6PwjxqdbA" target="_blank" rel="noopener" data-i18n="ver_no_youtube">▸ Ver no YouTube</a>
+            <a class="clip-link" href="https://www.youtube.com/live/gW6PwjxqdbA" target="_blank" rel="noopener"><span data-i18n="ver_no_youtube">Ver no YouTube</span><span class="chev" aria-hidden="true"></span></a>
           </div>
         </div>
       </div>
@@ -610,19 +669,19 @@
       <div class="subhead" style="margin-top:0;"><span class="dot" style="--dot:var(--design)"></span><h3 data-i18n="estudos_graficos">Estudos gráficos</h3><span class="subhead-line"></span></div>
       <div class="gallery-grid">
         <div class="gallery-item">
-          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/design/air-jordan.jpg" alt="Air Jordan - composição gráfica" data-i18n-alt="Air Jordan - graphic composition"></div>
+          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/design/air-jordan.jpg" alt="Air Jordan - composição gráfica" data-i18n-alt="Air Jordan - graphic composition"></div>
           <div class="clip-body"><div class="clip-title">Air Jordan</div></div>
         </div>
         <div class="gallery-item">
-          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/design/malignant.jpg" alt="Estudo Malignant - poster" data-i18n-alt="Malignant study - poster"></div>
+          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/design/malignant.jpg" alt="Estudo Malignant - poster" data-i18n-alt="Malignant study - poster"></div>
           <div class="clip-body"><div class="clip-title"><span data-i18n="estudo">Estudo</span> - Malignant</div></div>
         </div>
         <div class="gallery-item">
-          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/design/jigsaw.jpg" alt="Jigsaw - poster"></div>
+          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/design/jigsaw.jpg" alt="Jigsaw - poster"></div>
           <div class="clip-body"><div class="clip-title">Jigsaw</div></div>
         </div>
         <div class="gallery-item">
-          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/design/saw-japan.jpg" alt="Saw Japan - capa de álbum" data-i18n-alt="Saw Japan - album cover"></div>
+          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/design/saw-japan.jpg" alt="Saw Japan - capa de álbum" data-i18n-alt="Saw Japan - album cover"></div>
           <div class="clip-body"><div class="clip-title">Saw Japan</div></div>
         </div>
       </div>
@@ -632,28 +691,28 @@
       <p class="section-note" style="max-width:none; margin-bottom:22px;" data-i18n="desc_inverno_identidade">Criação de logótipo e captação/edição de imagem para a <b style="color:var(--text)">INVERNØ</b>, projeto musical de Rui T, com os convidados André Rodrigues e Gabriel Maia.</p>
       <div class="gallery-grid">
         <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:1/1; background:#0a0907;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-black.jpg" alt="Logótipo INVERNØ - versão clara" style="object-fit:contain; padding:14px;" data-i18n-alt="INVERNØ logo - light version"></div>
+          <div class="clip-thumb" style="aspect-ratio:1/1; background:#0a0907;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-black.jpg" alt="Logótipo INVERNØ - versão clara" style="object-fit:contain; padding:14px;" data-i18n-alt="INVERNØ logo - light version"></div>
           <div class="clip-body">
             <div class="clip-title"><span data-i18n="logotipo">Logótipo</span> - <span data-i18n="versao_clara">Versão clara</span></div>
             <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_claro"> Criação e estudo do logótipo da banda, para aplicação sobre fundos claros. Realizado no <b>Photoshop.</b></p>
           </div>
         </div>
         <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:1/1; background:#0a0907;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-white.jpg" alt="Logótipo INVERNØ - versão escura" style="object-fit:contain; padding:14px;" data-i18n-alt="INVERNØ logo - dark version"></div>
+          <div class="clip-thumb" style="aspect-ratio:1/1; background:#0a0907;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-white.jpg" alt="Logótipo INVERNØ - versão escura" style="object-fit:contain; padding:14px;" data-i18n-alt="INVERNØ logo - dark version"></div>
           <div class="clip-body">
             <div class="clip-title"><span data-i18n="logotipo">Logótipo</span> - <span data-i18n="versao_escura">Versão escura</span></div>
             <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_escuro"> Criação e estudo do logótipo da banda, para aplicação sobre fundos escuros. Realizado no <b>Photoshop.</b></p>
           </div>
         </div>
         <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:4/3;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/inverno/inverno-card-mockup.jpg" alt="Mockup do logótipo INVERNØ" data-i18n-alt="INVERNØ logo mockup"></div>
+          <div class="clip-thumb" style="aspect-ratio:4/3;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-card-mockup.jpg" alt="Mockup do logótipo INVERNØ" data-i18n-alt="INVERNØ logo mockup"></div>
           <div class="clip-body">
             <div class="clip-title"><span data-i18n="logotipo">Logótipo</span> - Mockup</div>
             <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_mockup">Simulação do logótipo aplicado num ambiente físico, no <b>Photoshop.</b></p>
           </div>
         </div>
         <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:3/4;"><img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Sessão fotográfica da banda INVERNØ" data-i18n-alt="INVERNØ band photo shoot"></div>
+          <div class="clip-thumb" style="aspect-ratio:3/4;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Sessão fotográfica da banda INVERNØ" data-i18n-alt="INVERNØ band photo shoot"></div>
           <div class="clip-body">
             <div class="clip-title" data-i18n="sessao_fotografica">Sessão fotográfica</div>
             <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_sessao_foto"> Captação e edição de imagem da banda, editado posteriormente no <b>Photoshop</b>, onde foi inserido o logótipo, e tratamento no <b>Lightroom</b>.</p>
@@ -676,14 +735,14 @@
     <div class="section-head">
       <div>
         <div class="eyebrow" data-i18n="quem_sou">Quem sou</div>
-        <h2 data-i18n="sobre_mim">Sobre mim</h2>
+        <h2 class="reveal-text"><span data-i18n="sobre_mim">Sobre mim</span></h2>
       </div>
       <p class="section-note" data-i18n="sobre_note">Formação em Motion Design e Efeitos Visuais, com um percurso paralelo em produção musical.</p>
     </div>
 
     <div class="about-grid">
       <div class="about-photo">
-        <img class="js-lightbox" loading="lazy" decoding="async" src="assets/images/profile/sou-eu.jpeg" alt="Retrato de Gonçalo Terroso" data-i18n-alt="Portrait of Gonçalo Terroso" />
+        <img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/profile/sou-eu.jpeg" alt="Retrato de Gonçalo Terroso" data-i18n-alt="Portrait of Gonçalo Terroso" />
         <div class="tape">GT_PROFILE.MOV</div>
       </div>
       <div class="about-text">
@@ -728,24 +787,39 @@
   <div class="wrap">
     <div class="contact">
       <div class="eyebrow" data-i18n="vamos_falar">Vamos falar</div>
-      <h2 data-i18n="contactos">Contactos</h2>
+      <h2 class="reveal-text"><span data-i18n="contactos">Contactos</span></h2>
       <p class="contact-sub" data-i18n="contact_sub">Disponível para novos projetos em produção musical, motion design, edição audiovisual e conteúdos para redes sociais. Entra em contacto por qualquer um dos canais abaixo.</p>
 
       <div class="contact-grid">
-        <a class="contact-card" href="mailto:goncaloterroso25@gmail.com">
+        <a class="contact-card contact-card--primary" href="mailto:goncaloterroso25@gmail.com" data-cursor="Email">
           <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
           <div class="contact-label">Email</div>
           <div class="contact-value">goncaloterroso25@gmail.com</div>
+          <span class="contact-go" aria-hidden="true"><span class="chev"></span></span>
         </a>
-        <a class="contact-card" href="tel:+351910734838">
+        <a class="contact-card" href="https://www.linkedin.com/in/gon%C3%A7alo-terroso-488527346/" target="_blank" rel="noopener" data-cursor="LinkedIn">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10.5V17"/><circle cx="7" cy="6.9" r="1.15" fill="currentColor" stroke="none"/><path d="M11.5 17v-3.8a2.4 2.4 0 0 1 4.8 0V17"/><path d="M11.5 10.5V17"/></svg>
+          <div class="contact-label">LinkedIn</div>
+          <div class="contact-value" data-i18n="contact_linkedin_val">Perfil profissional</div>
+          <span class="contact-go" aria-hidden="true"><span class="chev"></span></span>
+        </a>
+        <a class="contact-card" href="assets/cv/CV-Goncalo-Terroso.pdf" target="_blank" rel="noopener" data-cursor="PDF">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6.5A1.5 1.5 0 0 0 5 3.5v17A1.5 1.5 0 0 0 6.5 22h11a1.5 1.5 0 0 0 1.5-1.5V7z"/><path d="M14 2v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+          <div class="contact-label" data-i18n="contact_cv_lbl">Currículo</div>
+          <div class="contact-value" data-i18n="contact_cv_val">CV em PDF</div>
+          <span class="contact-go" aria-hidden="true"><span class="chev"></span></span>
+        </a>
+        <a class="contact-card" href="tel:+351910734838" data-cursor="Ligar">
           <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <div class="contact-label" data-i18n="telemovel">Telemóvel</div>
           <div class="contact-value">+351 910 734 838</div>
+          <span class="contact-go" aria-hidden="true"><span class="chev"></span></span>
         </a>
-        <a class="contact-card" href="https://www.instagram.com/1gonjay/" target="_blank" rel="noopener">
+        <a class="contact-card" href="https://www.instagram.com/1gonjay/" target="_blank" rel="noopener" data-cursor="Instagram">
           <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           <div class="contact-label">Instagram</div>
           <div class="contact-value">@1gonjay</div>
+          <span class="contact-go" aria-hidden="true"><span class="chev"></span></span>
         </a>
       </div>
     </div>
@@ -765,12 +839,37 @@
   <span class="lightbox-hint" data-i18n="lightbox_hint">Scroll / pinch para zoom · arrasta para mover · duplo clique para ampliar · Esc fecha</span>
 </div>
 
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<nav class="section-nav" aria-label="Navegação por secções" id="sectionNav">
+  <button class="section-nav-item" data-target="#hero" type="button">
+    <span class="section-nav-label" data-i18n="nav_inicio">Início</span>
+    <span class="section-nav-bar" aria-hidden="true"></span>
+  </button>
+  <button class="section-nav-item" data-target="#destaques" type="button">
+    <span class="section-nav-label" data-i18n="nav_destaques">Destaques</span>
+    <span class="section-nav-bar" aria-hidden="true"></span>
+  </button>
+  <button class="section-nav-item" data-target="#projetos" type="button">
+    <span class="section-nav-label" data-i18n="nav_projetos">Projetos</span>
+    <span class="section-nav-bar" aria-hidden="true"></span>
+  </button>
+  <button class="section-nav-item" data-target="#sobre" type="button">
+    <span class="section-nav-label" data-i18n="nav_sobre">Sobre</span>
+    <span class="section-nav-bar" aria-hidden="true"></span>
+  </button>
+  <button class="section-nav-item" data-target="#contacto" type="button">
+    <span class="section-nav-label" data-i18n="nav_contacto">Contacto</span>
+    <span class="section-nav-bar" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"><span class="cursor-label" id="cursorLabel"></span></div>
 <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
+<script src="js/intro.js"></script>
 <script src="js/main.js"></script>
 <script src="js/mobile.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/effects.js"></script>
+<script src="js/easter.js"></script>
 </body>
 </html>

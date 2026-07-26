@@ -24,6 +24,7 @@
     { color:'75,184,196', amp:0.10, speed:0.42, freq:2.3, phase:2.1, width:1.2 },
     { color:'156,143,224',amp:0.07, speed:0.68, freq:1.1, phase:4.2, width:1  }
   ];
+  const baseAmps = lines.map(l=> l.amp);
 
   function resize(){
     const rect = wrap.getBoundingClientRect();
@@ -75,6 +76,20 @@
     if(rafId) cancelAnimationFrame(rafId);
   }
 
+  // Control surface used by the hidden interactions in js/easter.js:
+  // `transient()` kicks a single spike through the line (like a drum
+  // hit), `setGain()` scales every amplitude at once.
+  window.__scope = {
+    transient(){
+      lines.forEach(line=>{ line.amp *= 2.6; });
+      setTimeout(()=>{ lines.forEach((line,i)=>{ line.amp = baseAmps[i]; }); }, 420);
+    },
+    setGain(g){
+      lines.forEach((line,i)=>{ line.amp = baseAmps[i] * g; });
+    },
+    isRunning(){ return running; }
+  };
+
   if(reduceMotion){
     // draw a single still frame so the space isn't empty, then stop
     resize(); draw();
@@ -102,8 +117,9 @@
 
 // ---------------------------------------------------------------
 // CUSTOM CURSOR — desktop / fine-pointer only. A small dot plus a
-// trailing glass ring that grows and tints with the section's own
-// accent colour when hovering an interactive element.
+// thin ring that grows over anything clickable, and turns into a
+// filled label pill ("Ver", "Ouvir"...) over elements that opt in
+// via [data-cursor]. Never blurs the content underneath.
 // ---------------------------------------------------------------
 (function(){
   const canHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
@@ -112,7 +128,8 @@
 
   const dot = document.getElementById('cursorDot');
   const ring = document.getElementById('cursorRing');
-  if(!dot || !ring) return;
+  const label = document.getElementById('cursorLabel');
+  if(!dot || !ring || !label) return;
 
   let mx = window.innerWidth/2, my = window.innerHeight/2;
   let rx = mx, ry = my;
@@ -121,28 +138,56 @@
   function onMove(e){
     mx = e.clientX; my = e.clientY;
     if(!ready){ ready = true; document.body.classList.add('cursor-ready'); }
-    dot.style.transform = `translate(${mx}px, ${my}px)`;
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
   }
   window.addEventListener('pointermove', onMove, {passive:true});
 
   function ringLoop(){
-    rx += (mx - rx) * 0.18;
-    ry += (my - ry) * 0.18;
-    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    rx += (mx - rx) * 0.2;
+    ry += (my - ry) * 0.2;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
     requestAnimationFrame(ringLoop);
   }
   requestAnimationFrame(ringLoop);
 
-  const hoverTargets = 'a, button, .js-lightbox, input, textarea';
+  const hoverTargets = 'a, button, .js-lightbox, input, textarea, [data-cursor]';
   document.addEventListener('mouseover', (e)=>{
-    if(e.target.closest(hoverTargets)) document.body.classList.add('cursor-hover');
+    const labelTarget = e.target.closest('[data-cursor]');
+    const plainTarget = e.target.closest(hoverTargets);
+    if(labelTarget){
+      label.textContent = labelTarget.dataset.cursor;
+      document.body.classList.add('cursor-label-active');
+      document.body.classList.remove('cursor-hover');
+    } else if(plainTarget){
+      document.body.classList.add('cursor-hover');
+    }
   });
   document.addEventListener('mouseout', (e)=>{
+    if(e.target.closest('[data-cursor]')) document.body.classList.remove('cursor-label-active');
     if(e.target.closest(hoverTargets)) document.body.classList.remove('cursor-hover');
   });
 
   window.addEventListener('mouseleave', ()=> document.body.classList.remove('cursor-ready'));
   window.addEventListener('mouseenter', ()=> document.body.classList.add('cursor-ready'));
+
+  // ---- Magnetic pull on primary buttons and category filters ----
+  // The button leans gently toward the cursor while it's nearby, and
+  // springs back once the pointer leaves — a small, tactile detail
+  // that makes the main calls-to-action feel alive without being a gimmick.
+  document.querySelectorAll('.btn, .track-btn').forEach(el=>{
+    el.classList.add('magnetic');
+    el.addEventListener('mousemove', (e)=>{
+      const r = el.getBoundingClientRect();
+      const relX = e.clientX - (r.left + r.width/2);
+      const relY = e.clientY - (r.top + r.height/2);
+      el.style.setProperty('--mx', (relX*0.28)+'px');
+      el.style.setProperty('--my', (relY*0.28)+'px');
+    });
+    el.addEventListener('mouseleave', ()=>{
+      el.style.setProperty('--mx','0px');
+      el.style.setProperty('--my','0px');
+    });
+  });
 })();
 
 // ---------------------------------------------------------------
