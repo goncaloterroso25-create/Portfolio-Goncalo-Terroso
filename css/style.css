@@ -169,8 +169,8 @@ body.lang-swapping [data-i18n]{ opacity:0; }
 }
 
 /* ---------- HIDDEN INTERACTIONS (see js/easter.js) ----------
-   Deliberately quiet: none of this is discoverable by accident, and
-   none of it changes layout or blocks anything. */
+   Deliberately quiet to find, but properly felt once triggered: none
+   of this changes layout or blocks anything. */
 .egg-toast{
   position:fixed; left:50%; bottom:30px; z-index:520;
   transform:translate(-50%, 14px); opacity:0;
@@ -184,19 +184,77 @@ body.lang-swapping [data-i18n]{ opacity:0; }
 }
 .egg-toast.in{ opacity:1; transform:translate(-50%, 0); }
 
-/* studio mode: the accents come up like faders being pushed */
-body.studio-mode .hero-scope{ opacity:.95; }
+/* --- REC: clapperboard moment --- */
+.pip-label.slating, .pip-label.rolling{ color:#ff2d2d; }
+.pip-label.rolling .rec-dot{ animation-duration:.6s; }
+.pip-frame{ position:relative; }
+.pip-frame.recording{ box-shadow:0 0 0 2px rgba(255,45,45,.65) inset; animation:recPulse 1.8s ease-in-out infinite; }
+@keyframes recPulse{
+  0%,100%{ box-shadow:0 0 0 2px rgba(255,45,45,.5) inset; }
+  50%{ box-shadow:0 0 0 2px rgba(255,45,45,.85) inset; }
+}
+.clapper{
+  position:absolute; inset:0; z-index:5; display:flex; flex-direction:column;
+  font-family:'IBM Plex Mono'; color:#fff; transform-origin:center;
+  opacity:0; transition:opacity .18s ease;
+}
+.clapper.clap{ opacity:1; }
+.clapper.gone{ opacity:0; }
+.clapper-top{
+  height:26%; background:repeating-linear-gradient(-25deg, #0a0907 0 22px, #f2ebdc 22px 44px);
+  transform:rotate(-16deg); transform-origin:top left;
+  transition:transform .32s cubic-bezier(.5,0,.3,1.4);
+  display:flex; align-items:flex-end; padding:4px;
+}
+.clapper.clap .clapper-top{ transform:rotate(0deg); }
+.clapper-top span{ display:none; }
+.clapper-body{
+  flex:1; background:rgba(10,9,7,.92); display:flex; flex-direction:column;
+  justify-content:center; gap:6px; padding:10px 14px;
+}
+.clapper-row{ display:flex; justify-content:space-between; font-size:11px; letter-spacing:.08em; }
+.clapper-row b{ color:var(--music); }
+
+/* --- studio mode: unmistakably on --- */
+body.studio-mode .hero-scope{ opacity:1; animation:studioHue 2.4s linear infinite; }
+@keyframes studioHue{ from{ filter:hue-rotate(0deg) saturate(1.4); } to{ filter:hue-rotate(360deg) saturate(1.4); } }
 body.studio-mode .rec-dot{ animation-duration:.5s; }
-body.studio-mode .hero::before{ filter:saturate(1.5) brightness(1.12); }
-body.studio-mode .grain{ opacity:.06; }
+body.studio-mode .hero::before{ filter:saturate(1.6) brightness(1.15); }
+body.studio-mode .grain{ opacity:.07; }
 .hero-scope, .hero::before, .grain{ transition:opacity .6s ease, filter .6s ease; }
 
-/* the REC label while a timecode is actually rolling */
-.pip-label.rolling{ color:#ff2d2d; }
-.pip-label.rolling .rec-dot{ animation-duration:.6s; }
+.vu-meter{
+  position:fixed; left:22px; bottom:26px; z-index:210; display:flex; align-items:flex-end; gap:4px;
+  height:46px; opacity:0; transform:translateY(8px); transition:opacity .35s ease, transform .35s var(--ease-glass);
+  pointer-events:none;
+}
+.vu-meter.in{ opacity:1; transform:translateY(0); }
+.vu-meter span{
+  width:5px; border-radius:2px; background:linear-gradient(to top, var(--music), var(--video));
+  animation:vuBounce .5s ease-in-out infinite alternate;
+}
+@keyframes vuBounce{ from{ height:8px; } to{ height:44px; } }
+
+/* --- vinyl: spins and can be clicked again for another scratch --- */
+.single-vinyl.spin{ animation:vinylSpin .9s cubic-bezier(.2,.7,.3,1); }
+@keyframes vinylSpin{ from{ transform:rotate(0deg); } to{ transform:rotate(320deg); } }
+
+/* --- footer credit roll --- */
+.credit-roll{
+  position:absolute; left:50%; bottom:100%; transform:translate(-50%, 8px); opacity:0;
+  font-family:'IBM Plex Mono'; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-faint); white-space:nowrap; margin-bottom:8px;
+  transition:opacity .5s ease, transform .5s var(--ease-glass);
+}
+.credit-roll.in{ opacity:1; transform:translate(-50%, 0); }
+footer{ position:relative; }
 
 @media (prefers-reduced-motion: reduce){
-  .egg-toast{ transition:opacity .2s ease; transform:translate(-50%,0); }
+  .egg-toast, .credit-roll, .vu-meter{ transition:opacity .2s ease; transform:none; }
+  .clapper-top{ transition:none; }
+  .pip-frame.recording{ animation:none; }
+  body.studio-mode .hero-scope{ animation:none; }
+  .single-vinyl.spin{ animation:none; }
 }
 
 /* ---------- GRAIN ---------- */

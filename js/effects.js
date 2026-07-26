@@ -24,6 +24,8 @@
     { color:'75,184,196', amp:0.10, speed:0.42, freq:2.3, phase:2.1, width:1.2 },
     { color:'156,143,224',amp:0.07, speed:0.68, freq:1.1, phase:4.2, width:1  }
   ];
+  const baseAmps = lines.map(l=> l.amp);
+  const baseSpeeds = lines.map(l=> l.speed);
 
   function resize(){
     const rect = wrap.getBoundingClientRect();
@@ -74,6 +76,23 @@
     running = false;
     if(rafId) cancelAnimationFrame(rafId);
   }
+
+  // Control surface used by the hidden interactions in js/easter.js:
+  // `transient()` kicks a single spike through the line (like a drum
+  // hit), `setGain()` scales every amplitude at once.
+  window.__scope = {
+    transient(){
+      lines.forEach(line=>{ line.amp *= 2.6; });
+      setTimeout(()=>{ lines.forEach((line,i)=>{ line.amp = baseAmps[i]; }); }, 420);
+    },
+    setGain(g){
+      lines.forEach((line,i)=>{ line.amp = baseAmps[i] * g; });
+    },
+    setSpeed(mult){
+      lines.forEach((line,i)=>{ line.speed = baseSpeeds[i] * mult; });
+    },
+    isRunning(){ return running; }
+  };
 
   if(reduceMotion){
     // draw a single still frame so the space isn't empty, then stop
