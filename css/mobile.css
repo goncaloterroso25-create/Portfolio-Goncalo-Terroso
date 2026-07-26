@@ -417,8 +417,9 @@
 
   .brand{ font-size:16.5px; }
 
-  /* the hidden-interaction toast must never sit under a thumb */
-  .egg-toast{ bottom:20px; font-size:9.5px; padding:9px 15px; }
+  /* the VU meter must stay clear of the thumb zone and of the shelves */
+  .vu-meter{ left:14px; bottom:16px; height:34px; gap:3px; }
+  .vu-meter span{ width:4px; --vu-max:32px; }
 }
 
 /* =========================================================
