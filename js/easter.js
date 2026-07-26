@@ -163,56 +163,6 @@ function eggToast(text, ms){
   });
 })();
 
-// ---- 4. The vinyl spins, and scratches ---------------------------------
-// Every little vinyl icon next to a track is a real control: click it
-// and it spins up with a short synthesised scratch, built entirely with
-// the Web Audio API — no audio file, and it only ever plays on a
-// direct click, never on its own.
-(function(){
-  const discs = document.querySelectorAll('.single-vinyl');
-  if(!discs.length) return;
-
-  let ctx = null;
-  function scratch(){
-    try{
-      if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-      if(ctx.state === 'suspended') ctx.resume();
-
-      const dur = 0.22;
-      const buffer = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for(let i=0;i<data.length;i++) data[i] = (Math.random() * 2 - 1);
-
-      const src = ctx.createBufferSource();
-      src.buffer = buffer;
-      src.playbackRate.setValueAtTime(1.6, ctx.currentTime);
-      src.playbackRate.exponentialRampToValueAtTime(0.35, ctx.currentTime + dur);
-
-      const bandpass = ctx.createBiquadFilter();
-      bandpass.type = 'bandpass';
-      bandpass.frequency.setValueAtTime(1400, ctx.currentTime);
-      bandpass.Q.value = 0.8;
-
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.22, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-
-      src.connect(bandpass).connect(gain).connect(ctx.destination);
-      src.start();
-    } catch(e){ /* Web Audio unavailable — the spin still plays silently */ }
-  }
-
-  discs.forEach(disc=>{
-    disc.style.cursor = 'pointer';
-    disc.addEventListener('click', ()=>{
-      disc.classList.remove('spin');
-      void disc.offsetWidth; // restart the animation on repeat clicks
-      disc.classList.add('spin');
-      scratch();
-    });
-  });
-})();
-
 // ---- 5. Reach the footer fast → a quiet "roll credits" nod -------------
 // Scrolling all the way to the bottom within a few seconds of arriving
 // on the page (rather than idly settling there) briefly rolls a short
