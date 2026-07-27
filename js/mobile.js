@@ -78,7 +78,13 @@
 
   // Tapping a link closes the menu; the smooth scroll itself is handled
   // generically for every `.navlinks a, .nav-overlay-links a` in main.js.
-  links.forEach(link=> link.addEventListener('click', closeMenu));
+  // The brand logo is included too: it's reachable and clickable while
+  // the menu is open (see the pointer-events re-enable in
+  // css/mobile.css), so it needs the same close behaviour or tapping it
+  // would navigate home while leaving the fullscreen menu stuck open.
+  const brand = document.querySelector('.topnav-inner .brand');
+  const closeOnClick = brand ? [...links, brand] : links;
+  closeOnClick.forEach(link=> link.addEventListener('click', closeMenu));
 
   document.addEventListener('scroll', ()=>{ if(!isOpen()) syncActive(); }, {passive:true});
 
