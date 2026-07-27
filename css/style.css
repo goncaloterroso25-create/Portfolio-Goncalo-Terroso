@@ -175,7 +175,9 @@ a:focus-visible, button:focus-visible{
 /* while the intro is on screen the page behind must not scroll.
    Horizontal clipping for the rest of the time is handled once, at the
    end of css/mobile.css, so the two rules can't fight each other. */
-body.intro-active{ overflow:hidden; }
+/* overflow-y only — see the matching note on body.nav-open in
+   css/mobile.css for why the shorthand is avoided here too. */
+body.intro-active{ overflow-y:hidden; }
 
 @media (prefers-reduced-motion: reduce){
   .intro{ display:none; }

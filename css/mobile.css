@@ -193,7 +193,17 @@
   }
   .nav-overlay-langs button.active{ color:var(--text); border-color:var(--glass-border-strong); }
 
-  body.nav-open{ overflow:hidden; }
+  /* overflow-y only: locking the shorthand `overflow` here would also
+     set overflow-x, which has higher specificity than the overflow-x:
+     clip safety net further down and would silently override it back
+     to `hidden` for as long as the menu is open. overflow:hidden on
+     <body> can make some mobile browser engines mis-resolve
+     position:fixed descendants (like .nav-overlay itself) against the
+     wrong containing block — which is almost certainly why the fixed,
+     fullscreen menu stopped rendering at all. Scoping this to the Y
+     axis avoids the conflict entirely; locking horizontal scroll was
+     never the point of this rule anyway. */
+  body.nav-open{ overflow-y:hidden; }
 
   @media (prefers-reduced-motion: reduce){
     .nav-overlay-bg{ transition:none; clip-path:none; opacity:0; }
