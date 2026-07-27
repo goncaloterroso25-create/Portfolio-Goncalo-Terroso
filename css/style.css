@@ -794,12 +794,20 @@ body.cursor-ready .cursor-host{ opacity:1; }
 }
 
 .cursor-label{
-  position:absolute; top:20px; left:50%; transform:translate(-50%,0) scale(.7); transform-origin:top center;
+  /* This is the pill itself in the label-active state — sized to its
+     own text via padding, not to a separate ring guessing at a
+     min-width. Two independently-sized elements trying to look like
+     one pill (the ring guessing "60px is probably enough", the label
+     floating 20px below it) is what produced the duplicated/misaligned
+     shape; a single element that sizes to its own content can't
+     mismatch itself. */
+  position:absolute; top:0; left:50%;
+  transform:translate(-50%,-50%) scale(.7); transform-origin:center;
   font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--ink); white-space:nowrap; opacity:0;
-  background:var(--accent); padding:7px 13px; border-radius:999px;
+  color:var(--ink); white-space:nowrap; opacity:0; pointer-events:none;
+  background:var(--accent); padding:11px 18px; border-radius:999px;
   box-shadow:0 0 0 1px rgba(10,9,7,.5);
-  transition:opacity .2s ease, transform .25s var(--ease-glass);
+  transition:opacity .2s ease, transform .25s var(--ease-glass), background .2s linear;
 }
 
 /* --- generic link / clickable: ring opens, brightens to a solid edge --- */
@@ -826,15 +834,12 @@ body.cursor-ready.cursor-hover-nav .cur-ring{
 }
 body.cursor-ready.cursor-hover-nav .cur-dot{ background:var(--accent); }
 
-/* --- labelled element (a project, a contact): ring fills solid and a
-       short tag names the action --- */
-body.cursor-ready.cursor-label-active .cur-ring{
-  width:auto; height:auto; min-width:60px; padding:11px 18px; border-radius:999px;
-  background:var(--accent); border-color:transparent;
-  transform:translate(-50%,-50%);
-}
+/* --- labelled element (a project, a contact): the ring hides and a
+       single self-sized tag names the action — see .cursor-label above,
+       which is the actual pill in this state. --- */
+body.cursor-ready.cursor-label-active .cur-ring{ opacity:0; }
 body.cursor-ready.cursor-label-active .cur-dot{ opacity:0; }
-body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:translate(-50%,0) scale(1); }
+body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:translate(-50%,-50%) scale(1); }
 
 /* --- draggable control (the hue rail): dashed ring reads as "grab and
        slide" rather than "click once" --- */
