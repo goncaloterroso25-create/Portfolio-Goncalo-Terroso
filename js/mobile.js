@@ -13,6 +13,7 @@
   if(!toggle || !overlay) return;
 
   const links = Array.from(overlay.querySelectorAll('.nav-overlay-links a'));
+  const focusTarget = document.getElementById('navOverlayHead');
   let lastFocused = null;
 
   function isOpen(){ return overlay.classList.contains('open'); }
@@ -38,8 +39,12 @@
     overlay.setAttribute('aria-hidden','false');
     document.body.classList.add('nav-open');
     // let the wipe start before moving focus, so screen readers and
-    // sighted users land at the same moment
-    setTimeout(()=>{ if(links[0]) links[0].focus({preventScroll:true}); }, 260);
+    // sighted users land at the same moment. Focusing a non-link
+    // heading — rather than the first nav link — is deliberate: giving
+    // an <a href="#hero"> programmatic focus makes Chrome for Android
+    // show its destination as a URL-preview tooltip at the bottom of
+    // the screen, which isn't part of this menu's design.
+    setTimeout(()=>{ if(focusTarget) focusTarget.focus({preventScroll:true}); }, 260);
   }
 
   function closeMenu(){

@@ -98,8 +98,12 @@
      disable the pill while the menu is open, then re-enable only the
      two things that still need to work: the brand link and the X. */
   body.nav-open .topnav-inner{ pointer-events:none; }
-  body.nav-open .topnav-inner .brand,
   body.nav-open .topnav-inner .nav-toggle{ pointer-events:auto; }
+  /* the brand is hidden outright rather than just left transparent —
+     the fullscreen menu has its own "Navegação" heading right below,
+     and showing the wordmark twice in the same top strip read as
+     overlapping/duplicated text rather than as two separate things. */
+  body.nav-open .topnav-inner .brand{ display:none; }
   body.nav-open .nav-progress{ opacity:0; }
   body.nav-open .nav-toggle{
     background:transparent; border-color:var(--glass-border-strong);
