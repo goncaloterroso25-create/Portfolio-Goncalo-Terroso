@@ -39,11 +39,26 @@ const sections = ['#hero','#destaques','#projetos','#sobre','#contacto'].map(s=>
 const progressEl = document.getElementById('navProgress');
 
 navLinks.forEach(link=>{
-  link.addEventListener('click', (e)=>{
+  // Real touchscreens can, on some browsers, suppress the synthetic
+  // `click` that normally follows a tap — most often when something on
+  // the page calls preventDefault() during touchstart/touchmove nearby.
+  // Chrome DevTools' touch emulation does NOT reproduce that gap, so a
+  // menu that opens and navigates correctly there can still fail on a
+  // real device if it only listens for `click`. Listening for both
+  // `touchend` and `click`, deduped so a normal tap (which fires both)
+  // only navigates once, closes that gap without changing behaviour on
+  // devices where `click` alone was already working fine.
+  let lastNav = 0;
+  function go(e){
     e.preventDefault();
+    const now = Date.now();
+    if(now - lastNav < 400) return;
+    lastNav = now;
     const target = document.querySelector(link.dataset.target);
     if(target) target.scrollIntoView({behavior:'smooth'});
-  });
+  }
+  link.addEventListener('touchend', go, {passive:false});
+  link.addEventListener('click', go);
 });
 
 const topnavEl = document.querySelector('.topnav');

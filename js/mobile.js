@@ -52,12 +52,33 @@
     if(lastFocused && lastFocused.focus) lastFocused.focus({preventScroll:true});
   }
 
-  toggle.addEventListener('click', ()=> isOpen() ? closeMenu() : openMenu());
+  // A real touchscreen can, on some browsers/devices, suppress the
+  // synthetic `click` that normally follows a tap (most commonly when
+  // something nearby calls preventDefault() on touchstart/touchmove —
+  // Chrome DevTools' touch emulation does NOT reproduce this, which is
+  // exactly the gap between "works in DevTools" and "fails on a real
+  // phone"). `onTap` listens for both `click` and `touchend` and runs
+  // the handler once regardless of which one actually fires, so the
+  // menu keeps working even if a given device drops one of the two.
+  function onTap(el, handler){
+    if(!el) return;
+    let lastRun = 0;
+    function run(e){
+      const now = Date.now();
+      if(now - lastRun < 400) return; // touchend + click both firing normally — ignore the second
+      lastRun = now;
+      handler(e);
+    }
+    el.addEventListener('touchend', (e)=>{ e.preventDefault(); run(e); }, {passive:false});
+    el.addEventListener('click', run);
+  }
+
+  onTap(toggle, ()=> isOpen() ? closeMenu() : openMenu());
 
   // Tapping the empty backdrop closes too — a secondary convenience.
   // The X in the top bar stays the obvious, primary way out.
   const backdrop = overlay.querySelector('.nav-overlay-bg');
-  if(backdrop) backdrop.addEventListener('click', closeMenu);
+  onTap(backdrop, closeMenu);
   overlay.addEventListener('click', (e)=>{
     if(e.target === overlay) closeMenu();
   });
@@ -84,7 +105,7 @@
   // would navigate home while leaving the fullscreen menu stuck open.
   const brand = document.querySelector('.topnav-inner .brand');
   const closeOnClick = brand ? [...links, brand] : links;
-  closeOnClick.forEach(link=> link.addEventListener('click', closeMenu));
+  closeOnClick.forEach(link=> onTap(link, closeMenu));
 
   document.addEventListener('scroll', ()=>{ if(!isOpen()) syncActive(); }, {passive:true});
 
