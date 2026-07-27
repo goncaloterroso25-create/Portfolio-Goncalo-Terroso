@@ -20,12 +20,34 @@
   --text-dim:#A79A87;
   --text-faint:#6E6455;
 
-  --music:#8c09ad;
-  --music-dim: rgba(228,120,75,0.15);
-  --video:#4BB8C4;
-  --video-dim: rgba(75,184,196,0.15);
-  --design:#9C8FE0;
-  --design-dim: rgba(156,143,224,0.15);
+  /* ---------- THEME SOURCE OF TRUTH ----------
+     Everything accent-coloured on this page resolves back to these
+     three numbers. The picker writes --accent-h and nothing else, so
+     the swatch it shows and the colour the page renders are the same
+     value by construction — they can't drift apart.
+
+     The secondary and tertiary hues are offsets, not fixed colours,
+     so picking blue moves the whole palette together instead of
+     leaving an orphaned purple gradient behind. */
+  --accent-h: 291;          /* the original purple */
+  --accent-s: 90%;
+  --accent-l: 36%;
+
+  --accent:      hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+  --accent-soft: hsl(var(--accent-h) var(--accent-s) 62%);
+  --accent-deep: hsl(var(--accent-h) var(--accent-s) 22%);
+  /* the two companion hues keep their relationship to the accent */
+  --accent-2:    hsl(calc(var(--accent-h) + 96) 50% 62%);
+  --accent-3:    hsl(calc(var(--accent-h) - 27) 55% 72%);
+
+  /* the category names stay as the semantic layer the rest of the
+     stylesheet already speaks; they just resolve to the theme now */
+  --music:  var(--accent);
+  --video:  var(--accent-2);
+  --design: var(--accent-3);
+  --music-dim:  hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .15);
+  --video-dim:  hsl(calc(var(--accent-h) + 96) 50% 62% / .15);
+  --design-dim: hsl(calc(var(--accent-h) - 27) 55% 72% / .15);
 
   --radius-sm:4px;
   --radius:10px;
@@ -229,42 +251,40 @@ body.lang-swapping [data-i18n]{ opacity:0; }
 }
 .pip-code span[role="button"]:hover{ color:var(--video); border-bottom-color:currentColor; }
 
-/* --- vinyl: silent, hand-driven --- */
+/* --- vinyl: hover only, silent, no click behaviour ---
+   Hover gives it depth and a slow turn that speeds up as it settles.
+   There is deliberately no click state: the hover reads as "this is a
+   real object" and that's the whole idea. */
 .single-vinyl{
-  touch-action:pan-y; user-select:none; -webkit-user-select:none;
-  transition:border-color .35s ease, box-shadow .35s ease, scale .4s var(--ease-glass);
+  user-select:none; -webkit-user-select:none;
+  transition:scale .45s var(--ease-glass), box-shadow .45s var(--ease-glass),
+             border-color .35s ease, filter .45s ease;
 }
-/* hover gives it presence before any click: it lifts off the card and
-   turns slowly, which is what tells you it's grabbable at all.
-   `scale` is a separate property from `transform`, so it composes with
-   the rotation JS writes every frame instead of fighting it. */
 @media (hover:hover) and (pointer:fine){
-  .single-vinyl:hover{
-    scale:1.08;
-    border-color:var(--video);
-    box-shadow:0 10px 26px -10px rgba(0,0,0,.7), 0 0 0 1px rgba(75,184,196,.35);
+  .single-card:hover .single-vinyl{
+    scale:1.12;
+    border-color:var(--accent-2);
+    box-shadow:0 16px 34px -12px rgba(0,0,0,.75),
+               0 0 0 1px hsl(calc(var(--accent-h) + 96) 50% 62% / .4);
+    filter:saturate(1.15);
+    /* eases from a slow first turn into a steady spin */
+    animation:vinylSpin 5.5s linear infinite;
   }
-  /* only idles when it isn't already being driven by the pointer */
-  .single-card:not(.vinyl-live) .single-vinyl:hover{
-    animation:vinylIdle 9s linear infinite;
-  }
+  /* the label lifts with it, so the whole card feels like one object */
+  .single-card:hover .single-label{ color:var(--accent-2); }
 }
-@keyframes vinylIdle{ to{ rotate:360deg; } }
+@keyframes vinylSpin{ to{ rotate:360deg; } }
 
 /* a marker near the rim — without it the concentric grooves look static */
 .single-vinyl::before{
   content:''; position:absolute; top:5px; left:50%; margin-left:-2px;
-  width:4px; height:4px; border-radius:50%; background:var(--video);
+  width:4px; height:4px; border-radius:50%; background:var(--accent-2);
   opacity:0; transition:opacity .3s ease; z-index:2;
 }
-.single-card.vinyl-live .single-vinyl::before{ opacity:1; }
-.single-card.vinyl-live .single-vinyl{
-  border-color:var(--music);
-  box-shadow:0 0 0 1px rgba(140,9,173,.5), 0 0 20px -4px var(--music);
-  scale:1.08;
-}
+.single-card:hover .single-vinyl::before{ opacity:1; }
+
 @media (prefers-reduced-motion: reduce){
-  .single-vinyl:hover{ animation:none; }
+  .single-card:hover .single-vinyl{ animation:none; }
 }
 
 /* --- studio mode --- */
@@ -299,40 +319,71 @@ body.studio-mode .grain{ opacity:.07; }
   .vu-meter{ transition:opacity .2s ease; transform:none; }
 }
 
-/* --- TERROSO → kinetic type ---
-   Each letter is its own inline-block so it can lift, scale and open
-   its tracking independently. All driven by --v (0..1 proximity),
-   written per-frame from js/easter.js. Only transform/opacity-class
-   properties animate, so it stays on the GPU. */
-.hero h1 .accent{ display:inline-block; cursor:pointer; }
+/* --- the name → kinetic type ---
+   Both words share one letter component; the sign and colour differ so
+   GONÇALO sinks into the surface while TERROSO rises out of it. All
+   driven by --v (0..1 proximity) written per-frame from js/easter.js —
+   only transform and colour, so it stays on the GPU. */
+.hero h1 .given, .hero h1 .accent{ display:inline-block; cursor:pointer; }
 .hero h1 .kt{
   display:inline-block; will-change:transform;
   transform:translateY(var(--lift,0px)) scale(var(--sc,1));
   letter-spacing:var(--track,0px);
-  /* the closer the cursor, the brighter and heavier the letter reads */
-  color:color-mix(in srgb, var(--music) calc(100% - var(--v,0) * 45%), var(--paper));
-  text-shadow:0 calc(var(--v,0) * 10px) calc(var(--v,0) * 26px) rgba(140,9,173, calc(var(--v,0) * 0.55));
 }
-/* browsers without color-mix keep the plain accent colour */
+/* TERROSO: rises, brightens toward paper, throws a coloured glow */
+.hero h1 .accent .kt{
+  color:color-mix(in srgb, var(--accent) calc(100% - var(--v,0) * 45%), var(--paper));
+  text-shadow:0 calc(var(--v,0) * 10px) calc(var(--v,0) * 26px)
+    hsl(var(--accent-h) var(--accent-s) var(--accent-l) / calc(var(--v,0) * 0.55));
+}
+/* GONÇALO: sinks, dims away from paper, casts a shadow into the page */
+.hero h1 .given .kt{
+  color:color-mix(in srgb, var(--text) calc(100% - var(--v,0) * 38%), var(--ink));
+  text-shadow:0 calc(var(--v,0) * -6px) calc(var(--v,0) * 18px) rgba(0,0,0,calc(var(--v,0) * 0.6));
+}
 @supports not (color: color-mix(in srgb, red, blue)){
-  .hero h1 .kt{ color:var(--music); }
+  .hero h1 .accent .kt{ color:var(--accent); }
+  .hero h1 .given .kt{ color:var(--text); }
 }
-.hero h1 .accent.kt-live{ cursor:none; }
-.hero h1 .accent.kt-static .kt{ transform:none; letter-spacing:0; color:var(--music); text-shadow:none; }
+.hero h1 .kt-live{ cursor:none; }
+.hero h1 .kt-static .kt{ transform:none; letter-spacing:0; text-shadow:none; }
 
-/* touch fallback: one ripple travelling left to right through the word */
-.hero h1 .accent.kt-ripple .kt{
-  animation:ktRipple .85s var(--ease-glass) both;
-  animation-delay:calc(var(--i) * 0.045s);
-}
-@keyframes ktRipple{
-  0%{ transform:translateY(0) scale(1); }
-  40%{ transform:translateY(-13px) scale(1.1); }
-  100%{ transform:translateY(0) scale(1); }
-}
+/* touch fallback: a ripple travelling through the word, each in its
+   own direction so the two still read as a pair */
+.hero h1 .accent.kt-ripple .kt{ animation:ktUp .85s var(--ease-glass) both; animation-delay:calc(var(--i) * .045s); }
+.hero h1 .given.kt-ripple .kt{ animation:ktDown .85s var(--ease-glass) both; animation-delay:calc(var(--i) * .045s); }
+@keyframes ktUp{ 0%,100%{ transform:translateY(0) scale(1); } 40%{ transform:translateY(-13px) scale(1.1); } }
+@keyframes ktDown{ 0%,100%{ transform:translateY(0) scale(1); } 40%{ transform:translateY(9px) scale(.94); } }
 @media (prefers-reduced-motion: reduce){
-  .hero h1 .accent.kt-ripple .kt{ animation:none; }
+  .hero h1 .kt-ripple .kt{ animation:none; }
 }
+
+/* ---------- NAV HOVER — "I am on this one" ----------
+   A pill that slides between items rather than each item lighting up
+   on its own: one moving object is far easier to track than five
+   independent fades, so the current target is never ambiguous. */
+.navlinks{ position:relative; }
+.navlinks .nav-ind{
+  position:absolute; z-index:0; top:0; height:100%; left:0;
+  width:var(--w,0px); transform:translateX(var(--x,0px));
+  border-radius:999px; background:hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .22);
+  border:1px solid hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .45);
+  opacity:0; pointer-events:none;
+  transition:transform .38s var(--ease-glass), width .38s var(--ease-glass), opacity .25s ease;
+}
+.navlinks.ind-on .nav-ind{ opacity:1; }
+.navlinks a{ position:relative; z-index:1; }
+.navlinks a:hover{ color:var(--text); }
+
+/* ---------- LIVE NEGATIVE SPACE ----------
+   Sits at the very back of the About section. Pointer-events:none and
+   a low z-index mean it can never intercept a click or sit over text —
+   it only ever fills margin that was empty anyway. */
+.field{
+  position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55;
+}
+#sobre{ position:relative; }
+#sobre > .wrap{ position:relative; z-index:1; }
 
 /* ---------- GRAIN ---------- */
 .grain{
@@ -449,20 +500,73 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 .lang-menu .lang-name{ font-size:11px; opacity:.7; }
 .lang-menu button.active .lang-code{ color:var(--music); }
 
-/* ---------- ATMOSPHERE DIAL ----------
-   A four-step control, not a free slider: unlimited hue would let a
-   visitor land somewhere that reads as broken rather than intentional.
-   Four curated moods keep every state deliberate, and it only ever
-   moves the ambient light — never the accents or the type. */
-.atmos{ display:flex; align-items:center; gap:5px; }
-.atmos-btn{
-  width:15px; height:15px; border-radius:50%; cursor:pointer; padding:0;
-  border:1px solid var(--glass-border); background:var(--swatch);
-  opacity:.5; transition:opacity .3s ease, transform .35s var(--ease-glass), border-color .3s ease;
+/* ---------- THEME PICKER ----------
+   A hue rail, not a swatch list. The rail itself is painted with the
+   full spectrum at the site's own saturation and lightness, so what you
+   point at is literally the colour you get — no conversion in between.
+   Dragging is continuous; the handle carries the live colour. */
+.theme-pick{ position:relative; display:flex; align-items:center; gap:9px; }
+.theme-trigger{
+  width:19px; height:19px; border-radius:50%; padding:0; cursor:pointer;
+  border:1.5px solid var(--glass-border-strong); background:var(--accent);
+  box-shadow:0 0 0 0 hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5);
+  transition:transform .35s var(--ease-glass), box-shadow .4s var(--ease-glass), background .3s linear;
 }
-.atmos-btn:hover{ opacity:.9; transform:scale(1.15); }
-.atmos-btn.active{ opacity:1; transform:scale(1.2); border-color:var(--paper); }
-.atmos-btn:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; }
+.theme-trigger:hover{ transform:scale(1.15); box-shadow:0 0 0 5px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .22); }
+.theme-trigger:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; }
+
+.theme-panel{
+  position:absolute; top:calc(100% + 14px); right:0; z-index:60;
+  width:236px; padding:16px; border-radius:16px;
+  background:var(--glass-bg-active); border:1px solid var(--glass-border);
+  backdrop-filter:blur(var(--glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.4);
+  box-shadow:0 1px 0 0 var(--glass-sheen) inset, 0 24px 48px -24px rgba(0,0,0,.7);
+  opacity:0; visibility:hidden; transform:translateY(-8px) scale(.97);
+  transition:opacity .25s ease, transform .3s var(--ease-glass), visibility .25s ease;
+}
+.theme-pick.open .theme-panel{ opacity:1; visibility:visible; transform:translateY(0) scale(1); }
+
+.theme-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:13px;
+}
+.theme-val{ color:var(--text); }
+
+/* the rail is the spectrum itself — 12 stops is enough to read as
+   continuous while staying exact at the ends */
+.theme-rail{
+  position:relative; height:26px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--glass-border);
+  background:linear-gradient(to right,
+    hsl(0 var(--accent-s) var(--accent-l)),   hsl(30 var(--accent-s) var(--accent-l)),
+    hsl(60 var(--accent-s) var(--accent-l)),  hsl(90 var(--accent-s) var(--accent-l)),
+    hsl(120 var(--accent-s) var(--accent-l)), hsl(150 var(--accent-s) var(--accent-l)),
+    hsl(180 var(--accent-s) var(--accent-l)), hsl(210 var(--accent-s) var(--accent-l)),
+    hsl(240 var(--accent-s) var(--accent-l)), hsl(270 var(--accent-s) var(--accent-l)),
+    hsl(300 var(--accent-s) var(--accent-l)), hsl(330 var(--accent-s) var(--accent-l)),
+    hsl(360 var(--accent-s) var(--accent-l)));
+  touch-action:none;   /* so a drag scrubs hue instead of scrolling the page */
+}
+.theme-handle{
+  position:absolute; top:50%; left:var(--pos, 80.8%);
+  width:20px; height:20px; margin:-10px 0 0 -10px; border-radius:50%;
+  background:var(--accent); border:2px solid var(--paper); pointer-events:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.5);
+  transition:background .12s linear;
+}
+.theme-pick.dragging .theme-handle{ transform:scale(1.15); }
+
+.theme-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:13px; }
+.theme-reset{
+  background:none; border:1px solid var(--glass-border); border-radius:8px; cursor:pointer;
+  padding:7px 11px; font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-dim);
+  transition:color .25s ease, border-color .25s ease;
+}
+.theme-reset:hover{ color:var(--text); border-color:var(--glass-border-strong); }
+.theme-hint{ font-family:'IBM Plex Mono'; font-size:9px; color:var(--text-faint); }
 
 /* ---------- CV BUTTON (persistent, in the nav) ---------- */
 .cv-btn{
@@ -497,288 +601,17 @@ section{ position:relative; padding:clamp(64px,10vw,120px) 0; }
 .hero::before{
   content:''; position:absolute; inset:-12%; z-index:0; pointer-events:none;
   background:
-    radial-gradient(ellipse 1000px 800px at 88% 10%, #4bb8c49c, transparent 60%),
-    radial-gradient(ellipse 1200px 1000px at 6% 92%, rgba(197, 26, 240, 0.507), transparent 60%);
+    radial-gradient(ellipse 1000px 800px at 88% 10%, hsl(calc(var(--accent-h) + 96) 50% 62% / .61), transparent 60%),
+    radial-gradient(ellipse 1200px 1000px at 6% 92%, hsl(var(--accent-h) 88% 52% / .5), transparent 60%);
   animation: heroDrift 24s ease-in-out infinite alternate;
-  /* --atmos rotates only these two ambient glows (see the atmosphere
-     dial). The accents, type and UI colours are untouched by design:
-     the identity has to survive whatever the visitor picks. */
-  filter:hue-rotate(var(--atmos, 0deg));
   transition:filter .8s var(--ease-glass);
 }
 .hero-grid{ position:relative; z-index:1; }
-
-/* ---------- CONTEXTUAL SECTION NAV ----------
-   Three jobs in one component: where am I (active label), how far
-   through am I (the rail fills as you scroll), and take me there
-   (every row is a button). Desktop only — on mobile the same
-   information lives in the fullscreen menu. */
-.section-nav{
-  position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:90;
-  display:flex; align-items:stretch; gap:14px;
-  padding:4px 0;
-}
-
-/* the continuous progress rail, drawn once for the whole component */
-.section-nav-rail{
-  position:relative; width:2px; border-radius:2px; flex-shrink:0;
-  background:var(--line-strong); order:2;
-}
-.section-nav-rail::after{
-  content:''; position:absolute; left:0; right:0; top:0; border-radius:2px;
-  height:var(--progress, 0%);
-  background:linear-gradient(to bottom, var(--music), var(--video));
-  transition:height .12s linear;
-}
-/* the playhead: a small marker riding the rail at the exact scroll position */
-.section-nav-head{
-  position:absolute; left:50%; top:var(--progress, 0%);
-  width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%;
-  background:var(--paper); box-shadow:0 0 0 3px rgba(140,9,173,.28);
-  transition:top .12s linear;
-}
-
-.section-nav-items{
-  display:flex; flex-direction:column; justify-content:space-between;
-  order:1; gap:2px; list-style:none; margin:0; padding:0;
-}
-.section-nav-item{
-  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:10px;
-  background:none; border:none; padding:7px 0; cursor:pointer; width:100%;
-  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--text-faint); text-align:right;
-  transition:color .3s var(--ease-glass);
-}
-.section-nav-label{
-  opacity:.32; transform:translateX(4px);
-  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass);
-  white-space:nowrap;
-}
-/* a dot per section, sitting against the rail */
-.section-nav-dot{
-  width:5px; height:5px; border-radius:50%; flex-shrink:0;
-  background:var(--line-strong);
-  transition:background .3s ease, transform .35s var(--ease-glass), box-shadow .3s ease;
-}
-/* current section: full-contrast label, dot lit in the accent */
-.section-nav-item.active{ color:var(--text); }
-.section-nav-item.active .section-nav-label{ opacity:1; transform:translateX(0); }
-.section-nav-item.active .section-nav-dot{
-  background:var(--music); transform:scale(1.5);
-  box-shadow:0 0 0 3px rgba(140,9,173,.2);
-}
-/* hovering the component previews every label at once */
-.section-nav:hover .section-nav-label{ opacity:.7; transform:translateX(0); }
-.section-nav-item:hover{ color:var(--text); }
-.section-nav-item:hover .section-nav-label{ opacity:1; }
-.section-nav-item:hover .section-nav-dot{ background:var(--text); transform:scale(1.3); }
-.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; border-radius:3px; }
-
-@media (max-width:1180px), (hover:none){
-  .section-nav{ display:none; }
-}
-
-/* ---------- SIGNATURE ANIMATION — live waveform ----------
-   A single continuous line, drawn on canvas, behaves like a monitored
-   audio signal: idle ambient motion, and a gentle ripple that follows
-   the cursor. It's the one purely decorative element on the page, so
-   it stays quiet (low opacity, thin stroke) and sits behind all text. */
-.hero-scope{
-  position:absolute; left:0; right:0; bottom:0; height:46%; z-index:0;
-  pointer-events:none; opacity:.55;
-  -webkit-mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
-  mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
-}
-.hero-scope canvas{ width:100%; height:100%; display:block; }
-
-/* ---------- CUSTOM CURSOR (desktop, fine pointer only) ----------
-   Never blurs, never hides content. The ring answers "what happens if
-   I click here?" before the click: it grows over a link, fills into a
-   labelled pill over a project, and becomes an open grab ring over the
-   discs. Every state is transform/opacity only. */
-.cursor-dot, .cursor-ring{
-  position:fixed; top:0; left:0; z-index:400; pointer-events:none;
-  border-radius:50%; will-change:transform; opacity:0;
-  transition:opacity .25s ease, width .3s var(--ease-glass), height .3s var(--ease-glass),
-    border-color .25s ease, background .25s ease, border-width .25s ease;
-}
-.cursor-dot{ width:6px; height:6px; background:var(--paper); margin:0; }
-.cursor-ring{
-  width:26px; height:26px; margin:0;
-  border:1px solid rgba(243,236,221,.45);
-  display:flex; align-items:center; justify-content:center;
-}
-.cursor-label{
-  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--ink); white-space:nowrap; opacity:0; transform:scale(.6);
-  transition:opacity .2s ease, transform .25s var(--ease-glass);
-}
-body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring{ opacity:1; }
-@media (hover:hover) and (pointer:fine){
-  body.cursor-ready, body.cursor-ready a, body.cursor-ready button{ cursor:none; }
-}
-
-/* --- link / button: ring opens up and brightens, dot stays as the
-       precise click point so aim is never ambiguous --- */
-body.cursor-ready.cursor-hover .cursor-ring{
-  width:40px; height:40px; border-color:var(--paper); border-width:1.5px;
-}
-body.cursor-ready.cursor-hover .cursor-dot{ width:4px; height:4px; }
-
-/* --- labelled element (a project, a contact): the ring becomes a
-       solid pill carrying the action word --- */
-body.cursor-ready.cursor-label-active .cursor-ring{
-  width:auto; height:auto; min-width:62px; padding:11px 18px; border-radius:999px;
-  background:var(--music); border-color:transparent;
-}
-body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:scale(1); }
-body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
-
-/* --- draggable disc: a dashed open ring reads as "grab this" --- */
-body.cursor-ready.cursor-drag .cursor-ring{
-  width:48px; height:48px; border-style:dashed; border-color:var(--video); border-width:1.5px;
-}
-body.cursor-ready.cursor-drag .cursor-dot{ opacity:0; }
-
-/* --- pressed: everything contracts a touch, so the click registers
-       visually even before the page responds --- */
-body.cursor-ready.cursor-down .cursor-ring{ transform-origin:center; filter:brightness(1.2); }
-body.cursor-ready.cursor-down .cursor-dot{ width:9px; height:9px; }
-
-@media (hover:none), (pointer:coarse){
-  .cursor-dot, .cursor-ring, .cursor-label{ display:none; }
-}
-
-/* ---------- CONTEXTUAL SECTION NAV ----------
-   Three jobs in one component: where am I (active label), how far
-   through am I (the rail fills as you scroll), and take me there
-   (every row is a button). Desktop only — on mobile the same
-   information lives in the fullscreen menu. */
-.section-nav{
-  position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:90;
-  display:flex; align-items:stretch; gap:14px;
-  padding:4px 0;
-}
-
-/* the continuous progress rail, drawn once for the whole component */
-.section-nav-rail{
-  position:relative; width:2px; border-radius:2px; flex-shrink:0;
-  background:var(--line-strong); order:2;
-}
-.section-nav-rail::after{
-  content:''; position:absolute; left:0; right:0; top:0; border-radius:2px;
-  height:var(--progress, 0%);
-  background:linear-gradient(to bottom, var(--music), var(--video));
-  transition:height .12s linear;
-}
-/* the playhead: a small marker riding the rail at the exact scroll position */
-.section-nav-head{
-  position:absolute; left:50%; top:var(--progress, 0%);
-  width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%;
-  background:var(--paper); box-shadow:0 0 0 3px rgba(140,9,173,.28);
-  transition:top .12s linear;
-}
-
-.section-nav-items{
-  display:flex; flex-direction:column; justify-content:space-between;
-  order:1; gap:2px; list-style:none; margin:0; padding:0;
-}
-.section-nav-item{
-  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:10px;
-  background:none; border:none; padding:7px 0; cursor:pointer; width:100%;
-  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--text-faint); text-align:right;
-  transition:color .3s var(--ease-glass);
-}
-.section-nav-label{
-  opacity:.32; transform:translateX(4px);
-  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass);
-  white-space:nowrap;
-}
-/* a dot per section, sitting against the rail */
-.section-nav-dot{
-  width:5px; height:5px; border-radius:50%; flex-shrink:0;
-  background:var(--line-strong);
-  transition:background .3s ease, transform .35s var(--ease-glass), box-shadow .3s ease;
-}
-/* current section: full-contrast label, dot lit in the accent */
-.section-nav-item.active{ color:var(--text); }
-.section-nav-item.active .section-nav-label{ opacity:1; transform:translateX(0); }
-.section-nav-item.active .section-nav-dot{
-  background:var(--music); transform:scale(1.5);
-  box-shadow:0 0 0 3px rgba(140,9,173,.2);
-}
-/* hovering the component previews every label at once */
-.section-nav:hover .section-nav-label{ opacity:.7; transform:translateX(0); }
-.section-nav-item:hover{ color:var(--text); }
-.section-nav-item:hover .section-nav-label{ opacity:1; }
-.section-nav-item:hover .section-nav-dot{ background:var(--text); transform:scale(1.3); }
-.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; border-radius:3px; }
-
-@media (max-width:1180px), (hover:none){
-  .section-nav{ display:none; }
-}
-
-/* ---------- SIGNATURE ANIMATION — live waveform ----------
-   A single continuous line, drawn on canvas, behaves like a monitored
-   audio signal: idle ambient motion, and a gentle ripple that follows
-   the cursor. It's the one purely decorative element on the page, so
-   it stays quiet (low opacity, thin stroke) and sits behind all text. */
-.hero-scope{
-  position:absolute; left:0; right:0; bottom:0; height:46%; z-index:0;
-  pointer-events:none; opacity:.55;
-  -webkit-mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
-  mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
-}
-.hero-scope canvas{ width:100%; height:100%; display:block; }
-
-/* ---------- CUSTOM CURSOR (desktop, fine pointer only) ----------
-   No blur, ever — the content under the cursor must stay perfectly
-   legible. Two things move: a small dot, and a thin ring that grows
-   and brightens over anything clickable. A short label appears only
-   over elements that opted in via [data-cursor], to say what will
-   happen ("Ver", "Ouvir", "Abrir"). */
-.cursor-dot, .cursor-ring{
-  position:fixed; top:0; left:0; z-index:400; pointer-events:none;
-  border-radius:50%; will-change:transform; opacity:0;
-  transition:opacity .25s ease, width .3s var(--ease-glass), height .3s var(--ease-glass),
-    border-color .25s ease, background .25s ease;
-}
-.cursor-dot{
-  width:6px; height:6px; background:var(--paper); margin:0;
-}
-.cursor-ring{
-  width:30px; height:30px; margin:0;
-  border:1px solid var(--glass-border-strong);
-  display:flex; align-items:center; justify-content:center;
-}
-.cursor-label{
-  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--ink); white-space:nowrap; opacity:0; transform:scale(.6);
-  transition:opacity .2s ease, transform .25s var(--ease-glass);
-}
-body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring{ opacity:1; }
-@media (hover:hover) and (pointer:fine){
-  body.cursor-ready, body.cursor-ready a, body.cursor-ready button{ cursor:none; }
-}
-/* clickable but plain — ring grows, dot steps back a little */
-body.cursor-ready.cursor-hover .cursor-ring{ width:46px; height:46px; margin:-23px 0 0 -23px; border-color:var(--dot,var(--music)); }
-body.cursor-ready.cursor-hover .cursor-dot{ opacity:0; }
-/* elements that opt in to a contextual label: ring becomes a solid
-   pill filled with the accent colour, label fades in on top of it */
-body.cursor-ready.cursor-label-active .cursor-ring{
-  width:auto; height:auto; min-width:64px; padding:11px 18px; border-radius:999px;
-  background:var(--dot,var(--music)); border-color:transparent;
-}
-body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:scale(1); }
-body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
-@media (hover:none), (pointer:coarse){
-  .cursor-dot, .cursor-ring, .cursor-label{ display:none; }
-}
 @keyframes heroDrift{
   0%{ transform:translate(0,0) scale(1); }
   100%{ transform:translate(-2.5%, 2%) scale(1.06); }
 }
+/* the actual two-column layout — text left, photo monitor right */
 .hero-grid{ display:grid; grid-template-columns:1.35fr 0.85fr; gap:48px; align-items:center; }
 
 .hero-eyebrow{
@@ -809,12 +642,9 @@ body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
 }
 
 .hero h1{ font-size:clamp(52px, 9.6vw, 118px); font-weight:900; color:var(--text); }
-.hero h1 .accent{ color:var(--music); }
-.hero-role{
-  margin-top:22px; font-size:clamp(18px,2vw,23px); color:var(--paper-dim);
-  max-width:600px; line-height:1.5; font-family:'Fraunces', serif; font-style:italic; font-weight:400;
-}
-.hero-role b{ color:var(--text); font-style:normal; font-weight:600; }
+
+.hero-role{ font-size:19px; color:var(--text-dim); margin-top:20px; max-width:560px; line-height:1.55; }
+.hero-role b{ color:var(--text); font-weight:700; }
 
 .hero-tags{ display:flex; flex-wrap:wrap; gap:9px; margin-top:28px; }
 .hero-tag{
@@ -825,24 +655,200 @@ body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
 }
 .hero-tag:hover{ color:var(--text); border-color:var(--glass-border-strong); transform:translateY(-2px); }
 
-.hero-cta{ display:flex; gap:14px; margin-top:38px; flex-wrap:wrap; }
-.btn{
-  font-family:'IBM Plex Mono'; font-size:12.5px; letter-spacing:0.04em;
-  padding:14px 26px; border-radius:var(--radius-sm); text-decoration:none; cursor:pointer;
-  display:inline-flex; align-items:center; gap:10px; border:1px solid transparent;
-  transform:translate(var(--mx,0px), var(--my,0px));
-  transition:transform .2s var(--ease-glass), background .2s ease, border-color .2s ease;
+.hero-cta{ display:flex; gap:14px; margin-top:36px; flex-wrap:wrap; }
+
+/* ---------- CONTEXTUAL SECTION NAV ----------
+   Three jobs in one component: where am I (active label), how far
+   through am I (the rail fills as you scroll), and take me there
+   (every row is a button). Desktop only — on mobile the same
+   information lives in the fullscreen menu. */
+.section-nav{
+  position:fixed; right:26px; top:50%; transform:translateY(-50%); z-index:90;
+  display:flex; align-items:stretch; gap:14px;
+  padding:4px 0;
 }
-.btn-primary{ background:var(--music); color:#000000; font-weight:600; position:relative; overflow:hidden; }
-.btn-primary:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); background:#4bb8c49c; }
-.btn-primary::after{
-  content:''; position:absolute; top:0; left:-60%; width:35%; height:100%;
-  background:linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
-  transform:skewX(-20deg); transition:left .65s ease;
+
+/* the continuous progress rail, drawn once for the whole component */
+.section-nav-rail{
+  position:relative; width:2px; border-radius:2px; flex-shrink:0;
+  background:var(--line-strong); order:2;
 }
-.btn-primary:hover::after{ left:130%; }
-.btn-ghost{ border-color:var(--line-strong); color:var(--text); }
-.btn-ghost:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); border-color:var(--video); color:var(--video); }
+.section-nav-rail::after{
+  content:''; position:absolute; left:0; right:0; top:0; border-radius:2px;
+  height:var(--progress, 0%);
+  background:linear-gradient(to bottom, var(--music), var(--video));
+  transition:height .12s linear;
+}
+/* the playhead: a small marker riding the rail at the exact scroll position */
+.section-nav-head{
+  position:absolute; left:50%; top:var(--progress, 0%);
+  width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%;
+  background:var(--paper); box-shadow:0 0 0 3px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .28);
+  transition:top .12s linear;
+}
+
+.section-nav-items{
+  display:flex; flex-direction:column; justify-content:space-between;
+  order:1; gap:2px; list-style:none; margin:0; padding:0;
+}
+.section-nav-item{
+  position:relative; display:flex; align-items:center; justify-content:flex-end; gap:10px;
+  background:none; border:none; padding:7px 0; cursor:pointer; width:100%;
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-faint); text-align:right;
+  transition:color .3s var(--ease-glass);
+}
+.section-nav-label{
+  opacity:.32; transform:translateX(4px);
+  transition:opacity .35s var(--ease-glass), transform .35s var(--ease-glass);
+  white-space:nowrap;
+}
+/* a dot per section, sitting against the rail */
+.section-nav-dot{
+  width:5px; height:5px; border-radius:50%; flex-shrink:0;
+  background:var(--line-strong);
+  transition:background .3s ease, transform .35s var(--ease-glass), box-shadow .3s ease;
+}
+/* current section: full-contrast label, dot lit in the accent */
+.section-nav-item.active{ color:var(--text); }
+.section-nav-item.active .section-nav-label{ opacity:1; transform:translateX(0); }
+.section-nav-item.active .section-nav-dot{
+  background:var(--music); transform:scale(1.5);
+  box-shadow:0 0 0 3px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .2);
+}
+/* hovering the component previews every label at once */
+.section-nav:hover .section-nav-label{ opacity:.7; transform:translateX(0); }
+.section-nav-item:hover{ color:var(--text); }
+.section-nav-item:hover .section-nav-label{ opacity:1; }
+.section-nav-item:hover .section-nav-dot{ background:var(--text); transform:scale(1.3); }
+.section-nav-item:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; border-radius:3px; }
+
+@media (max-width:1180px), (hover:none){
+  .section-nav{ display:none; }
+}
+
+/* ---------- SIGNATURE ANIMATION — live waveform ----------
+   A single continuous line, drawn on canvas, behaves like a monitored
+   audio signal: idle ambient motion, and a gentle ripple that follows
+   the cursor. It's the one purely decorative element on the page, so
+   it stays quiet (low opacity, thin stroke) and sits behind all text. */
+.hero-scope{
+  position:absolute; left:0; right:0; bottom:0; height:46%; z-index:0;
+  pointer-events:none; opacity:.55;
+  -webkit-mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
+  mask-image:linear-gradient(to top, black 0%, black 55%, transparent 100%);
+}
+.hero-scope canvas{ width:100%; height:100%; display:block; }
+
+/* ---------- CUSTOM CURSOR — dot + ring ----------
+   Back to the earlier concept on purpose: a small solid dot for exact
+   aim, and a thin ring around it that answers "is this interactive?"
+   before the click. Three things were actually broken about it, fixed
+   here without changing what it looks like:
+
+   1. CONTRAST — a ring drawn in a single translucent light colour can
+      wash out over the paper-toned photo or a light gallery card. Every
+      stroke now carries a hairline dark contact-shadow behind the light
+      stroke (box-shadow, not a blurred glow), so there's always a dark
+      edge and a light edge — one of the two reads on any background in
+      the palette. Restrained on purpose: no spread, no colour, no
+      videogame glow.
+
+   2. PRECISION / OFFSET — the ring used to lerp toward the pointer on
+      its own animation loop, which left it visibly behind the real
+      pointer position during a fast move (that's what made it look
+      "outside" the thing being hovered). The dot and ring are now both
+      children of one host, positioned with a fixed CSS transform
+      (translate(-50%,-50%)) and moved by writing the host's transform
+      directly from the pointer event — zero smoothing, zero lag. Only
+      size/border/colour animate; position never does.
+
+   3. STATES — normal / link / primary button / nav / project each get
+      a distinct, restrained treatment (see below) instead of one
+      generic "hover" bucket. */
+.cursor-host{
+  position:fixed; top:0; left:0; z-index:400; pointer-events:none;
+  width:0; height:0; opacity:0; transition:opacity .2s ease;
+}
+body.cursor-ready .cursor-host{ opacity:1; }
+@media (hover:hover) and (pointer:fine){
+  body.cursor-ready, body.cursor-ready a, body.cursor-ready button{ cursor:none; }
+}
+
+.cur-dot, .cur-ring{
+  position:absolute; top:0; left:0; border-radius:50%;
+  transform:translate(-50%,-50%);
+  transition:width .25s var(--ease-glass), height .25s var(--ease-glass),
+    border-color .2s ease, background .2s ease, opacity .2s ease, transform .25s var(--ease-glass);
+}
+.cur-dot{
+  width:6px; height:6px; background:var(--paper);
+  box-shadow:0 0 0 1px rgba(10,9,7,.55);
+}
+.cur-ring{
+  width:26px; height:26px;
+  border:1.5px solid rgba(243,236,221,.6);
+  box-shadow:0 0 0 1px rgba(10,9,7,.4);
+}
+
+.cursor-label{
+  position:absolute; top:20px; left:50%; transform:translate(-50%,0) scale(.7); transform-origin:top center;
+  font-family:'IBM Plex Mono'; font-size:10px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ink); white-space:nowrap; opacity:0;
+  background:var(--accent); padding:7px 13px; border-radius:999px;
+  box-shadow:0 0 0 1px rgba(10,9,7,.5);
+  transition:opacity .2s ease, transform .25s var(--ease-glass);
+}
+
+/* --- generic link / clickable: ring opens, brightens to a solid edge --- */
+body.cursor-ready.cursor-hover .cur-ring{
+  width:38px; height:38px; border-color:rgba(243,236,221,.92);
+}
+body.cursor-ready.cursor-hover .cur-dot{ width:4px; height:4px; }
+
+/* --- primary action (.btn, category filters): ring grows further and
+       takes a faint accent fill, reading as "this is the main thing" --- */
+body.cursor-ready.cursor-hover-btn .cur-ring{
+  width:46px; height:46px; border-color:var(--accent);
+  background:hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .14);
+}
+body.cursor-ready.cursor-hover-btn .cur-dot{ opacity:0; }
+
+/* --- navigation (top bar, side rail, language menu): ring tints in the
+       accent colour but stays the same size as the plain hover state —
+       it works alongside each item's own hover animation rather than
+       competing with it, and the dot stays visible since nav targets
+       are small and benefit from a precise aim point --- */
+body.cursor-ready.cursor-hover-nav .cur-ring{
+  width:34px; height:34px; border-color:var(--accent);
+}
+body.cursor-ready.cursor-hover-nav .cur-dot{ background:var(--accent); }
+
+/* --- labelled element (a project, a contact): ring fills solid and a
+       short tag names the action --- */
+body.cursor-ready.cursor-label-active .cur-ring{
+  width:auto; height:auto; min-width:60px; padding:11px 18px; border-radius:999px;
+  background:var(--accent); border-color:transparent;
+  transform:translate(-50%,-50%);
+}
+body.cursor-ready.cursor-label-active .cur-dot{ opacity:0; }
+body.cursor-ready.cursor-label-active .cursor-label{ opacity:1; transform:translate(-50%,0) scale(1); }
+
+/* --- draggable control (the hue rail): dashed ring reads as "grab and
+       slide" rather than "click once" --- */
+body.cursor-ready.cursor-drag .cur-ring{
+  width:48px; height:48px; border-style:dashed; border-color:var(--accent-2);
+}
+body.cursor-ready.cursor-drag .cur-dot{ opacity:0; }
+
+/* --- pressed: a quick contraction confirms the click before the page
+       itself responds --- */
+body.cursor-ready.cursor-down .cur-ring{ transform:translate(-50%,-50%) scale(.86); }
+body.cursor-ready.cursor-down .cur-dot{ transform:translate(-50%,-50%) scale(1.4); }
+
+@media (hover:none), (pointer:coarse){
+  .cursor-host{ display:none; }
+}
 
 /* ---------- CHEVRON — replaces every ▸ glyph across the site.
    One small, consistent, animated indicator for "this goes somewhere". ---------- */
@@ -855,6 +861,23 @@ body.cursor-ready.cursor-label-active .cursor-dot{ opacity:0; }
 }
 a:hover .chev, button:hover .chev{ transform:rotate(-45deg) translateX(4px); opacity:1; }
 @media (hover:none){ a:hover .chev{ transform:rotate(-45deg); } }
+.btn{
+  font-family:'IBM Plex Mono'; font-size:12.5px; letter-spacing:0.04em;
+  padding:14px 26px; border-radius:var(--radius-sm); text-decoration:none; cursor:pointer;
+  display:inline-flex; align-items:center; gap:10px; border:1px solid transparent;
+  transform:translate(var(--mx,0px), var(--my,0px));
+  transition:transform .2s var(--ease-glass), background .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn-primary{ background:var(--video); color:var(--ink); font-weight:700; position:relative; overflow:hidden; }
+.btn-primary::after{
+  content:''; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);
+  transform:translateX(-100%); transition:transform .6s ease;
+}
+.btn-primary:hover::after{ transform:translateX(100%); }
+.btn-primary:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); background:#4bb8c49c; }
+.btn-ghost{ border-color:var(--line-strong); color:var(--text); }
+.btn-ghost:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); border-color:var(--video); color:var(--video); }
 .btn-sm{ padding:9px 15px; font-size:11px; }
 .btn-spotify{ background:#1DB954; color:#06210f; font-weight:600; border-color:#1DB954; }
 .btn-spotify:hover{ transform:translate(var(--mx,0px), calc(var(--my,0px) - 2px)); background:#22e560; }
@@ -1208,7 +1231,7 @@ img.js-lightbox{ cursor:zoom-in; }
 }
 .contact::before{
   content:''; position:absolute; inset:0;
-  background:radial-gradient(ellipse 600px 300px at 90% -10%, #8c09ad93, transparent 60%);
+  background:radial-gradient(ellipse 600px 300px at 90% -10%, hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .58), transparent 60%);
   pointer-events:none;
 }
 .contact h2{ font-size:clamp(38px,6.6vw,74px); }
@@ -1225,7 +1248,7 @@ img.js-lightbox{ cursor:zoom-in; }
    used everywhere else on the page */
 .contact-card::before{
   content:''; position:absolute; inset:0; z-index:-1;
-  background:linear-gradient(to top, rgba(140,9,173,.18), transparent 65%);
+  background:linear-gradient(to top, hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .18), transparent 65%);
   opacity:0; transition:opacity .35s ease;
 }
 .contact-card:hover{ transform:translateY(-5px); border-color:var(--music); box-shadow:0 20px 40px -26px var(--music); }

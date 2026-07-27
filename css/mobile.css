@@ -42,9 +42,9 @@
   #navLinks,
   #langSelect,
   .nav-actions .cv-btn{ display:none; }
-  /* the atmosphere dial moves into the fullscreen menu on mobile,
-     where there's room for it beside the language codes */
-  #atmos{ display:none; }
+  /* the theme picker moves into the fullscreen menu on mobile, where a
+     drag has room to work and doesn't fight the top bar for space */
+  .topnav .theme-pick{ display:none; }
   .nav-actions{ gap:0; }
 
   /* ---- menu trigger: two lines that cross into an X ---- */
@@ -99,8 +99,8 @@
   .nav-overlay-bg::after{
     content:''; position:absolute; inset:0; pointer-events:none;
     background:
-      radial-gradient(ellipse 700px 500px at 90% 12%, rgba(75,184,196,.30), transparent 62%),
-      radial-gradient(ellipse 800px 600px at 5% 92%, rgba(197,26,240,.28), transparent 62%);
+      radial-gradient(ellipse 700px 500px at 90% 12%, hsl(calc(var(--accent-h) + 96) 50% 62% / .30), transparent 62%),
+      radial-gradient(ellipse 800px 600px at 5% 92%, hsl(var(--accent-h) 88% 52% / .28), transparent 62%);
     opacity:0; transition:opacity .5s ease .18s;
   }
   .nav-overlay.open .nav-overlay-bg::after{ opacity:1; }
@@ -157,8 +157,17 @@
   .nav-overlay.open .nav-overlay-foot{ opacity:1; transform:translateY(0); }
   .cv-btn--overlay{ font-size:11px; padding:12px 20px; }
   .nav-overlay-langs{ display:flex; gap:4px; }
-  .nav-overlay .atmos{ display:flex; gap:8px; margin-top:18px; }
-  .nav-overlay .atmos-btn{ width:22px; height:22px; }
+  /* in the overlay the picker is always open — no trigger to hunt for,
+     and the rail gets a proper touch target */
+  .nav-overlay .theme-pick{ width:100%; margin-top:20px; }
+  .nav-overlay .theme-trigger{ display:none; }
+  .nav-overlay .theme-panel{
+    position:static; opacity:1; visibility:visible; transform:none;
+    width:100%; padding:14px 0 0; background:none; border:none;
+    backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:none;
+  }
+  .nav-overlay .theme-rail{ height:38px; }
+  .nav-overlay .theme-handle{ width:28px; height:28px; margin:-14px 0 0 -14px; }
   .nav-overlay-langs button{
     background:none; border:1px solid transparent; cursor:pointer; border-radius:8px;
     padding:8px 10px; font-family:'IBM Plex Mono'; font-size:11.5px; letter-spacing:.06em;

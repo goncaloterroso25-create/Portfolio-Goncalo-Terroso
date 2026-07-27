@@ -136,116 +136,11 @@
   void baseFilter;
 })();
 
-// ---- 3. Vinyl → spin it by hand --------------------------------------
-// Silent, entirely visual. Tap to spin up or wind down; drag across the
-// disc to push it faster, slow it, or send it backwards, and it keeps
-// the momentum you gave it before easing back to speed. A marker dot
-// makes the rotation readable — concentric grooves alone would look
-// motionless.
-(function(){
-  const discs = document.querySelectorAll('.single-vinyl');
-  if(!discs.length) return;
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const CRUISE = 2.6; // degrees per frame at rest speed
-
-  discs.forEach(disc=>{
-    const card = disc.closest('.single-card') || disc.parentElement;
-    let angle = 0, vel = 0, target = 0;
-    let playing = false, raf = null;
-    let dragging = false, lastX = 0, moved = 0;
-
-    disc.style.cursor = 'grab';
-    disc.setAttribute('role', 'button');
-    disc.setAttribute('tabindex', '0');
-    disc.setAttribute('aria-label', 'Disco');
-
-    function render(){
-      disc.style.transform = 'rotate(' + angle.toFixed(2) + 'deg)';
-    }
-
-    function frame(){
-      if(!dragging){
-        // ease toward the target speed; when stopped this is a spin-down
-        vel += (target - vel) * 0.045;
-      }
-      angle = (angle + vel) % 360;
-      render();
-
-      const settled = !playing && Math.abs(vel) < 0.02;
-      if(settled){
-        vel = 0;
-        raf = null;
-        return;   // stop the loop entirely once it's at rest
-      }
-      raf = requestAnimationFrame(frame);
-    }
-
-    function kick(){
-      if(!raf) raf = requestAnimationFrame(frame);
-    }
-
-    function setPlaying(on){
-      playing = on;
-      target = on ? CRUISE : 0;
-      if(card) card.classList.toggle('vinyl-live', on);
-      if(reduceMotion){
-        // no continuous spinning; just show the live state
-        vel = 0; target = 0;
-        return;
-      }
-      kick();
-    }
-
-    disc.addEventListener('pointerdown', (e)=>{
-      dragging = true; moved = 0; lastX = e.clientX;
-      disc.setPointerCapture && disc.setPointerCapture(e.pointerId);
-      disc.style.cursor = 'grabbing';
-    });
-
-    disc.addEventListener('pointermove', (e)=>{
-      if(!dragging) return;
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
-      moved += Math.abs(dx);
-      if(reduceMotion) return;
-      angle += dx * 0.9;
-      vel = dx * 0.9;      // carry the throw as momentum
-      render();
-      kick();
-    });
-
-    function endDrag(e){
-      if(!dragging) return;
-      dragging = false;
-      disc.style.cursor = 'grab';
-      if(e && e.pointerId != null && disc.releasePointerCapture){
-        try { disc.releasePointerCapture(e.pointerId); } catch(err){}
-      }
-      // a drag under a few pixels counts as a tap
-      if(moved < 4){ setPlaying(!playing); }
-      else { if(!playing) setPlaying(true); else kick(); }
-    }
-
-    disc.addEventListener('pointerup', endDrag);
-    disc.addEventListener('pointercancel', endDrag);
-    disc.addEventListener('lostpointercapture', endDrag);
-
-    disc.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setPlaying(!playing); }
-    });
-
-    // a disc scrolled out of view has no business animating
-    if('IntersectionObserver' in window){
-      new IntersectionObserver((entries)=>{
-        entries.forEach(en=>{
-          if(!en.isIntersecting && raf){ cancelAnimationFrame(raf); raf = null; }
-          else if(en.isIntersecting && playing && !raf){ kick(); }
-        });
-      }, {threshold:0}).observe(disc);
-    }
-  });
-})();
+// ---- 3. Vinyl --------------------------------------------------------
+// Intentionally no JavaScript. The whole interaction is hover, handled
+// in CSS (see "vinyl: hover only" in style.css): no click state, no
+// drag, no audio. Kept as a note so nobody re-adds a click handler
+// later wondering why it's missing.
 
 // ---- 4. "GONJAY" → studio mode ---------------------------------------
 // Typing the artist alias pushes the page into a louder state: the
@@ -297,92 +192,71 @@
   });
 })();
 
-// ---- 5. TERROSO → kinetic type ---------------------------------------
-// The centrepiece interaction. Each letter is its own element and
-// responds to how close the cursor is and how fast it's moving: near
-// letters lift toward the viewer, stretch in weight and widen their
-// tracking, while their neighbours ease off in proportion. Nothing
-// snaps — every value is spring-eased on its own frame loop, so
-// sweeping across it feels like dragging a hand through water.
+// ---- 5. The name → two complementary kinetic behaviours -------------
+// The centrepiece. Both lines split into per-letter elements driven by
+// the same proximity falloff and the same spring, so they read as one
+// system — but they answer differently, which is what makes hovering
+// both worth doing:
 //
-// The letters never move far enough to break the word, and the whole
-// thing settles back to a clean, legible wordmark the moment the
-// cursor leaves. On touch it becomes a one-shot ripple instead.
-(function(){
-  const host = document.querySelector('.hero h1 .accent');
+//   GONÇALO  → letters SINK and open apart, weight draining out.
+//              Reads as the surface giving way under the cursor.
+//   TERROSO  → letters RISE toward you, tighten and light up.
+//              Reads as the surface pushing back.
+//
+// Same physics, opposite sign. Neither ever moves far enough to break
+// the word, and both settle to a clean wordmark on leave.
+function kineticWord(host, opts){
   if(!host) return;
-
   const word = host.textContent.trim();
   const canHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // rebuild as individual letters, keeping the word readable to
-  // screen readers and to anything that copies the text
   host.textContent = '';
   host.setAttribute('aria-label', word);
   const letters = word.split('').map((ch, i)=>{
     const el = document.createElement('span');
     el.className = 'kt';
-    el.textContent = ch;
+    // a non-breaking space still needs to occupy a cell
+    el.textContent = ch === ' ' ? '\u00A0' : ch;
     el.setAttribute('aria-hidden', 'true');
     el.style.setProperty('--i', i);
     host.appendChild(el);
-    return { el, i, cur:0, target:0 };
+    return { el, cur:0, target:0 };
   });
 
-  if(reduce){
-    // keep the letters (they're the markup now) but no continuous motion
-    host.classList.add('kt-static');
-    return;
-  }
+  if(reduce){ host.classList.add('kt-static'); return; }
 
-  let raf = null, active = false;
-  let pointerX = -1, lastX = -1, speed = 0;
+  let raf = null, active = false, pointerX = -1, lastX = -1, speed = 0;
 
   function frame(){
     let moving = false;
-    const rect = host.getBoundingClientRect();
-
     letters.forEach(L=>{
       if(active && pointerX >= 0){
         const b = L.el.getBoundingClientRect();
-        const cx = b.left + b.width/2;
-        // falloff: 1 at the cursor, easing to 0 about 170px away
-        const d = Math.abs(pointerX - cx);
-        L.target = Math.max(0, 1 - d / 170);
+        const d = Math.abs(pointerX - (b.left + b.width/2));
+        L.target = Math.max(0, 1 - d / opts.reach);
       } else {
         L.target = 0;
       }
-      // spring toward the target rather than jumping — this is what
-      // makes a fast sweep leave a trailing wave behind the cursor
-      L.cur += (L.target - L.cur) * 0.16;
+      L.cur += (L.target - L.cur) * opts.spring;
       if(Math.abs(L.target - L.cur) > 0.001) moving = true;
 
       const v = L.cur;
       if(v > 0.002){
-        // weight and width ride the falloff; the lift is deliberately
-        // small so the baseline still reads as a single word
         L.el.style.setProperty('--v', v.toFixed(3));
-        L.el.style.setProperty('--lift', (-v * 14).toFixed(2) + 'px');
-        L.el.style.setProperty('--track', (v * 5).toFixed(2) + 'px');
-        // a touch of extra scale when the cursor is moving quickly
-        L.el.style.setProperty('--sc', (1 + v * (0.10 + speed * 0.035)).toFixed(3));
+        L.el.style.setProperty('--lift',  (v * opts.lift).toFixed(2) + 'px');
+        L.el.style.setProperty('--track', (v * opts.track).toFixed(2) + 'px');
+        L.el.style.setProperty('--sc', (1 + v * (opts.scale + speed * opts.speedScale)).toFixed(3));
       } else {
-        L.el.style.setProperty('--v', '0');
-        L.el.style.setProperty('--lift', '0px');
-        L.el.style.setProperty('--track', '0px');
-        L.el.style.setProperty('--sc', '1');
+        L.el.style.setProperty('--v','0');
+        L.el.style.setProperty('--lift','0px');
+        L.el.style.setProperty('--track','0px');
+        L.el.style.setProperty('--sc','1');
       }
     });
-
     speed *= 0.88;
-    void rect;
-
-    if(moving || active){
-      raf = requestAnimationFrame(frame);
-    } else {
-      raf = null;
-    }
+    if(moving || active) raf = requestAnimationFrame(frame);
+    else raf = null;
   }
   function kick(){ if(!raf) raf = requestAnimationFrame(frame); }
 
@@ -390,18 +264,14 @@
     host.addEventListener('pointerenter', ()=>{ active = true; host.classList.add('kt-live'); kick(); });
     host.addEventListener('pointermove', (e)=>{
       if(lastX >= 0) speed = Math.min(3, speed + Math.abs(e.clientX - lastX) * 0.06);
-      lastX = e.clientX;
-      pointerX = e.clientX;
-      active = true;
-      kick();
+      lastX = e.clientX; pointerX = e.clientX; active = true; kick();
     });
     host.addEventListener('pointerleave', ()=>{
       active = false; pointerX = -1; lastX = -1;
-      host.classList.remove('kt-live');
-      kick();   // let the spring settle everything back to zero
+      host.classList.remove('kt-live'); kick();
     });
   } else {
-    // touch: a single ripple travelling through the word on tap
+    // touch: one ripple through the word, in that word's own direction
     host.style.cursor = 'pointer';
     host.addEventListener('click', ()=>{
       if(host.classList.contains('kt-ripple')) return;
@@ -409,7 +279,14 @@
       setTimeout(()=> host.classList.remove('kt-ripple'), 1100);
     });
   }
-})();
+}
+
+kineticWord(document.querySelector('.hero h1 .given'), {
+  reach:190, spring:0.13, lift:11, track:6, scale:-0.06, speedScale:0.02
+});
+kineticWord(document.querySelector('.hero h1 .accent'), {
+  reach:170, spring:0.16, lift:-14, track:5, scale:0.10, speedScale:0.035
+});
 
 // ---- 6. A note in the console ----------------------------------------
 (function(){

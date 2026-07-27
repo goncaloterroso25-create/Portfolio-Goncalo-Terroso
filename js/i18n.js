@@ -108,6 +108,10 @@
     telemovel: "Phone",
     footer_portfolio: "Portfolio 2026",
     lightbox_hint: "Scroll / pinch to zoom · drag to move · double-click to enlarge · Esc to close",
+
+    // Colour picker (theming control) — not the language/nav copy above,
+    // but the same completeness rule applies.
+    cp_site_color: "Site colour", cp_color_label: "Colour", cp_hue: "Hue", cp_reset: "Reset",
   };
 
   const ES = {
@@ -209,6 +213,8 @@
     telemovel: "Teléfono",
     footer_portfolio: "Portfolio 2026",
     lightbox_hint: "Scroll / pellizcar para zoom · arrastra para mover · doble clic para ampliar · Esc cierra",
+
+    cp_site_color: "Color del sitio", cp_color_label: "Color", cp_hue: "Matiz", cp_reset: "Restablecer",
   };
 
   const FR = {
@@ -310,6 +316,8 @@
     telemovel: "Téléphone",
     footer_portfolio: "Portfolio 2026",
     lightbox_hint: "Défiler / pincer pour zoomer · glisser pour déplacer · double-clic pour agrandir · Échap ferme",
+
+    cp_site_color: "Couleur du site", cp_color_label: "Couleur", cp_hue: "Teinte", cp_reset: "Réinitialiser",
   };
 
   const DICTS = { en: EN, es: ES, fr: FR };

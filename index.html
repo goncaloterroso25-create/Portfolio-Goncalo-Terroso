@@ -117,12 +117,20 @@
         </ul>
       </div>
 
-      <!-- Atmosphere: shifts the ambient light only, never the identity -->
-      <div class="atmos" id="atmos" role="group" aria-label="Atmosfera">
-        <button type="button" class="atmos-btn active" data-atmos="0"   style="--swatch:#8c09ad" aria-label="Atmosfera original"></button>
-        <button type="button" class="atmos-btn"        data-atmos="70"  style="--swatch:#0a7d5a" aria-label="Atmosfera fria"></button>
-        <button type="button" class="atmos-btn"        data-atmos="150" style="--swatch:#b8862a" aria-label="Atmosfera quente"></button>
-        <button type="button" class="atmos-btn"        data-atmos="235" style="--swatch:#1c4fd8" aria-label="Atmosfera noturna"></button>
+      <!-- Theme: writes --accent-h; every accent colour resolves from it -->
+      <div class="theme-pick" data-theme-pick>
+        <button type="button" class="theme-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="Cor do site" data-i18n-aria-label="cp_site_color"></button>
+        <div class="theme-panel" role="dialog" aria-label="Cor do site" data-i18n-aria-label="cp_site_color">
+          <div class="theme-head"><span data-i18n="cp_color_label">Cor</span><span class="theme-val" data-theme-val>291°</span></div>
+          <div class="theme-rail" data-theme-rail role="slider" tabindex="0"
+               aria-label="Matiz" data-i18n-aria-label="cp_hue" aria-valuemin="0" aria-valuemax="359" aria-valuenow="291">
+            <span class="theme-handle" data-theme-handle></span>
+          </div>
+          <div class="theme-foot">
+            <button type="button" class="theme-reset" data-theme-reset data-i18n="cp_reset">Repor</button>
+            <span class="theme-hint">←  →</span>
+          </div>
+        </div>
       </div>
 
       <!-- CV: reachable from every section, never covering content -->
@@ -167,11 +175,19 @@
         </span>
         <span class="cv-btn-text" data-i18n="cv_btn">Ver CV</span>
       </a>
-      <div class="atmos" role="group" aria-label="Atmosfera">
-        <button type="button" class="atmos-btn active" data-atmos="0"   style="--swatch:#8c09ad" aria-label="Atmosfera original"></button>
-        <button type="button" class="atmos-btn"        data-atmos="70"  style="--swatch:#0a7d5a" aria-label="Atmosfera fria"></button>
-        <button type="button" class="atmos-btn"        data-atmos="150" style="--swatch:#b8862a" aria-label="Atmosfera quente"></button>
-        <button type="button" class="atmos-btn"        data-atmos="235" style="--swatch:#1c4fd8" aria-label="Atmosfera noturna"></button>
+      <div class="theme-pick theme-pick--overlay" data-theme-pick>
+        <button type="button" class="theme-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="Cor do site" data-i18n-aria-label="cp_site_color"></button>
+        <div class="theme-panel" role="dialog" aria-label="Cor do site" data-i18n-aria-label="cp_site_color">
+          <div class="theme-head"><span data-i18n="cp_color_label">Cor</span><span class="theme-val" data-theme-val>291°</span></div>
+          <div class="theme-rail" data-theme-rail role="slider" tabindex="0"
+               aria-label="Matiz" data-i18n-aria-label="cp_hue" aria-valuemin="0" aria-valuemax="359" aria-valuenow="291">
+            <span class="theme-handle" data-theme-handle></span>
+          </div>
+          <div class="theme-foot">
+            <button type="button" class="theme-reset" data-theme-reset data-i18n="cp_reset">Repor</button>
+            <span class="theme-hint">←  →</span>
+          </div>
+        </div>
       </div>
       <div class="nav-overlay-langs" role="group" aria-label="Idioma / Language">
         <button type="button" class="lang-opt active" data-lang="pt">PT</button>
@@ -189,7 +205,7 @@
   <div class="wrap hero-grid">
     <div>
       <div class="hero-eyebrow" data-i18n="hero_eyebrow"><span class="rec-dot"></span> PORTFÓLIO AUDIOVISUAL</div>
-      <h1>GONÇALO<br><span class="accent">TERROSO</span></h1>
+      <h1><span class="given">GONÇALO</span><br><span class="accent">TERROSO</span></h1>
       <p class="hero-role" data-i18n="hero_role">
         <b>Multimedia Producer</b> com experiência em produção musical e audiovisual.
       </p>
@@ -881,8 +897,11 @@
   </div>
 </nav>
 
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"><span class="cursor-label" id="cursorLabel"></span></div>
-<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-host" id="cursorHost" aria-hidden="true">
+  <span class="cur-ring" id="curRing"></span>
+  <span class="cur-dot" id="curDot"></span>
+  <span class="cursor-label" id="cursorLabel"></span>
+</div>
 
 <script src="js/intro.js"></script>
 <script src="js/main.js"></script>
