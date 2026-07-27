@@ -116,8 +116,17 @@
     color:var(--text-faint); display:flex; align-items:center; gap:10px;
   }
   .nav-overlay-eyebrow::before{ content:''; width:22px; height:1px; background:var(--music); }
-  .nav-overlay-head{ opacity:0; transform:translateY(-8px); transition:opacity .4s ease .2s, transform .4s ease .2s; }
-  .nav-overlay.open .nav-overlay-head{ opacity:1; transform:translateY(0); }
+  .nav-overlay-head{
+    opacity:0; transform:translateY(-8px);
+    /* fast, no delay — this is the CLOSING transition (base state).
+       The staggered entrance timing lives only on .open below, so it
+       never applies in reverse when the menu closes. */
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .nav-overlay.open .nav-overlay-head{
+    opacity:1; transform:translateY(0);
+    transition:opacity .4s ease .2s, transform .4s ease .2s;
+  }
 
   .nav-overlay-links{ list-style:none; margin:26px 0 0; padding:0; }
   .nav-overlay-links li{ overflow:hidden; }
@@ -152,9 +161,18 @@
     margin-top:34px; display:flex; align-items:center; justify-content:space-between;
     gap:16px; flex-wrap:wrap;
     opacity:0; transform:translateY(10px);
+    /* fast, no delay — this is what runs when the menu CLOSES. The
+       staggered ".5s later" entrance timing only lives on the .open
+       rule below; without this split, closing the menu re-used that
+       same .5s delay in reverse, so the colour picker (and the
+       language/CV row) stayed fully visible for the better part of a
+       second after the backdrop had already wiped shut. */
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .nav-overlay.open .nav-overlay-foot{
+    opacity:1; transform:translateY(0);
     transition:opacity .4s ease .5s, transform .45s var(--ease-glass) .5s;
   }
-  .nav-overlay.open .nav-overlay-foot{ opacity:1; transform:translateY(0); }
   .cv-btn--overlay{ font-size:11px; padding:12px 20px; }
   .nav-overlay-langs{ display:flex; gap:4px; }
   /* in the overlay the picker is always open — no trigger to hunt for,
@@ -181,7 +199,9 @@
     .nav-overlay-bg{ transition:none; clip-path:none; opacity:0; }
     .nav-overlay.open .nav-overlay-bg{ opacity:1; }
     .nav-overlay.open .nav-overlay-links a{ animation:none; transform:none; opacity:1; }
-    .nav-overlay-head, .nav-overlay-foot{ transition:none; opacity:1; transform:none; }
+    .nav-overlay.open .nav-overlay-head,
+    .nav-overlay.open .nav-overlay-foot{ transition:none; opacity:1; transform:none; }
+    .nav-overlay-head, .nav-overlay-foot{ transition:none; }
   }
 }
 

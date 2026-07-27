@@ -104,7 +104,7 @@
 
     vamos_falar: "Let's talk", contactos: "Contact",
     contact_sub: "Available for new projects in music production, motion design, audiovisual editing and content for social media. Get in touch through any of the channels below.",
-    contact_linkedin_val: "Professional profile", contact_cv_lbl: "Résumé", contact_cv_val: "CV as PDF",
+    contact_linkedin_val: "Professional profile", contact_cv_lbl: "Résumé", contact_cv_val: "CV as PDF", contact_github_val: "Code repositories",
     telemovel: "Phone",
     footer_portfolio: "Portfolio 2026",
     lightbox_hint: "Scroll / pinch to zoom · drag to move · double-click to enlarge · Esc to close",
@@ -209,7 +209,7 @@
 
     vamos_falar: "Hablemos", contactos: "Contacto",
     contact_sub: "Disponible para nuevos proyectos de producción musical, motion design, edición audiovisual y contenidos para redes sociales. Contacta por cualquiera de los canales de abajo.",
-    contact_linkedin_val: "Perfil profesional", contact_cv_lbl: "Currículum", contact_cv_val: "CV en PDF",
+    contact_linkedin_val: "Perfil profesional", contact_cv_lbl: "Currículum", contact_cv_val: "CV en PDF", contact_github_val: "Repositorios de código",
     telemovel: "Teléfono",
     footer_portfolio: "Portfolio 2026",
     lightbox_hint: "Scroll / pellizcar para zoom · arrastra para mover · doble clic para ampliar · Esc cierra",
@@ -312,7 +312,7 @@
 
     vamos_falar: "Parlons-en", contactos: "Contact",
     contact_sub: "Disponible pour de nouveaux projets en production musicale, motion design, montage audiovisuel et contenus pour les réseaux sociaux. Contactez-moi par l'un des canaux ci-dessous.",
-    contact_linkedin_val: "Profil professionnel", contact_cv_lbl: "Curriculum", contact_cv_val: "CV en PDF",
+    contact_linkedin_val: "Profil professionnel", contact_cv_lbl: "Curriculum", contact_cv_val: "CV en PDF", contact_github_val: "Dépôts de code",
     telemovel: "Téléphone",
     footer_portfolio: "Portfolio 2026",
     lightbox_hint: "Défiler / pincer pour zoomer · glisser pour déplacer · double-clic pour agrandir · Échap ferme",
