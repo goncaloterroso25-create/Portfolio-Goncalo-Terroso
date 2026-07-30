@@ -156,7 +156,10 @@
   }
   .nav-overlay-head,
   .nav-overlay-links,
-  .nav-overlay-foot{ pointer-events:auto; }
+  .nav-overlay-foot{ pointer-events:none; }
+  .nav-overlay.open .nav-overlay-head,
+  .nav-overlay.open .nav-overlay-links,
+  .nav-overlay.open .nav-overlay-foot{ pointer-events:auto; }
   .nav-overlay-eyebrow{
     font-family:'IBM Plex Mono'; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase;
     color:var(--text-faint); display:flex; align-items:center; gap:10px;

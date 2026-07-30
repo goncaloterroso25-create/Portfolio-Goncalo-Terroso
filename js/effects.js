@@ -280,6 +280,8 @@
     const panel   = pick.querySelector('.theme-panel');
     const rail    = pick.querySelector('[data-theme-rail]');
     const reset   = pick.querySelector('[data-theme-reset]');
+    const mobileOverlay = pick.closest('#navOverlay');
+    const canInteract = ()=> !mobileOverlay || mobileOverlay.classList.contains('open');
 
     if(trigger){
       trigger.addEventListener('click', (e)=>{
@@ -302,13 +304,14 @@
       // pointer events cover mouse, pen and touch with one path — and
       // capture means a drag keeps working past the edge of the rail
       rail.addEventListener('pointerdown', (e)=>{
+        if(!canInteract()) return;
         e.preventDefault();
         pick.classList.add('dragging');
         rail.setPointerCapture && rail.setPointerCapture(e.pointerId);
         fromEvent(e);
       });
       rail.addEventListener('pointermove', (e)=>{
-        if(pick.classList.contains('dragging')) fromEvent(e);
+        if(canInteract() && pick.classList.contains('dragging')) fromEvent(e);
       });
       const end = (e)=>{
         pick.classList.remove('dragging');
@@ -321,6 +324,7 @@
       rail.addEventListener('lostpointercapture', end);
 
       rail.addEventListener('keydown', (e)=>{
+        if(!canInteract()) return;
         const step = e.shiftKey ? 15 : 5;
         if(e.key === 'ArrowRight' || e.key === 'ArrowUp'){ e.preventDefault(); paint(hue + step, true); }
         if(e.key === 'ArrowLeft'  || e.key === 'ArrowDown'){ e.preventDefault(); paint(hue - step, true); }
