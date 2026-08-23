@@ -409,7 +409,7 @@
       </button>
       <button class="track-btn" data-track="design" style="--dot:var(--design); --dot-bg:var(--design-dim);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-.5-1.5-.5-2.5A2.5 2.5 0 0 1 16 15h2a4 4 0 0 0 4-4c0-5-4.5-9-10-9Z"/><circle cx="7.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.2" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.3" cy="10.5" r="1.1" fill="currentColor" stroke="none"/></svg>
-        <span class="tag" data-i18n="tag_design">Design Gráfico</span><span class="count">8</span>
+        <span class="tag" data-i18n="tag_design">Design Gráfico</span><span class="count">9</span>
       </button>
     </div>
 
@@ -719,33 +719,58 @@
 
       <div class="subhead"><span class="dot" style="--dot:var(--design)"></span><h3>INVERNØ - <span data-i18n="identidade_fotografia">Identidade & Fotografia</span></h3><span class="subhead-line"></span><span class="subhead-note">Photoshop · Lightroom</span></div>
       <p class="section-note" style="max-width:none; margin-bottom:22px;" data-i18n="desc_inverno_identidade">Criação de logótipo e captação/edição de imagem para a <b style="color:var(--text)">INVERNØ</b>, projeto musical de Rui T, com os convidados André Rodrigues e Gabriel Maia.</p>
-      <div class="gallery-grid">
-        <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:1/1; background:#0a0907;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-black.jpg" alt="Logótipo INVERNØ - versão clara" style="object-fit:contain; padding:14px;" data-i18n-alt="INVERNØ logo - light version"></div>
-          <div class="clip-body">
-            <div class="clip-title"><span data-i18n="logotipo">Logótipo</span> - <span data-i18n="versao_clara">Versão clara</span></div>
-            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_claro"> Criação e estudo do logótipo da banda, para aplicação sobre fundos claros. Realizado no <b>Photoshop.</b></p>
-          </div>
-        </div>
-        <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:1/1; background:#0a0907;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-white.jpg" alt="Logótipo INVERNØ - versão escura" style="object-fit:contain; padding:14px;" data-i18n-alt="INVERNØ logo - dark version"></div>
-          <div class="clip-body">
-            <div class="clip-title"><span data-i18n="logotipo">Logótipo</span> - <span data-i18n="versao_escura">Versão escura</span></div>
-            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_escuro"> Criação e estudo do logótipo da banda, para aplicação sobre fundos escuros. Realizado no <b>Photoshop.</b></p>
-          </div>
-        </div>
-        <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:4/3;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-card-mockup.jpg" alt="Mockup do logótipo INVERNØ" data-i18n-alt="INVERNØ logo mockup"></div>
-          <div class="clip-body">
-            <div class="clip-title"><span data-i18n="logotipo">Logótipo</span> - Mockup</div>
-            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_mockup">Simulação do logótipo aplicado num ambiente físico, no <b>Photoshop.</b></p>
-          </div>
-        </div>
-        <div class="gallery-item" style="position:relative;">
-          <div class="clip-thumb" style="aspect-ratio:3/4;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Sessão fotográfica da banda INVERNØ" data-i18n-alt="INVERNØ band photo shoot"></div>
-          <div class="clip-body">
+      <div class="gallery-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));">
+        <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
+          <div class="clip-thumb" style="aspect-ratio:3/4; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Sessão fotográfica da banda INVERNØ" data-i18n-alt="INVERNØ band photo shoot"></div>
+          <div class="clip-body" style="flex:none;">
             <div class="clip-title" data-i18n="sessao_fotografica">Sessão fotográfica</div>
             <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_sessao_foto"> Captação e edição de imagem da banda, editado posteriormente no <b>Photoshop</b>, onde foi inserido o logótipo, e tratamento no <b>Lightroom</b>.</p>
+          </div>
+        </div>
+        <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
+          <div class="clip-thumb" style="aspect-ratio:3/4; display:grid; grid-template-rows:minmax(0,1fr) minmax(0,1fr); flex:1 1 auto; min-height:0;">
+            <img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-black.jpg" alt="Logótipo INVERNØ - versão clara" style="width:100%; height:100%; min-height:0; object-fit:contain; background:#fafafa; padding:18px; border-bottom:1px solid var(--line); box-sizing:border-box;" data-i18n-alt="INVERNØ logo - light version">
+            <img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-logo-white.jpg" alt="Logótipo INVERNØ - versão escura" style="width:100%; height:100%; min-height:0; object-fit:contain; background:#000000; padding:18px; box-sizing:border-box;" data-i18n-alt="INVERNØ logo - dark version">
+          </div>
+          <div class="clip-body" style="flex:none;">
+            <div class="clip-title" data-i18n="logotipo">Logótipo</div>
+            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_logo_combinado">Criação e estudo do logótipo da banda, desenvolvido nas versões preta e branca. Feito no <b>Photoshop.</b></p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; margin:32px 0 18px;">
+        <span style="font-family:'IBM Plex Mono'; font-size:11px; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;" data-i18n="subsec_cartoes_mockups">Cartões de Visita &amp; Mockups</span>
+        <span class="subhead-line"></span>
+        <span style="font-family:'IBM Plex Mono'; font-size:11px; color:var(--text-dim);">Photoshop</span>
+      </div>
+      <div class="gallery-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));">
+        <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
+          <div class="clip-thumb" style="aspect-ratio:1134/661; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-bc-front.jpg" alt="Cartão de visita INVERNØ - frente" data-i18n-alt="INVERNØ business card - front"></div>
+          <div class="clip-body" style="flex:none;">
+            <div class="clip-title" data-i18n="titulo_bc_frente">Cartão de Visita - Frente</div>
+            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_bc_frente">Frente do cartão de visita da INVERNØ, desenvolvida como extensão da identidade visual da banda.</p>
+          </div>
+        </div>
+        <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
+          <div class="clip-thumb" style="aspect-ratio:1134/661; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-bc-back.jpg" alt="Cartão de visita INVERNØ - verso" data-i18n-alt="INVERNØ business card - back"></div>
+          <div class="clip-body" style="flex:none;">
+            <div class="clip-title" data-i18n="titulo_bc_verso">Cartão de Visita - Verso</div>
+            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_bc_verso">Verso do cartão de visita da INVERNØ, desenvolvido como extensão da identidade visual da banda.</p>
+          </div>
+        </div>
+        <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
+          <div class="clip-thumb" style="aspect-ratio:4/3; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-bc-mockup2.png" alt="Cartão de visita INVERNØ - apresentação frente e verso" data-i18n-alt="INVERNØ business card - front and back presentation"></div>
+          <div class="clip-body" style="flex:none;">
+            <div class="clip-title" data-i18n="titulo_bc_apresentacao">Cartão de Visita - Apresentação</div>
+            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_bc_apresentacao">Apresentação física do cartão de visita da INVERNØ, frente e verso.</p>
+          </div>
+        </div>
+        <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
+          <div class="clip-thumb" style="aspect-ratio:4/3; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" loading="lazy" decoding="async" src="assets/images/inverno/inverno-bc-box.jpg" alt="Cartão de visita INVERNØ - apresentação em caixa" data-i18n-alt="INVERNØ business card - box presentation"></div>
+          <div class="clip-body" style="flex:none;">
+            <div class="clip-title" data-i18n="titulo_bc_caixa">Cartão de Visita - Caixa</div>
+            <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_bc_caixa">Simulação da caixa premium de apresentação do cartão de visita da INVERNØ.</p>
           </div>
         </div>
       </div>
