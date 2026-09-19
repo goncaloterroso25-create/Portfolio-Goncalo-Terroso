@@ -381,11 +381,11 @@
 }
 
 @media (max-width:600px){
-  /* Category picker: all three visible at once, no sideways scroll and
-     no clipping of the selected tab. */
+  /* Category picker: four categories in a clean 2×2 grid, with no
+     sideways scroll or clipping of the selected tab. */
   .tracks-nav{
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:8px;
     overflow:visible;
     margin:0 0 28px;
@@ -433,6 +433,7 @@
   .destaque-video-row > .feat-card{
     flex:0 0 82%; width:auto; max-width:none; scroll-snap-align:start;
   }
+  .destaque-video-row--single > .feat-card{ flex-basis:100%; }
   .clip-card.portrait{ flex-basis:62%; width:auto; }
 
   /* a quiet hint that these shelves move sideways */
@@ -483,10 +484,38 @@
   .contact-value{ font-size:15.5px; }
   .contact-icon{ width:26px; height:26px; }
   .contact-go{ opacity:.6; right:14px; bottom:14px; }
+
+  .project-dialog{
+    width:100vw; height:100svh; border:0; border-radius:0;
+  }
+  .project-dialog-shell{ scrollbar-gutter:auto; }
+  .project-dialog-close{ top:9px; margin:9px 9px -53px 0; background:rgba(20,18,15,.96); }
+  .project-detail-header{ grid-template-columns:1fr; min-height:0; }
+  .project-detail-media{ min-height:0; aspect-ratio:16/9; }
+  .project-detail-media--phone{ aspect-ratio:auto; height:330px; }
+  .project-detail-media--phone img{ max-width:74%; }
+  .project-detail-intro{ padding:30px var(--wrap-pad) 32px; }
+  .project-detail-intro h2{ font-size:clamp(38px,12vw,58px); }
+  .project-detail-lead{ font-size:14px; }
+  .project-detail-tabs{ padding:8px var(--wrap-pad); }
+  .project-detail-tabs button{ min-height:58px; padding:8px 5px; font-size:11px; line-height:1.25; }
+  .project-detail-panel{ padding:28px var(--wrap-pad) 42px; }
+  .project-overview-grid, .project-process-grid{ grid-template-columns:1fr; }
+  .project-fact, .project-process-grid article{ min-height:0; padding:22px; }
+  .project-gallery, .project-gallery--phones{ grid-template-columns:1fr; gap:12px; }
+  .project-gallery-stage{ position:relative; top:auto; width:100%; }
+  .project-gallery--phones .project-gallery-stage{ width:min(360px,100%); }
+  .project-gallery--phones .project-gallery-stage img{ max-height:none; }
+  .project-gallery-controls{ grid-column:1; }
+  .project-gallery-rail{ grid-column:1; grid-row:auto; grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
 
 @media (max-width:400px){
   .contact-grid{ grid-template-columns:1fr; }
+  .tech-actions{ flex-direction:column; }
+  .tech-cta{ width:100%; justify-content:center; }
+  .project-detail-links{ width:100%; }
+  .project-detail-tabs button{ font-size:11px; }
 }
 
 @media (max-width:640px){

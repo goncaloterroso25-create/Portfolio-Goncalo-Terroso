@@ -17,9 +17,8 @@
   let targetX = 0.5;
   let t = 0;
 
-  // Three overlapping lines. Their hues are offsets from the live theme
-  // rather than fixed colours, so the canvas follows the picker exactly
-  // like the CSS does — read fresh each frame batch, never cached.
+  // Three overlapping lines. Their hues are offsets from the live theme.
+  // The base hue is cached and refreshed only when the picker changes.
   const lines = [
     { hue:0,   sat:'90%', lig:'46%', amp:0.16, speed:0.55, freq:1.6, phase:0,   width:1.6 },
     { hue:96,  sat:'50%', lig:'62%', amp:0.10, speed:0.42, freq:2.3, phase:2.1, width:1.2 },
@@ -41,10 +40,12 @@
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
 
-  let baseHue = 291;
-  // one read per frame, not per line — getComputedStyle is the expensive part
+  let baseHue = themeHue();
+  document.addEventListener('portfolio:themechange', event=>{
+    const next = Number(event.detail && event.detail.hue);
+    if(Number.isFinite(next)) baseHue = next;
+  });
   function draw(){
-    baseHue = themeHue();
     ctx.clearRect(0,0,w,h);
     pointerX += (targetX - pointerX) * 0.045;
 
@@ -149,6 +150,34 @@
   const label = document.getElementById('cursorLabel');
   if(!host || !label) return;
 
+  // Native modal dialogs are promoted to the browser's top layer. A
+  // document-level cursor, regardless of z-index, remains underneath that
+  // layer, so move the single cursor host into whichever dialog is currently
+  // on top. When dialogs close, restore it to its original DOM position.
+  const homeParent = host.parentNode;
+  const homeNext = host.nextSibling;
+  let portalDialog = null;
+  function topOpenDialog(){
+    const lightbox = document.getElementById('lightboxOverlay');
+    const project = document.getElementById('projectDialog');
+    if(lightbox && lightbox.open) return lightbox;
+    if(project && project.open) return project;
+    return null;
+  }
+  function setCursorModalHost(preferred){
+    const nextDialog = preferred && preferred.open ? preferred : topOpenDialog();
+    if(portalDialog && portalDialog !== nextDialog) portalDialog.classList.remove('cursor-portal-active');
+    portalDialog = nextDialog;
+    if(nextDialog){
+      nextDialog.classList.add('cursor-portal-active');
+      if(host.parentNode !== nextDialog) nextDialog.appendChild(host);
+      return;
+    }
+    if(homeNext && homeNext.parentNode === homeParent) homeParent.insertBefore(host, homeNext);
+    else homeParent.appendChild(host);
+  }
+  window.__setCursorModalHost = setCursorModalHost;
+
   let ready = false;
   function onMove(e){
     if(!ready){ ready = true; document.body.classList.add('cursor-ready'); }
@@ -203,7 +232,7 @@
   document.addEventListener('pointerup',   ()=> document.body.classList.remove('cursor-down'));
 
   window.addEventListener('mouseleave', ()=> document.body.classList.remove('cursor-ready'));
-  window.addEventListener('mouseenter', ()=> document.body.classList.add('cursor-ready'));
+  window.addEventListener('mouseenter', onMove);
 
   // ---- Magnetic pull on primary buttons and category filters ----
   // The button leans gently toward the cursor while it's nearby, and
@@ -214,14 +243,23 @@
   // position.
   document.querySelectorAll('.btn, .track-btn').forEach(el=>{
     el.classList.add('magnetic');
-    el.addEventListener('mousemove', (e)=>{
-      const r = el.getBoundingClientRect();
-      const relX = e.clientX - (r.left + r.width/2);
-      const relY = e.clientY - (r.top + r.height/2);
-      el.style.setProperty('--mx', (relX*0.28)+'px');
-      el.style.setProperty('--my', (relY*0.28)+'px');
-    });
+    let rect = null, px = 0, py = 0, frame = 0;
+    el.addEventListener('pointerenter', ()=>{ rect = el.getBoundingClientRect(); });
+    el.addEventListener('pointermove', (e)=>{
+      if(!rect) rect = el.getBoundingClientRect();
+      px = e.clientX; py = e.clientY;
+      if(frame) return;
+      frame = requestAnimationFrame(()=>{
+        frame = 0;
+        const relX = px - (rect.left + rect.width/2);
+        const relY = py - (rect.top + rect.height/2);
+        el.style.setProperty('--mx', (relX*0.2)+'px');
+        el.style.setProperty('--my', (relY*0.2)+'px');
+      });
+    }, {passive:true});
     el.addEventListener('mouseleave', ()=>{
+      rect = null;
+      if(frame){ cancelAnimationFrame(frame); frame = 0; }
       el.style.setProperty('--mx','0px');
       el.style.setProperty('--my','0px');
     });
@@ -235,10 +273,21 @@
   const canHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   if(!canHover) return;
   document.querySelectorAll('.clip-card').forEach(card=>{
-    card.addEventListener('mousemove', (e)=>{
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
-      card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
+    let rect = null, px = 0, py = 0, frame = 0;
+    card.addEventListener('pointerenter', ()=>{ rect = card.getBoundingClientRect(); });
+    card.addEventListener('pointermove', (e)=>{
+      if(!rect) rect = card.getBoundingClientRect();
+      px = e.clientX; py = e.clientY;
+      if(frame) return;
+      frame = requestAnimationFrame(()=>{
+        frame = 0;
+        card.style.setProperty('--mx', ((px - rect.left) / rect.width * 100) + '%');
+        card.style.setProperty('--my', ((py - rect.top) / rect.height * 100) + '%');
+      });
+    }, {passive:true});
+    card.addEventListener('pointerleave', ()=>{
+      rect = null;
+      if(frame){ cancelAnimationFrame(frame); frame = 0; }
     });
   });
 })();
@@ -272,6 +321,7 @@
       if(val) val.textContent = Math.round(hue) + '\u00B0';
       if(rail) rail.setAttribute('aria-valuenow', Math.round(hue));
     });
+    document.dispatchEvent(new CustomEvent('portfolio:themechange', {detail:{hue}}));
     if(save){ try{ localStorage.setItem(KEY, String(Math.round(hue))); }catch(e){} }
   }
 
@@ -389,7 +439,7 @@
   });
   list.addEventListener('pointerleave', rest);
   window.addEventListener('resize', rest);
-  document.addEventListener('scroll', rest, {passive:true});
+  document.addEventListener('portfolio:scrollstate', rest);
   // the active class is written by main.js on first scroll pass
   requestAnimationFrame(rest);
 })();
@@ -416,6 +466,7 @@
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let w = 0, h = 0, raf = null, running = false;
+  let hostRect = {left:0, top:0};
   let mx = -999, my = -999;
 
   const NODES = 26;
@@ -426,20 +477,25 @@
   }));
 
   function resize(){
-    const r = host.getBoundingClientRect();
-    w = r.width; h = r.height;
+    const rect = host.getBoundingClientRect();
+    hostRect = {left:rect.left + window.scrollX, top:rect.top + window.scrollY};
+    w = rect.width; h = rect.height;
     canvas.width = Math.max(1, w*dpr); canvas.height = Math.max(1, h*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
 
-  function hue(){
+  function readHue(){
     const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--accent-h'));
     return isNaN(v) ? 291 : v;
   }
+  let baseHue = readHue();
+  document.addEventListener('portfolio:themechange', event=>{
+    const next = Number(event.detail && event.detail.hue);
+    if(Number.isFinite(next)) baseHue = next;
+  });
 
   function draw(){
     ctx.clearRect(0,0,w,h);
-    const baseHue = hue();
 
     pts.forEach(p=>{
       p.x += p.vx; p.y += p.vy;
@@ -475,10 +531,10 @@
 
   resize();
   window.addEventListener('resize', resize);
+  document.addEventListener('portfolio:languagechange', resize);
   host.addEventListener('pointermove', (e)=>{
-    const r = host.getBoundingClientRect();
-    mx = e.clientX - r.left; my = e.clientY - r.top;
-  });
+    mx = e.pageX - hostRect.left; my = e.pageY - hostRect.top;
+  }, {passive:true});
   host.addEventListener('pointerleave', ()=>{ mx = -999; my = -999; });
 
   if('IntersectionObserver' in window){

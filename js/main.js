@@ -3,9 +3,27 @@ const trackBtns = document.querySelectorAll('.track-btn');
 const panels = document.querySelectorAll('.track-panel');
 
 function activateTrack(name){
-  trackBtns.forEach(b=>b.classList.toggle('active', b.dataset.track===name));
-  panels.forEach(p=>p.classList.toggle('active', p.id === 'panel-'+name));
+  const nextPanel = document.getElementById('panel-'+name);
+  const wasActive = !!(nextPanel && nextPanel.classList.contains('active'));
+  trackBtns.forEach(b=>{
+    const on = b.dataset.track === name;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  panels.forEach(p=>{
+    const on = p.id === 'panel-'+name;
+    p.classList.toggle('active', on);
+    p.hidden = !on;
+  });
+  if(nextPanel && !wasActive && window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    window.gsap.killTweensOf(nextPanel);
+    window.gsap.fromTo(nextPanel,
+      {autoAlpha:0, y:10},
+      {autoAlpha:1, y:0, duration:.28, ease:'power2.out', clearProps:'opacity,visibility,transform'}
+    );
+  }
   document.querySelectorAll('video').forEach(v=>v.pause());
+  scheduleSectionMeasure();
 
   // Only centre the active button when the navigation genuinely overflows.
   // The mobile layout now shows all categories in a fixed grid, so forcing
@@ -66,77 +84,104 @@ const heroEl = document.getElementById('hero');
 const pipFrameEl = document.querySelector('.pip-frame');
 const heroScopeEl = document.querySelector('.hero-scope');
 const reduceMotionMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+const sectionNavEl = document.getElementById('sectionNav');
+const sectionNavItems = sectionNavEl ? Array.from(sectionNavEl.querySelectorAll('.section-nav-item')) : [];
+const sectionNavRailEl = sectionNavEl ? sectionNavEl.querySelector('.section-nav-rail') : null;
+let sectionMetrics = [];
+let heroMetric = {top:0, height:1};
+let sectionRailHeight = 0;
+let scrollFrame = 0;
+let measureFrame = 0;
+let lastActiveHref = null;
+let lastHeroPast = -1;
+let lastNavScrolled = null;
 
-function onScroll(){
+function measureSections(){
+  const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  sectionMetrics = sections.map(sec=>{
+    if(!sec) return null;
+    const rect = sec.getBoundingClientRect();
+    return {id:sec.id, top:rect.top + scrollY};
+  }).filter(Boolean);
+  if(heroEl){
+    const rect = heroEl.getBoundingClientRect();
+    heroMetric = {top:rect.top + scrollY, height:rect.height || 1};
+  }
+  if(sectionNavRailEl) sectionRailHeight = sectionNavRailEl.clientHeight;
+  updateScrollUI();
+}
+
+function currentSectionHref(){
+  const probe = (window.scrollY || document.documentElement.scrollTop || 0) + window.innerHeight * .5;
+  let current = sectionMetrics[0] || null;
+  sectionMetrics.forEach(metric=>{ if(metric.top <= probe) current = metric; });
+  return current ? ('#' + current.id) : null;
+}
+
+function scrollProgress(){
   const doc = document.documentElement;
   const scrollTop = doc.scrollTop || document.body.scrollTop;
   const scrollH = doc.scrollHeight - doc.clientHeight;
-  const pct = scrollH>0 ? scrollTop/scrollH : 0;
-  if(progressEl) progressEl.style.width = (pct*100)+'%';
-  if(topnavEl) topnavEl.classList.toggle('is-scrolled', scrollTop > 24);
+  return scrollH > 0 ? Math.min(1, Math.max(0, scrollTop / scrollH)) : 0;
+}
 
-  // subtle depth: as the hero scrolls away, the photo drifts a little
-  // slower than the page (classic parallax) and the waveform drifts
-  // the other way — a quiet cue of depth, not a visual effect on its own
+function updateScrollUI(){
+  scrollFrame = 0;
+  const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+  const progress = scrollProgress();
+  if(progressEl) progressEl.style.setProperty('--nav-progress', progress.toFixed(4));
+  const navScrolled = scrollTop > 24;
+  if(topnavEl && navScrolled !== lastNavScrolled){
+    topnavEl.classList.toggle('is-scrolled', navScrolled);
+    lastNavScrolled = navScrolled;
+  }
+
   if(heroEl && !reduceMotionMQ.matches){
-    const heroRect = heroEl.getBoundingClientRect();
-    const heroHeight = heroRect.height || 1;
-    const past = Math.min(1, Math.max(0, -heroRect.top / heroHeight));
-    if(pipFrameEl) pipFrameEl.style.transform = `translateY(${past*36}px)`;
-    if(heroScopeEl) heroScopeEl.style.transform = `translateY(${past*-24}px)`;
+    const past = Math.min(1, Math.max(0, (scrollTop - heroMetric.top) / heroMetric.height));
+    if(past !== lastHeroPast){
+      if(pipFrameEl) pipFrameEl.style.transform = `translateY(${past*36}px)`;
+      if(heroScopeEl) heroScopeEl.style.transform = `translateY(${past*-24}px)`;
+      lastHeroPast = past;
+    }
   }
 
   const activeHref = currentSectionHref();
-  navLinks.forEach(l=> l.classList.toggle('active', l.getAttribute('href') === activeHref));
-}
-document.addEventListener('scroll', onScroll, {passive:true});
-onScroll();
-
-// ---- Single source of truth for "which section am I in?" ----
-// The top bar, the mobile menu and the side rail all read from this,
-// so the three can never disagree about the active section.
-function currentSectionHref(){
-  let idx = 0;
-  sections.forEach((sec,i)=>{
-    if(sec && sec.getBoundingClientRect().top < window.innerHeight*0.5) idx = i;
-  });
-  return sections[idx] ? ('#' + sections[idx].id) : null;
-}
-function scrollProgress(){
-  const doc = document.documentElement;
-  const scrollH = doc.scrollHeight - doc.clientHeight;
-  return scrollH > 0 ? Math.min(1, Math.max(0, (doc.scrollTop || document.body.scrollTop) / scrollH)) : 0;
-}
-
-// ---- Contextual section navigation (desktop rail) ----
-// Three jobs: shows where you are, how far through you are, and jumps
-// you there on click.
-(function(){
-  const nav = document.getElementById('sectionNav');
-  if(!nav) return;
-  const items = Array.from(nav.querySelectorAll('.section-nav-item'));
-
-  items.forEach(item=>{
-    item.addEventListener('click', ()=>{
-      const target = document.querySelector(item.dataset.target);
-      if(target) target.scrollIntoView({behavior:'smooth'});
-    });
-  });
-
-  function update(){
-    nav.style.setProperty('--progress', (scrollProgress()*100).toFixed(2) + '%');
-    const activeHref = currentSectionHref();
-    items.forEach(item=>{
+  if(sectionNavEl){
+    sectionNavEl.style.setProperty('--progress-ratio', progress.toFixed(4));
+    sectionNavEl.style.setProperty('--progress-y', (progress * sectionRailHeight).toFixed(2) + 'px');
+  }
+  if(activeHref !== lastActiveHref){
+    navLinks.forEach(l=> l.classList.toggle('active', l.getAttribute('href') === activeHref));
+    sectionNavItems.forEach(item=>{
       const on = item.dataset.target === activeHref;
       item.classList.toggle('active', on);
-      item.setAttribute('aria-current', on ? 'true' : 'false');
+      if(on) item.setAttribute('aria-current', 'true');
+      else item.removeAttribute('aria-current');
     });
+    lastActiveHref = activeHref;
+    document.dispatchEvent(new CustomEvent('portfolio:scrollstate', {detail:{activeHref}}));
   }
+}
 
-  document.addEventListener('scroll', update, {passive:true});
-  window.addEventListener('resize', update);
-  update();
-})();
+function scheduleScrollUpdate(){
+  if(!scrollFrame) scrollFrame = requestAnimationFrame(updateScrollUI);
+}
+function scheduleSectionMeasure(){
+  if(!measureFrame) measureFrame = requestAnimationFrame(()=>{ measureFrame = 0; measureSections(); });
+}
+
+sectionNavItems.forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const target = document.querySelector(item.dataset.target);
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  });
+});
+document.addEventListener('scroll', scheduleScrollUpdate, {passive:true});
+window.addEventListener('resize', scheduleSectionMeasure, {passive:true});
+window.addEventListener('load', scheduleSectionMeasure, {once:true});
+document.addEventListener('portfolio:languagechange', scheduleSectionMeasure);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleSectionMeasure);
+scheduleSectionMeasure();
 
 // ---- Lightbox: fullscreen photo viewer with zoom + pan (no quality loss, no cropping) ----
 (function(){
@@ -148,6 +193,16 @@ function scrollProgress(){
   let scale = 1, originX = 0, originY = 0;
   let isDragging = false, startX = 0, startY = 0;
   let lastTouchDist = null;
+  let lastFocused = null;
+  let closeTimer = null;
+
+  function syncModalLock(){
+    if(window.__syncPortfolioModalLock) window.__syncPortfolioModalLock();
+    else {
+      const projectDialog = document.getElementById('projectDialog');
+      document.body.classList.toggle('modal-open', overlay.open || !!(projectDialog && projectDialog.open));
+    }
+  }
 
   function applyTransform(){
     imgEl.style.transform = `translate(${originX}px, ${originY}px) scale(${scale})`;
@@ -158,31 +213,60 @@ function scrollProgress(){
     applyTransform();
   }
   function openLightbox(src, alt){
+    if(!src || overlay.open) return;
+    lastFocused = document.activeElement;
     imgEl.src = src;
     imgEl.alt = alt || '';
     resetTransform();
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    if(typeof overlay.showModal === 'function') overlay.showModal();
+    else overlay.setAttribute('open','');
+    if(window.__setCursorModalHost) window.__setCursorModalHost(overlay);
+    syncModalLock();
+    requestAnimationFrame(()=> overlay.classList.add('active'));
+    closeBtn.focus({preventScroll:true});
   }
   function closeLightbox(){
+    if(!overlay.open) return;
     overlay.classList.remove('active');
-    document.body.style.overflow = '';
     isDragging = false;
     imgEl.classList.remove('dragging');
+    clearTimeout(closeTimer);
+    const finish = ()=>{
+      if(overlay.open && typeof overlay.close === 'function') overlay.close();
+      else overlay.removeAttribute('open');
+      syncModalLock();
+      if(window.__setCursorModalHost) window.__setCursorModalHost();
+      if(lastFocused && lastFocused.focus) lastFocused.focus({preventScroll:true});
+    };
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) finish();
+    else closeTimer = setTimeout(finish, 180);
   }
 
   document.querySelectorAll('img.js-lightbox').forEach(img=>{
-    img.addEventListener('click', ()=> openLightbox(img.currentSrc || img.src, img.alt));
+    if(!img.hasAttribute('tabindex')) img.tabIndex = 0;
+    if(!img.hasAttribute('role')) img.setAttribute('role','button');
   });
-
+  document.addEventListener('click', event=>{
+    const img = event.target.closest && event.target.closest('img.js-lightbox');
+    if(img) openLightbox(img.currentSrc || img.src, img.alt);
+  });
+  document.addEventListener('keydown', event=>{
+    const img = event.target.closest && event.target.closest('img.js-lightbox');
+    if(img && (event.key === 'Enter' || event.key === ' ')){
+      event.preventDefault();
+      openLightbox(img.currentSrc || img.src, img.alt);
+    }
+  });
   closeBtn.addEventListener('click', closeLightbox);
   overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeLightbox(); });
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && overlay.classList.contains('active')) closeLightbox();
+  overlay.addEventListener('cancel', e=>{ e.preventDefault(); closeLightbox(); });
+  overlay.addEventListener('close', ()=>{
+    syncModalLock();
+    if(window.__setCursorModalHost) window.__setCursorModalHost();
   });
 
   overlay.addEventListener('wheel', (e)=>{
-    if(!overlay.classList.contains('active')) return;
+    if(!overlay.open) return;
     e.preventDefault();
     const prevScale = scale;
     const delta = -e.deltaY * 0.0016;

@@ -112,7 +112,7 @@
   const closeOnClick = brand ? [...links, brand] : links;
   closeOnClick.forEach(link=> onTap(link, closeMenu));
 
-  document.addEventListener('scroll', ()=>{ if(!isOpen()) syncActive(); }, {passive:true});
+  document.addEventListener('portfolio:scrollstate', ()=>{ if(!isOpen()) syncActive(); });
 
   // If rotated/resized back past the mobile breakpoint while open, close
   // it so it can't get stuck over the (now visible) desktop nav.
