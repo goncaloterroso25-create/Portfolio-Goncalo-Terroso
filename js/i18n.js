@@ -404,7 +404,7 @@
     spoken_word_note: "Poetry and music",
 
     // Hora do Saber features, episode 4 excerpt and music player states
-    alt_hds_ep4_still: "Inês Guedes and Sílvia Geraldes in the Hora do Saber studio, with the on-screen lower third",
+    alt_hds_ep4_still: "A conversation in the Hora do Saber studio, with the guest and the presenters at the table, among microphones and a pop-up book",
     hds_feature_kicker: "Videocast · Internship at the Pedagogical Innovation Centre",
     hds_feature_desc: "Five episodes about literary works, recorded in the CIP studio. I followed the production from set to delivery: recording, live directing of the last two episodes, full editing, motion graphics and sound.",
     hds_stat_directed_short: "Episodes directed live",
@@ -824,7 +824,7 @@
     spoken_word_note: "Poesía y música",
 
     // Hora do Saber features, episode 4 excerpt and music player states
-    alt_hds_ep4_still: "Inês Guedes y Sílvia Geraldes en el estudio de Hora do Saber, con el rótulo de identificación en pantalla",
+    alt_hds_ep4_still: "Conversación en el estudio de Hora do Saber, con la invitada y las presentadoras a la mesa, entre micrófonos y un libro desplegable",
     hds_feature_kicker: "Videocast · Prácticas en el Centro de Innovación Pedagógica",
     hds_feature_desc: "Cinco episodios sobre obras literarias, grabados en el estudio del CIP. Acompañé la producción del escenario a la entrega: grabación, realización en directo de los dos últimos episodios, edición completa, motion graphics y sonido.",
     hds_stat_directed_short: "Episodios realizados en directo",
@@ -1244,7 +1244,7 @@
     spoken_word_note: "Poésie et musique",
 
     // Hora do Saber features, episode 4 excerpt and music player states
-    alt_hds_ep4_still: "Inês Guedes et Sílvia Geraldes dans le studio de Hora do Saber, avec le synthé d'identification à l'écran",
+    alt_hds_ep4_still: "Conversation dans le studio de Hora do Saber, avec l’invitée et les présentatrices autour de la table, entre micros et livre animé",
     hds_feature_kicker: "Vidéocast · Stage au Centre d'innovation pédagogique",
     hds_feature_desc: "Cinq épisodes consacrés à des œuvres littéraires, tournés dans le studio du CIP. J'ai suivi la production du décor à la livraison : tournage, réalisation en direct des deux derniers épisodes, montage complet, motion graphics et son.",
     hds_stat_directed_short: "Épisodes réalisés en direct",
