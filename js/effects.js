@@ -188,15 +188,19 @@
   // Checked in order from most to least specific — a track-btn inside
   // the nav still reads as "nav", not "generic link".
   const LABELLED = '[data-cursor]';
-  const DRAG     = '[data-theme-rail]';
+  const DRAG     = '[data-theme-rail], [data-compare-range]';
   const NAV      = '.navlinks a, .nav-overlay-links a, .section-nav-item, .lang-current, .lang-opt, .brand[data-target]';
   const BTN      = '.btn, .track-btn, .theme-trigger';
   const LINK     = 'a, button, input, textarea, [role="button"]';
 
-  const STATE_CLASSES = ['cursor-hover','cursor-hover-nav','cursor-hover-btn','cursor-label-active','cursor-drag'];
+  // native video controls keep the system cursor: the custom one steps aside
+  const MEDIA    = 'video';
+
+  const STATE_CLASSES = ['cursor-hover','cursor-hover-nav','cursor-hover-btn','cursor-label-active','cursor-drag','cursor-media'];
   function clearStates(){ document.body.classList.remove(...STATE_CLASSES); }
 
   document.addEventListener('mouseover', (e)=>{
+    const media    = e.target.closest(MEDIA);
     const labelled = e.target.closest(LABELLED);
     const drag     = e.target.closest(DRAG);
     const nav      = e.target.closest(NAV);
@@ -204,7 +208,9 @@
     const link     = e.target.closest(LINK);
 
     clearStates();
-    if(drag){
+    if(media){
+      document.body.classList.add('cursor-media');
+    } else if(drag){
       document.body.classList.add('cursor-drag');
     } else if(labelled){
       label.textContent = labelled.dataset.cursor;
@@ -221,7 +227,7 @@
     // only clear when actually leaving an interactive element, so moving
     // between two children of the same target doesn't flicker the cursor
     const stillInside = e.relatedTarget && e.relatedTarget.closest &&
-      (e.relatedTarget.closest(LABELLED) || e.relatedTarget.closest(DRAG) ||
+      (e.relatedTarget.closest(MEDIA) || e.relatedTarget.closest(LABELLED) || e.relatedTarget.closest(DRAG) ||
        e.relatedTarget.closest(NAV) || e.relatedTarget.closest(BTN) || e.relatedTarget.closest(LINK));
     if(stillInside) return;
     clearStates();

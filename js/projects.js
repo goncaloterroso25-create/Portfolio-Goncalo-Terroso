@@ -1,4 +1,5 @@
-// Creative Technology case studies: accessible dialog, fast tabs and deferred galleries.
+// Project case studies (Creative Technology and Visual Design): accessible
+// dialog, fast tabs, deferred galleries and a before/after comparison.
 (function(){
   const dialog = document.getElementById('projectDialog');
   if(!dialog) return;
@@ -42,7 +43,10 @@
       tab.tabIndex = on ? 0 : -1;
       if(on && opts.focus) tab.focus({preventScroll:true});
     });
-    panels.forEach(panel=>{ panel.hidden = panel !== target; });
+    panels.forEach(panel=>{
+      if(panel !== target) panel.querySelectorAll('video').forEach(video=> video.pause());
+      panel.hidden = panel !== target;
+    });
 
     if(hasGsap && opts.animate !== false && !reduceMotion.matches){
       window.gsap.killTweensOf(target);
@@ -80,12 +84,26 @@
     if(!items.length || !activeImg || !activeCaption) return;
 
     let current = 0;
+    let token = 0;
+    // Items may point at a larger image than their thumbnail (data-large),
+    // a full-resolution file for the lightbox (data-full) and a richer
+    // caption kept in a hidden, translated block (data-copy).
+    function sourceFor(item){
+      const thumb = item.querySelector('img');
+      return item.dataset.large || thumb.currentSrc || thumb.getAttribute('src') || thumb.dataset.src;
+    }
+    function captionFor(item){
+      const copy = item.dataset.copy && gallery.querySelector('[data-gallery-copy="'+item.dataset.copy+'"]');
+      if(copy) return {html: copy.innerHTML};
+      const caption = item.querySelector('[data-gallery-caption]');
+      return {text: caption ? caption.textContent : item.querySelector('img').alt};
+    }
     function render(index, animate){
       current = (index + items.length) % items.length;
       const item = items[current];
       const thumb = item.querySelector('img');
-      const caption = item.querySelector('[data-gallery-caption]');
-      const src = thumb.currentSrc || thumb.getAttribute('src') || thumb.dataset.src;
+      const src = sourceFor(item);
+      const run = ++token;
 
       items.forEach((button,i)=>{
         const on = i === current;
@@ -95,19 +113,46 @@
       if(count) count.textContent = (current + 1) + ' / ' + items.length;
 
       const commit = ()=>{
+        if(run !== token) return;
         activeImg.src = src;
         activeImg.alt = thumb.alt;
-        activeCaption.textContent = caption ? caption.textContent : thumb.alt;
+        if(item.dataset.full) activeImg.dataset.full = item.dataset.full;
+        else delete activeImg.dataset.full;
+        const caption = captionFor(item);
+        if(caption.html !== undefined){
+          activeCaption.innerHTML = caption.html;
+          activeCaption.querySelectorAll('*').forEach(node=>{
+            Array.from(node.attributes).forEach(attr=>{ if(attr.name.indexOf('data-i18n') === 0) node.removeAttribute(attr.name); });
+          });
+        } else {
+          activeCaption.textContent = caption.text;
+        }
       };
-      if(hasGsap && animate && !reduceMotion.matches && activeImg.getAttribute('src')){
-        window.gsap.killTweensOf(activeImg);
-        window.gsap.to(activeImg, {autoAlpha:0, scale:.992, duration:.1, ease:'power1.out', onComplete:()=>{
+      // Decode the next image before swapping so a slow load never flashes
+      // an empty frame; the previous image stays visible meanwhile.
+      const ready = item.dataset.large && activeImg.getAttribute('src') !== src
+        ? new Promise(resolve=>{
+            const pre = new Image();
+            pre.onload = pre.onerror = ()=> resolve();
+            pre.src = src;
+            if(pre.decode) pre.decode().then(resolve, resolve);
+          })
+        : Promise.resolve();
+      ready.then(()=>{
+        if(run !== token) return;
+        if(hasGsap && animate && !reduceMotion.matches && activeImg.getAttribute('src')){
+          window.gsap.killTweensOf(activeImg);
+          window.gsap.to(activeImg, {autoAlpha:0, scale:.992, duration:.1, ease:'power1.out', onComplete:()=>{
+            commit();
+            window.gsap.fromTo(activeImg, {autoAlpha:0, scale:1.008}, {autoAlpha:1, scale:1, duration:.2, ease:'power2.out', clearProps:'opacity,visibility,transform'});
+          }});
+        } else {
           commit();
-          window.gsap.fromTo(activeImg, {autoAlpha:0, scale:1.008}, {autoAlpha:1, scale:1, duration:.2, ease:'power2.out', clearProps:'opacity,visibility,transform'});
-        }});
-      } else {
-        commit();
-      }
+        }
+        // warm the cache for the next stage so stepping forward feels instant
+        const nextItem = items[(current + 1) % items.length];
+        if(nextItem && nextItem.dataset.large){ const warm = new Image(); warm.src = nextItem.dataset.large; }
+      });
     }
 
     items.forEach((item,index)=>{
@@ -131,9 +176,26 @@
     gallery.__resetGallery = ()=> render(0, false);
   }
 
+  // Before/after comparison: a native range input sits over the images, so
+  // dragging, touch and the keyboard (arrows, Home/End, Page keys) all work
+  // without custom pointer handling.
+  function setupCompare(compare){
+    const range = compare.querySelector('[data-compare-range]');
+    if(!range) return;
+    const update = ()=>{
+      const value = Number(range.value);
+      compare.style.setProperty('--pos', value + '%');
+      range.setAttribute('aria-valuetext', value + '%');
+    };
+    range.addEventListener('input', update);
+    compare.__resetCompare = ()=>{ range.value = 50; update(); };
+    update();
+  }
+
   details.forEach(detail=>{
     setupTabs(detail);
     detail.querySelectorAll('[data-project-gallery]').forEach(setupGallery);
+    detail.querySelectorAll('[data-compare]').forEach(setupCompare);
   });
 
   function showDialog(){
@@ -142,6 +204,7 @@
   }
 
   function finishClose(){
+    if(activeDetail) activeDetail.querySelectorAll('video').forEach(video=> video.pause());
     if(dialog.open) dialog.close();
     else dialog.removeAttribute('open');
     closing = false;
@@ -192,23 +255,40 @@
     const detail = details.find(item=> item.dataset.projectDetail === name);
     if(!detail || dialog.open) return;
     lastTrigger = trigger;
-    lastCardMedia = document.querySelector('[data-project-card-media="'+name+'"]');
+    // Animate from the card that was actually clicked; a project can be
+    // opened from several places, and a card inside a hidden panel has no box.
+    const card = trigger && trigger.closest('.clip-card, .gallery-item, .feat-card, .hds-feature');
+    lastCardMedia = (card && card.querySelector('[data-project-card-media="'+name+'"]')) ||
+      document.querySelector('[data-project-card-media="'+name+'"]');
+    if(lastCardMedia && !lastCardMedia.getClientRects().length) lastCardMedia = null;
 
     details.forEach(item=>{ item.hidden = item !== detail; });
     activeDetail = detail;
-    dialog.setAttribute('aria-labelledby', name === 'sheepy' ? 'projectDialogTitleSheepy' : 'projectDialogTitleSweep');
+    const title = detail.querySelector('h2[id]');
+    if(title) dialog.setAttribute('aria-labelledby', title.id);
+    // Visual design studies reuse this dialog with the design accent.
+    dialog.dataset.accent = detail.dataset.accent || 'tech';
     hydrate(detail);
-    setDetailTab(detail, 'overview', {animate:false});
+    // a trigger can ask for a specific tab (e.g. straight to the episode excerpt)
+    const startTab = (trigger && trigger.dataset.projectTab) || 'overview';
+    setDetailTab(detail, startTab, {animate:false});
     detail.querySelectorAll('[data-project-gallery]').forEach(gallery=> gallery.__resetGallery && gallery.__resetGallery());
+    detail.querySelectorAll('[data-compare]').forEach(compare=> compare.__resetCompare && compare.__resetCompare());
 
     const hero = detail.querySelector('[data-project-hero]');
     const state = hasFlip && lastCardMedia && !reduceMotion.matches
       ? window.Flip.getState(lastCardMedia, {simple:true})
       : null;
 
+    // nothing on the page keeps playing behind the case study
+    document.querySelectorAll("video").forEach(video=>{ if(!dialog.contains(video)) video.pause(); });
     showDialog();
     if(window.__setCursorModalHost) window.__setCursorModalHost(dialog);
     shell.scrollTop = 0;
+    if(startTab !== 'overview'){
+      const bar = detail.querySelector('.project-detail-tabs');
+      if(bar) shell.scrollTop = bar.offsetTop;
+    }
     syncModalLock();
     closeBtn.focus({preventScroll:true});
 
@@ -238,7 +318,12 @@
     syncModalLock();
     if(window.__setCursorModalHost) window.__setCursorModalHost();
   });
+  // Only case studies that have been opened need their captions re-rendered;
+  // touching the others would fetch gallery images on page load.
   document.addEventListener('portfolio:languagechange', ()=>{
-    details.forEach(detail=> detail.querySelectorAll('[data-project-gallery]').forEach(gallery=> gallery.__refreshActive && gallery.__refreshActive()));
+    details.forEach(detail=>{
+      if(detail.dataset.hydrated !== 'true') return;
+      detail.querySelectorAll('[data-project-gallery]').forEach(gallery=> gallery.__refreshActive && gallery.__refreshActive());
+    });
   });
 })();

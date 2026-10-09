@@ -60,8 +60,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Fraunces:ital,wght@0,500;1,400;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=20260919-4">
-<link rel="stylesheet" href="css/mobile.css?v=20260919-2">
+<link rel="stylesheet" href="css/style.css?v=20261009-2">
+<link rel="stylesheet" href="css/mobile.css?v=20261009-2">
 </head>
 <body>
 
@@ -315,46 +315,36 @@
         </a>
       </div>
       <div class="fmp-foot">
-        <a class="btn btn-primary" href="#projetos" data-jump="musica"><span data-i18n="ver_toda_musica">Ver toda a produção musical</span><span class="chev" aria-hidden="true"></span></a>
+        <a class="btn btn-primary" href="#projetos" data-jump="musica"><span data-i18n="ver_toda_musica">Ouvir a discografia</span><span class="chev" aria-hidden="true"></span></a>
       </div>
     </div>
 
     <div class="subhead" style="margin-top:0;"><span class="dot" style="--dot:var(--video)"></span><h3 data-i18n="subhead_video_estagio">Vídeo - Estágio no Centro de Inovação Pedagógica</h3><span class="subhead-line"></span></div>
-    <div class="destaque-video-row">
-      <div class="feat-card">
-        <div class="feat-media" style="aspect-ratio:16/9;">
-          <video controls preload="none" poster="assets/images/posters/motion-horasaber-intro.jpg">
-            <source src="assets/videos/motion-horasaber-intro.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="feat-body">
-          <div class="feat-badge" data-i18n="badge_estagio_cip">Estágio · Centro de Inovação Pedagógica</div>
-          <div class="feat-title">"Hora do Saber" - <span data-i18n="introducao">Introdução</span></div>
-          <p class="feat-desc" data-i18n="desc_horasaber_intro">Animação de abertura do videocast institucional do P.PORTO.</p>
-          <div class="tool-badges">
-            <span class="tool-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span data-i18n="motion_ae">Motion - After Effects</span></span>
-            <span class="tool-badge"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="10" width="2.4" height="4" rx="1"/><rect x="6.4" y="6" width="2.4" height="12" rx="1"/><rect x="10.8" y="2" width="2.4" height="20" rx="1"/><rect x="15.2" y="6" width="2.4" height="12" rx="1"/><rect x="19.6" y="10" width="2.4" height="4" rx="1"/></svg><span data-i18n="som_flstudio">Som - FL Studio</span></span>
-          </div>
+    <!-- Hora do Saber: one editorial feature for the whole production; the
+         intro, credits and episode 4 excerpt live in the case study. -->
+    <article class="hds-feature hds-feature--highlight" data-hds-feature style="--card-accent:var(--video)">
+      <div class="hds-feature-media" data-hds-media>
+        <img class="hds-feature-img" data-hds-parallax loading="lazy" decoding="async" src="assets/images/posters/hora-do-saber-ep4.jpg" width="1280" height="720" alt="Inês Guedes e Sílvia Geraldes no estúdio do Hora do Saber, com o oráculo de identificação no ecrã" data-i18n-alt="alt_hds_ep4_still" data-project-card-media="hora-do-saber" data-flip-id="project-media-hora">
+        <img class="hds-feature-inset" data-hds-inset loading="lazy" decoding="async" src="assets/images/posters/motion-horasaber-intro.jpg" width="1280" height="720" alt="">
+        <span class="clip-code">CIP · P.PORTO · 2026</span>
+      </div>
+      <div class="hds-feature-body">
+        <div class="hds-feature-kicker" data-i18n="hds_feature_kicker">Videocast · Estágio no Centro de Inovação Pedagógica</div>
+        <h3 class="hds-feature-title"><span>Hora do Saber</span><span class="hds-feature-line" aria-hidden="true"></span></h3>
+        <p class="hds-feature-desc" data-i18n="hds_feature_desc">Cinco episódios sobre obras literárias, gravados no estúdio do CIP. Acompanhei a produção do cenário à entrega: gravação, realização ao vivo dos dois últimos episódios, edição completa, motion graphics e som.</p>
+        <dl class="hds-feature-stats">
+          <div><dt data-i18n="hds_stat_edited">Episódios editados</dt><dd>05</dd></div>
+          <div><dt data-i18n="hds_stat_directed_short">Episódios realizados ao vivo</dt><dd>02</dd></div>
+        </dl>
+        <ul class="hds-feature-roles">
+          <li data-i18n="hds_role_live">Realização ao vivo</li><li data-i18n="hds_resp_edit">Edição</li><li>Motion graphics</li><li data-i18n="hds_resp_sound">Som</li>
+        </ul>
+        <div class="hds-feature-actions">
+          <button class="hds-cta hds-cta--primary" type="button" data-project-open="hora-do-saber" aria-label="Explorar a produção completa de Hora do Saber" data-i18n-aria-label="aria_explore_hora"><span data-i18n="explorar_producao">Explorar produção</span><span class="chev" aria-hidden="true"></span></button>
+          <button class="hds-cta" type="button" data-project-open="hora-do-saber" data-project-tab="editing"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-i18n="hds_watch_excerpt">Ver excerto do episódio 4</span></button>
         </div>
       </div>
-
-      <div class="feat-card">
-        <div class="feat-media" style="aspect-ratio:16/9;">
-          <video controls preload="none" poster="assets/images/posters/motion-horasaber-credits.jpg">
-            <source src="assets/videos/motion-horasaber-credits.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="feat-body">
-          <div class="feat-badge" data-i18n="badge_estagio_cip">Estágio · Centro de Inovação Pedagógica</div>
-          <div class="feat-title">"Hora do Saber" - <span data-i18n="creditos">Créditos</span></div>
-          <p class="feat-desc" data-i18n="desc_horasaber_credits">Encerramento e créditos do videocast, com sonorização própria.</p>
-          <div class="tool-badges">
-            <span class="tool-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span data-i18n="motion_ae">Motion - After Effects</span></span>
-            <span class="tool-badge"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="10" width="2.4" height="4" rx="1"/><rect x="6.4" y="6" width="2.4" height="12" rx="1"/><rect x="10.8" y="2" width="2.4" height="20" rx="1"/><rect x="15.2" y="6" width="2.4" height="12" rx="1"/><rect x="19.6" y="10" width="2.4" height="4" rx="1"/></svg><span data-i18n="som_flstudio">Som - FL Studio</span></span>
-          </div>
-        </div>
-      </div>
-    </div>
+    </article>
 
     <div class="subhead"><span class="dot" style="--dot:var(--tech)"></span><h3 data-i18n="highlight_interaction">Som + Imagem + Interação</h3><span class="subhead-line"></span></div>
     <div class="destaque-video-row destaque-video-row--single">
@@ -365,7 +355,7 @@
         <div class="feat-body">
           <div class="feat-badge" data-i18n="tag_creative_tech">Tecnologia Criativa</div>
           <div class="feat-title">Sheepy World: A Cheeky Tale</div>
-          <p class="feat-desc" data-i18n="highlight_sheepy_desc">Jogo completo de exploração pixel-art que reúne direção visual, interação, música original e sound design.</p>
+          <p class="feat-desc" data-i18n="highlight_sheepy_desc">Um jogo de exploração pixel-art criado como prenda pessoal, que reúne direção visual, interação, música original e sound design.</p>
           <div class="tool-badges">
             <span class="tool-badge">Game Design</span>
             <span class="tool-badge" data-i18n="tag_sound_design">Sound Design</span>
@@ -396,11 +386,11 @@
       </button>
       <button class="track-btn" data-track="video" aria-controls="panel-video" aria-pressed="false" style="--dot:var(--video); --dot-bg:var(--video-dim);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h16v12H4z"/><path d="m4 8 2-4h3l-2 4"/><path d="m9.5 8 2-4h3l-2 4"/><path d="m15 8 2-4h3l-2 4"/></svg>
-        <span class="tag" data-i18n="tag_video_motion">Vídeo & Motion</span><span class="count">12</span>
+        <span class="tag" data-i18n="tag_video_motion">Vídeo & Motion</span><span class="count">11</span>
       </button>
       <button class="track-btn" data-track="design" aria-controls="panel-design" aria-pressed="false" style="--dot:var(--design); --dot-bg:var(--design-dim);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-.5-1.5-.5-2.5A2.5 2.5 0 0 1 16 15h2a4 4 0 0 0 4-4c0-5-4.5-9-10-9Z"/><circle cx="7.5" cy="10.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.2" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.3" cy="10.5" r="1.1" fill="currentColor" stroke="none"/></svg>
-        <span class="tag" data-i18n="tag_visual_design">Design Visual</span><span class="count">10</span>
+        <span class="tag" data-i18n="tag_visual_design">Design Visual</span><span class="count">11</span>
       </button>
       <button class="track-btn" data-track="tech" aria-controls="panel-tech" aria-pressed="false" style="--dot:var(--tech); --dot-bg:var(--tech-dim);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9zM9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
@@ -411,68 +401,85 @@
     <!-- MÚSICA -->
     <div class="track-panel active" id="panel-musica" style="--card-accent:var(--music)">
 
-      <p class="section-note" style="max-width:none; margin:26px 0 18px;" data-i18n="faixas_destaque">FAIXAS EM DESTAQUE</p>
-      <div class="featured-row">
-        <div class="single-card">
-          <div class="single-vinyl"></div>
-          <div>
-            <div class="single-label">Single · Thxuzz</div>
-            <div class="single-title">Freestyle 01</div>
-            <div class="single-artist">Thxuzz, L3OZIN, GonJ</div>
-          </div>
-          <div class="single-links">
-            <a class="btn btn-sm btn-spotify" href="https://open.spotify.com/track/1sW0BCO3lnzCx7aYnPzV6K" target="_blank" rel="noopener">Spotify</a>
-            <a class="btn btn-sm btn-youtube" href="https://www.youtube.com/watch?v=UHzCCiGo_uc" target="_blank" rel="noopener">YouTube</a>
-          </div>
-        </div>
+      <!-- Music catalogue: track data lives in js/music.js; this markup is
+           only the structure it renders into. One Spotify embed is created
+           on demand, never on page load. -->
+      <div class="music" data-music>
+        <p class="section-note music-intro" data-i18n="music_intro">Produção musical desde 2020, em FL Studio, para artistas nacionais e internacionais, com mais de 3 milhões de streams e visualizações. Escolhe uma faixa para a ouvir aqui através do Spotify.</p>
 
-        <div class="single-card">
-          <div class="single-vinyl"></div>
-          <div>
-            <div class="single-label">Single · Thxuzz</div>
-            <div class="single-title">Freestyle 03</div>
-            <div class="single-artist">Thxuzz</div>
-          </div>
-          <div class="single-links">
-            <a class="btn btn-sm btn-spotify" href="https://open.spotify.com/track/2U8ogfw2aVxpVyuNVKjUDj" target="_blank" rel="noopener">Spotify</a>
-            <a class="btn btn-sm btn-youtube" href="https://www.youtube.com/watch?v=JYeD5qJOw_4" target="_blank" rel="noopener">YouTube</a>
-          </div>
-        </div>
+        <div class="subhead"><span class="dot" style="--dot:var(--music)"></span><h3 data-i18n="producoes_destaque">Produções em destaque</h3><span class="subhead-line"></span></div>
+        <ul class="music-featured" data-music-featured></ul>
 
-        <div class="single-card">
-          <div class="single-vinyl"></div>
-          <div>
-            <div class="single-label">Single · PL Quest</div>
-            <div class="single-title">Original Carioca</div>
-            <div class="single-artist">PL Quest ft. MC Kevin O Chris</div>
-          </div>
-          <div class="single-links">
-            <a class="btn btn-sm btn-spotify" href="https://open.spotify.com/track/0Bc5JSx0uOTY5wqg2L6Cbo" target="_blank" rel="noopener">Spotify</a>
-            <a class="btn btn-sm btn-youtube" href="https://www.youtube.com/watch?v=ZdJoa9FAWUc" target="_blank" rel="noopener">YouTube</a>
-          </div>
+        <div class="music-layout">
+          <section class="music-catalogue" aria-labelledby="musicDiscographyTitle">
+            <div class="subhead"><span class="dot" style="--dot:var(--music)"></span><h3 id="musicDiscographyTitle" data-i18n="discografia_selecionada">Discografia selecionada</h3><span class="subhead-line"></span><span class="subhead-note" data-music-range></span></div>
+            <ol class="music-list" data-music-list></ol>
+            <p class="music-list-note" data-i18n="music_restricted_note">As faixas marcadas com restrição regional não podem ser ouvidas aqui em todos os países. Continuam disponíveis através do link para o Spotify.</p>
+            <a class="clip-link music-playlist-link" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64" target="_blank" rel="noopener"><span data-i18n="ver_playlist_completa">Ver playlist completa</span><span class="chev" aria-hidden="true"></span><span class="visually-hidden" data-i18n="new_tab_note">(abre num novo separador)</span></a>
+          </section>
+
+          <aside class="music-player" data-music-player aria-labelledby="musicPlayerTitle">
+            <div class="music-player-card">
+              <div class="music-player-head">
+                <div class="music-player-label" id="musicPlayerTitle" data-i18n="music_player_label">Ouvir no site</div>
+                <span class="music-chip" data-music-chip data-state="selected"></span>
+              </div>
+              <div class="music-now">
+                <div class="music-now-art" data-music-art-wrap>
+                  <img data-music-art width="300" height="300" alt="" loading="lazy" decoding="async">
+                </div>
+                <div class="music-now-info" data-music-info>
+                  <div class="music-now-meta" data-music-meta></div>
+                  <div class="music-now-title" data-music-title></div>
+                  <div class="music-now-artist" data-music-artist></div>
+                </div>
+              </div>
+              <div class="music-embed" data-music-embed>
+                <button type="button" class="music-load" data-music-load>
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.6 14.4c-.2.3-.6.4-.9.2-2.5-1.5-5.6-1.9-9.3-1-.4.1-.7-.1-.8-.5-.1-.4.1-.7.5-.8 4-.9 7.5-.5 10.3 1.2.3.2.4.6.2.9zm1.2-2.7c-.2.4-.7.5-1.1.3-2.9-1.8-7.3-2.3-10.7-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 3.9-1.2 8.7-.6 12.1 1.4.4.2.5.7.2 1.1zm.1-2.8C14.6 8.9 9 8.7 5.7 9.7c-.5.1-1-.2-1.1-.7-.1-.5.2-1 .7-1.1 3.8-1.1 10-.9 13.9 1.4.5.3.6.9.3 1.3-.3.4-.9.5-1.3.2z"/></svg>
+                  <span data-i18n="music_load">Carregar o leitor do Spotify</span>
+                </button>
+                <p class="music-embed-note" data-i18n="music_embed_note">O leitor só é carregado quando o pedes.</p>
+              </div>
+              <p class="music-status" data-music-status role="status" aria-live="polite"></p>
+              <a class="tech-cta music-external" data-music-external href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64" target="_blank" rel="noopener">
+                <span data-i18n="music_open_spotify">Abrir no Spotify</span>
+                <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                <span class="visually-hidden" data-i18n="new_tab_note">(abre num novo separador)</span>
+              </a>
+              <p class="music-fineprint" data-i18n="music_fineprint">A reprodução é feita pelo Spotify e depende da conta, da região e do navegador. Alguns visitantes podem ouvir apenas uma pré-visualização.</p>
+              <div hidden data-music-messages>
+                <span data-msg="loading" data-i18n="music_msg_loading">A carregar o leitor do Spotify...</span>
+                <span data-msg="ready" data-i18n="music_msg_ready">Faixa pronta no leitor. Usa o botão de reprodução do Spotify.</span>
+                <span data-msg="error" data-i18n="music_msg_error">Não foi possível carregar o leitor do Spotify. Podes ouvir a faixa diretamente no Spotify.</span>
+                <span data-msg="previewNote" data-i18n="music_msg_preview">Sem sessão iniciada, o Spotify permite ouvir 30 segundos. Abre a faixa no Spotify para a ouvir completa.</span>
+                <span data-msg="selected" data-i18n="music_state_selected">No leitor</span>
+                <span data-msg="chip_selected" data-i18n="music_chip_selected">Selecionada</span>
+                <span data-msg="chip_loading" data-i18n="music_chip_loading">A carregar</span>
+                <span data-msg="chip_ready" data-i18n="music_chip_ready">Pronta</span>
+                <span data-msg="playing" data-i18n="music_state_playing">A reproduzir</span>
+                <span data-msg="paused" data-i18n="music_state_paused">Em pausa</span>
+                <span data-msg="preview" data-i18n="music_state_preview">Pré-visualização de 30 s</span>
+                <span data-msg="chip_error" data-i18n="music_chip_error">Leitor indisponível</span>
+                <span data-msg="listen" data-i18n="music_listen">Ouvir aqui</span>
+                <span data-msg="production" data-i18n="music_credit_production">Produção</span>
+                <span data-msg="coproduction" data-i18n="music_credit_coproduction">Coprodução com prodbyiniesta</span>
+                <span data-msg="coproduction2" data-i18n="music_credit_coproduction2">Coprodução com prodbyiniesta e L3OZIN</span>
+                <span data-msg="restricted" data-i18n="music_restricted">Restrição regional</span>
+                <span data-msg="open" data-i18n="music_open_spotify">Abrir no Spotify</span>
+                <span data-msg="newtab" data-i18n="new_tab_note">(abre num novo separador)</span>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
 
-      <div class="subhead"><span class="dot" style="--dot:var(--music)"></span><h3 data-i18n="creditos_composicoes">Créditos & composições originais</h3><span class="subhead-line"></span></div>
-      <div class="grid-row">
-        <div class="clip-card" style="--card-accent:var(--music)">
-          <a class="clip-thumb linked" data-cursor="Abrir" style="aspect-ratio:643/347;" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64?si=b0b9accb32f34a90" target="_blank" rel="noopener" aria-label="Abrir playlist completa no Spotify" data-i18n-aria-label="aria_playlist_spotify">
-            <img src="assets/images/musica/gonjay.jpg" alt="Freestyle 03 no Spotify" data-i18n-alt="alt_freestyle_spotify">
-            <span class="clip-code">A1_01</span>
-            <span class="thumb-go">Spotify<span class="chev" aria-hidden="true"></span></span>
-          </a>
-          <div class="clip-body">
-            <div class="clip-title" data-i18n="creditos_prod_musical">Créditos de Produção Musical</div>
-            <p class="clip-desc" data-i18n="desc_creditos_musical">Produção para vários artistas a nível internacional, como <b>Thxuzz</b>, <b>PL Quest</b> e <b>Kevin O Chris</b>, entre outros. Mais de <b>3 milhões de streams/visualizações</b> nas plataformas de streaming.</p>
-            <div class="clip-tools"><span>FL Studio</span></div>
-            <a class="clip-link" href="https://open.spotify.com/playlist/6tiUJIbz2WAhgnrPSdIG64?si=b0b9accb32f34a90" target="_blank" rel="noopener"><span data-i18n="ver_playlist_completa">Ver playlist completa</span><span class="chev" aria-hidden="true"></span></a>
-          </div>
-        </div>
-
+      <div class="subhead"><span class="dot" style="--dot:var(--music)"></span><h3 data-i18n="outros_trabalhos_audio">Outros trabalhos de áudio</h3><span class="subhead-line"></span><span class="subhead-note" data-i18n="spoken_word_note">Poesia e música</span></div>
+      <div class="grid-row music-other">
         <div class="clip-card" style="--card-accent:var(--music)">
           <a class="clip-thumb linked" data-cursor="Abrir" style="aspect-ratio:1/1;" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" aria-label="Abrir Cidade Vazia no Instagram" data-i18n-aria-label="aria_cidade_instagram">
             <img src="assets/images/musica/inverno-audiobook.jpg" alt="INVERNØ - Cidade Vazia">
-            <span class="clip-code">A1_02</span>
+            <span class="clip-code">A2_01</span>
             <span class="thumb-go">Instagram<span class="chev" aria-hidden="true"></span></span>
           </a>
           <div class="clip-body">
@@ -486,7 +493,7 @@
         <div class="clip-card" style="--card-accent:var(--music)">
           <a class="clip-thumb linked" data-cursor="Abrir" style="aspect-ratio:1/1;" href="https://www.instagram.com/p/DMquTVCtXG_/" target="_blank" rel="noopener" aria-label="Abrir Amor em Tempo de Guerra no Instagram" data-i18n-aria-label="aria_amor_instagram">
             <img src="assets/images/musica/inverno-audiobook.jpg" alt="Amor em Tempo de Guerra">
-            <span class="clip-code">A1_03</span>
+            <span class="clip-code">A2_02</span>
             <span class="thumb-go">Instagram<span class="chev" aria-hidden="true"></span></span>
           </a>
           <div class="clip-body">
@@ -503,6 +510,33 @@
     <div class="track-panel" id="panel-video" hidden style="--card-accent:var(--video)">
 
       <div class="subhead"><span class="dot" style="--dot:var(--video)"></span><h3 data-i18n="subhead_estagio_cip">Estágio - Centro de Inovação Pedagógica</h3><span class="subhead-line"></span><span class="subhead-note">P.PORTO · 2026</span></div>
+
+      <!-- Hora do Saber leads the category: full-width showcase, intro video inline -->
+      <article class="hds-feature hds-feature--showcase" data-hds-feature style="--card-accent:var(--video)">
+        <div class="hds-feature-media" data-hds-media>
+          <span class="stage-flag" data-i18n="estagio">Estágio</span>
+          <video controls preload="none" playsinline poster="assets/images/posters/motion-horasaber-intro.jpg" aria-label="Animação de introdução de Hora do Saber" data-i18n-aria-label="aria_hds_intro_video" data-project-card-media="hora-do-saber" data-flip-id="project-media-hora">
+            <source src="assets/videos/motion-horasaber-intro.mp4" type="video/mp4">
+          </video>
+          <span class="clip-code">V1_01 · VIDEOCAST</span>
+        </div>
+        <div class="hds-feature-body">
+          <div class="hds-feature-kicker" data-i18n="hds_showcase_kicker">Projeto em destaque · Videocast em 5 episódios</div>
+          <h3 class="hds-feature-title"><span>Hora do Saber</span><span class="hds-feature-line" aria-hidden="true"></span></h3>
+          <p class="hds-feature-desc" data-i18n="hds_showcase_desc">Videocast educativo do Centro de Inovação Pedagógica do P.PORTO, apresentado por Inês Guedes e Sílvia Geraldes. Participei nas cinco gravações, realizei ao vivo os episódios 4 e 5, editei os cinco episódios e criei a introdução, os oráculos e a ficha técnica animados.</p>
+          <dl class="hds-feature-stats">
+            <div><dt data-i18n="hds_stat_edited">Episódios editados</dt><dd>05</dd></div>
+            <div><dt data-i18n="hds_stat_directed_short">Episódios realizados ao vivo</dt><dd>02</dd></div>
+            <div><dt data-i18n="hds_stat_recorded">Gravações com a minha participação</dt><dd>05</dd></div>
+          </dl>
+          <div class="clip-tools"><span>Premiere Pro</span><span>After Effects</span><span>FL Studio</span><span>Adobe Podcast</span></div>
+          <div class="hds-feature-actions">
+            <button class="hds-cta hds-cta--primary" type="button" data-project-open="hora-do-saber" aria-label="Explorar a produção completa de Hora do Saber" data-i18n-aria-label="aria_explore_hora"><span data-i18n="explorar_producao">Explorar produção</span><span class="chev" aria-hidden="true"></span></button>
+            <button class="hds-cta" type="button" data-project-open="hora-do-saber" data-project-tab="editing"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-i18n="hds_watch_excerpt">Ver excerto do episódio 4</span></button>
+          </div>
+        </div>
+      </article>
+
       <div class="grid-row">
         <div class="clip-card" style="--card-accent:var(--video)">
           <div class="clip-thumb" style="aspect-ratio:16/9;">
@@ -510,7 +544,7 @@
             <video controls preload="none" poster="assets/images/posters/motion-esmae.jpg">
               <source src="assets/videos/motion-esmae.mp4" type="video/mp4">
             </video>
-            <span class="clip-code">V1_01</span>
+            <span class="clip-code">V1_02</span>
           </div>
           <div class="clip-body">
             <div class="clip-title">Loop - <span data-i18n="jornadas_inovacao">Jornadas de Inovação</span></div>
@@ -525,42 +559,12 @@
             <video controls preload="none" poster="assets/images/posters/motion-savethedate.jpg">
               <source src="assets/videos/motion-savethedate.mp4" type="video/mp4">
             </video>
-            <span class="clip-code">V1_02</span>
+            <span class="clip-code">V1_03</span>
           </div>
           <div class="clip-body">
             <div class="clip-title">Save the Date - <span data-i18n="vertical">Vertical</span></div>
             <p class="clip-desc" data-i18n="desc_savethedate">Animação vertical de <b>"save the date"</b> para as Jornadas Internas de Inovação Pedagógica de 2026. Formato nativo para redes sociais.</p>
             <div class="clip-tools"><span>After Effects</span><span>Illustrator</span></div>
-          </div>
-        </div>
-
-        <div class="clip-card" style="--card-accent:var(--video)">
-          <div class="clip-thumb" style="aspect-ratio:16/9;">
-            <span class="stage-flag" data-i18n="estagio">Estágio</span>
-            <video controls preload="none" poster="assets/images/posters/motion-horasaber-intro.jpg">
-              <source src="assets/videos/motion-horasaber-intro.mp4" type="video/mp4">
-            </video>
-            <span class="clip-code">V1_03</span>
-          </div>
-          <div class="clip-body">
-            <div class="clip-title">Hora do Saber - <span data-i18n="introducao">Introdução</span></div>
-            <p class="clip-desc" data-i18n="desc_horasaber_intro_full">Animação de introdução do videocast <b>"Hora do Saber"</b>, dirigido e produzido no Centro de Inovação Pedagógica do P.PORTO, com moderação de Inês Guedes e Sílvia Geraldes. Organização dos grafismos em <b>Illustrator</b>, realização da animação em <b>After Effects</b>, e sonorização no <b>FL Studio</b> Todos os episódios foram posteriormente editados no <b>Premiere Pro</b>.</p>
-            <div class="clip-tools"><span>After Effects</span><span>Premiere Pro</span><span>FL Studio</span></div>
-          </div>
-        </div>
-
-        <div class="clip-card" style="--card-accent:var(--video)">
-          <div class="clip-thumb" style="aspect-ratio:16/9;">
-            <span class="stage-flag" data-i18n="estagio">Estágio</span>
-            <video controls preload="none" poster="assets/images/posters/motion-horasaber-credits.jpg">
-              <source src="assets/videos/motion-horasaber-credits.mp4" type="video/mp4">
-            </video>
-            <span class="clip-code">V1_04</span>
-          </div>
-          <div class="clip-body">
-            <div class="clip-title">Hora do Saber - <span data-i18n="creditos">Créditos</span></div>
-            <p class="clip-desc" data-i18n="desc_horasaber_credits_full">Animação de encerramento e créditos do videocast <b>"Hora do Saber"</b>. Organização dos grafismos em <b>Illustrator</b>, realização da animação em <b>After Effects</b>, e criação de música original e sonorização no <b>FL Studio</b>. Edição e pós-produção de todos os episódios em <b>Premiere Pro</b>.</p>
-            <div class="clip-tools"><span>After Effects</span><span>Premiere Pro</span><span>FL Studio</span></div>
           </div>
         </div>
       </div>
@@ -695,10 +699,13 @@
       <p class="section-note" style="max-width:none; margin-bottom:22px;" data-i18n="desc_inverno_identidade">Criação de logótipo e captação/edição de imagem para a <b style="color:var(--text)">INVERNØ</b>, projeto musical de Rui T, com os convidados André Rodrigues e Gabriel Maia.</p>
       <div class="gallery-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));">
         <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
-          <div class="clip-thumb" style="aspect-ratio:3/4; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Sessão fotográfica da banda INVERNØ" data-i18n-alt="alt_inverno_photo_shoot"></div>
+          <div class="clip-thumb" style="aspect-ratio:3/4; flex:1 1 auto; min-height:0;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/inverno/inverno-band-photo.jpg" alt="Sessão fotográfica da banda INVERNØ" data-i18n-alt="alt_inverno_photo_shoot" data-project-card-media="inverno"></div>
           <div class="clip-body" style="flex:none;">
             <div class="clip-title" data-i18n="sessao_fotografica">Sessão fotográfica</div>
             <p class="clip-desc" style="margin-top:4px;" data-i18n="desc_sessao_foto"> Captação e edição de imagem da banda, editado posteriormente no <b>Photoshop</b>, onde foi inserido o logótipo, e tratamento no <b>Lightroom</b>.</p>
+            <button class="design-cta" type="button" data-project-open="inverno" aria-label="Ver o processo criativo da fotografia INVERNØ" data-i18n-aria-label="aria_inverno_process">
+              <span data-i18n="ver_processo_criativo">Ver processo criativo</span><span class="chev" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
         <div class="gallery-item" style="position:relative; display:flex; flex-direction:column;">
@@ -750,22 +757,64 @@
       </div>
 
       <div class="subhead"><span class="dot" style="--dot:var(--design)"></span><h3 data-i18n="estudos_graficos">Estudos gráficos selecionados</h3><span class="subhead-line"></span></div>
+
+      <div class="design-divider">
+        <span class="design-divider-label" data-i18n="estudos_academicos">Estudos académicos</span>
+        <span class="subhead-line"></span>
+        <span class="design-divider-note">ESMAD</span>
+      </div>
+      <p class="section-note design-context" data-i18n="desc_estudos_academicos">Estudos gráficos desenvolvidos no âmbito da unidade curricular de Design e Comunicação Audiovisual, durante o primeiro ano do CTeSP em Motion Design e Efeitos Visuais, na ESMAD. Os trabalhos exploram composição, manipulação de imagem e comunicação visual através de diferentes propostas criativas.</p>
       <div class="gallery-grid">
-        <div class="gallery-item">
-          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/air-jordan.jpg" alt="Air Jordan - composição gráfica" data-i18n-alt="alt_design_air_jordan"></div>
-          <div class="clip-body"><div class="clip-title">Air Jordan</div></div>
+        <div class="gallery-item design-study">
+          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/air-jordan.jpg" alt="Air Jordan - composição gráfica" data-i18n-alt="alt_design_air_jordan" data-project-card-media="air-jordan"></div>
+          <div class="clip-body">
+            <div class="design-label" data-i18n="label_academico">Projeto académico</div>
+            <div class="clip-title">Air Jordan</div>
+            <p class="design-caption" data-i18n="caption_air_jordan">Anúncio OLX criado a partir de um briefing académico.</p>
+            <button class="design-cta" type="button" data-project-open="air-jordan" aria-label="Ver detalhes do estudo Air Jordan" data-i18n-aria-label="aria_details_air_jordan"><span data-i18n="ver_detalhes">Ver detalhes</span><span class="chev" aria-hidden="true"></span></button>
+          </div>
         </div>
-        <div class="gallery-item">
-          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/malignant.jpg" alt="Estudo Malignant - poster" data-i18n-alt="alt_design_malignant"></div>
-          <div class="clip-body"><div class="clip-title"><span data-i18n="estudo">Estudo</span> - Malignant</div></div>
+        <div class="gallery-item design-study">
+          <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/malignant.jpg" alt="Estudo Malignant - poster" data-i18n-alt="alt_design_malignant" data-project-card-media="malignant"></div>
+          <div class="clip-body">
+            <div class="design-label" data-i18n="label_academico">Projeto académico</div>
+            <div class="clip-title"><span data-i18n="estudo">Estudo</span> - Malignant</div>
+            <p class="design-caption" data-i18n="caption_malignant">Estudo de composição inacabado, a partir de imagens do filme.</p>
+            <button class="design-cta" type="button" data-project-open="malignant" aria-label="Ver detalhes do estudo Malignant" data-i18n-aria-label="aria_details_malignant"><span data-i18n="ver_detalhes">Ver detalhes</span><span class="chev" aria-hidden="true"></span></button>
+          </div>
         </div>
-        <div class="gallery-item">
+        <div class="gallery-item design-study">
           <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/jigsaw.jpg" alt="Jigsaw - poster" data-i18n-alt="alt_design_jigsaw"></div>
-          <div class="clip-body"><div class="clip-title">Jigsaw</div></div>
+          <div class="clip-body">
+            <div class="design-label" data-i18n="label_academico">Projeto académico</div>
+            <div class="clip-title">Jigsaw</div>
+            <p class="design-caption" data-i18n="caption_jigsaw">Cartaz centrado na personagem Jigsaw, da saga Saw.</p>
+          </div>
         </div>
-        <div class="gallery-item">
+        <div class="gallery-item design-study">
           <div class="clip-thumb" style="aspect-ratio:900/1273;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/saw-japan.jpg" alt="Saw Japan - capa de álbum" data-i18n-alt="alt_design_saw_japan"></div>
-          <div class="clip-body"><div class="clip-title">Saw Japan</div></div>
+          <div class="clip-body">
+            <div class="design-label" data-i18n="label_academico">Projeto académico</div>
+            <div class="clip-title">Saw Japan</div>
+            <p class="design-caption" data-i18n="caption_saw_japan">Estudo de capa com referências à saga Saw.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="design-divider">
+        <span class="design-divider-label" data-i18n="exploracao_independente">Exploração independente</span>
+        <span class="subhead-line"></span>
+        <span class="design-divider-note">Photoshop</span>
+      </div>
+      <div class="gallery-grid gallery-grid--fill">
+        <div class="gallery-item design-study">
+          <div class="clip-thumb" style="aspect-ratio:1/1;"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" src="assets/images/design/personal/reflexo-card.webp" data-full="assets/images/design/personal/reflexo.webp" width="800" height="800" alt="Composição em tons sépia com uma casa isolada e o seu reflexo invertido" data-i18n-alt="alt_design_reflexo" data-project-card-media="reflexo"></div>
+          <div class="clip-body">
+            <div class="design-label design-label--personal" data-i18n="label_pessoal">Estudo pessoal</div>
+            <div class="clip-title" data-i18n="title_reflexo">Estudo de Composição: Reflexo</div>
+            <p class="design-caption" data-i18n="caption_reflexo">Fotografia de Lorenzo Castellino (Pexels) reinterpretada numa composição espelhada.</p>
+            <button class="design-cta" type="button" data-project-open="reflexo" aria-label="Ver detalhes do estudo pessoal Reflexo" data-i18n-aria-label="aria_details_reflexo"><span data-i18n="ver_detalhes">Ver detalhes</span><span class="chev" aria-hidden="true"></span></button>
+          </div>
         </div>
       </div>
       <p class="section-note" style="margin-top:22px; max-width:none;" data-i18n="pecas_design_note">Peças selecionadas de design gráfico feitas em Photoshop e Illustrator.</p>
@@ -787,10 +836,10 @@
             <span class="clip-code">CT_01 · GAME</span>
           </div>
           <div class="clip-body">
-            <div class="tech-kicker" data-i18n="tech_game_kicker">Jogo · Experiência interativa</div>
+            <div class="tech-kicker" data-i18n="tech_game_kicker">Jogo · Projeto pessoal</div>
             <div class="clip-title">Sheepy World: A Cheeky Tale</div>
-            <p class="clip-desc" data-i18n="sheepy_desc">Jogo completo de exploração pixel-art, com regiões interligadas, recuperação de memórias, diálogo, suporte a comando, gravação persistente e versão nativa para Windows.</p>
-            <p class="tech-role" data-i18n="sheepy_role"><strong>O meu papel:</strong> conceito, game design, direção criativa, desenvolvimento iterativo, música original, sound design e QA, num workflow assistido por IA.</p>
+            <p class="clip-desc" data-i18n="sheepy_desc">Nasceu como prenda de aniversário de namoro para a minha namorada: memórias, lugares e pequenas histórias transformados num jogo de exploração pixel-art. A versão pública foi adaptada para proteger o conteúdo pessoal e pode ser jogada no Windows.</p>
+            <p class="tech-role" data-i18n="sheepy_role"><strong>O meu papel:</strong> conceito, game design, direção criativa, UI, música original, sound design, QA e preparação da versão pública, num workflow assistido por IA.</p>
             <div class="clip-tools" aria-label="Tecnologias" data-i18n-aria-label="technologies_aria">
               <span>Phaser</span><span>TypeScript</span><span>Vite</span><span>Tauri</span>
             </div>
@@ -804,8 +853,8 @@
                 <span data-i18n="view_github">Ver no GitHub</span>
                 <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
               </a>
-              <a class="tech-cta" href="https://github.com/goncaloterroso25-create/Sheepy-World/releases/tag/SheepyWorldV1" target="_blank" rel="noopener" aria-label="Ver versão de Sheepy World para Windows (abre num novo separador)" data-i18n-aria-label="aria_sheepy_windows">
-                <span data-i18n="windows_release">Versão Windows</span>
+              <a class="tech-cta" href="https://github.com/goncaloterroso25-create/Sheepy-World/releases/tag/SheepyWorldV1" target="_blank" rel="noopener" aria-label="Experimentar a versão pública de Sheepy World para Windows (abre a página de download no GitHub num novo separador)" data-i18n-aria-label="aria_sheepy_windows">
+                <span data-i18n="windows_release">Experimentar versão Windows</span>
                 <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
               </a>
             </div>
@@ -813,8 +862,8 @@
         </article>
 
         <article class="clip-card tech-card" data-project-card="sweep" style="--card-accent:var(--tech)">
-          <div class="clip-thumb tech-media tech-media--portrait" style="aspect-ratio:16/9;">
-            <img loading="lazy" decoding="async" src="assets/images/creative-tech/sweep/categories-dark.png" alt="Categorias de limpeza e gestão de armazenamento na aplicação Sweep" data-i18n-alt="alt_sweep_categories" data-project-card-media="sweep" data-flip-id="project-media-sweep">
+          <div class="clip-thumb tech-media tech-media--logo" style="aspect-ratio:16/9;">
+            <img loading="lazy" decoding="async" src="assets/images/creative-tech/sweep/sweep-logo.webp" width="640" height="640" alt="Logótipo do Sweep: três barras verde-lima sobre fundo escuro" data-i18n-alt="alt_sweep_logo" data-project-card-media="sweep" data-flip-id="project-media-sweep">
             <span class="clip-code">CT_02 · ANDROID</span>
           </div>
           <div class="clip-body">
@@ -972,7 +1021,7 @@
         <div class="project-detail-intro">
           <div class="tech-kicker" data-i18n="tech_game_kicker">Jogo · Experiência interativa</div>
           <h2 id="projectDialogTitleSheepy">Sheepy World: A Cheeky Tale</h2>
-          <p class="project-detail-lead" data-i18n="sheepy_detail_lead">Uma experiência de exploração pixel-art onde memórias, lugares e pequenas interações constroem a progressão.</p>
+          <p class="project-detail-lead" data-i18n="sheepy_detail_lead">Sheepy World nasceu como uma prenda de aniversário de namoro para a minha namorada: transformei memórias, lugares e pequenas histórias numa experiência interativa de exploração pixel-art. A versão pública disponível no GitHub foi adaptada para proteger o conteúdo pessoal e continua jogável no Windows.</p>
           <div class="clip-tools" aria-label="Tecnologias" data-i18n-aria-label="technologies_aria">
             <span>Phaser</span><span>TypeScript</span><span>Vite</span><span>Tauri</span>
           </div>
@@ -980,8 +1029,8 @@
             <a class="tech-cta tech-cta--primary" href="https://github.com/goncaloterroso25-create/Sheepy-World" target="_blank" rel="noopener" aria-label="Ver Sheepy World no GitHub (abre num novo separador)" data-i18n-aria-label="aria_sheepy_github">
               <span data-i18n="view_github">Ver no GitHub</span><svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
             </a>
-            <a class="tech-cta" href="https://github.com/goncaloterroso25-create/Sheepy-World/releases/tag/SheepyWorldV1" target="_blank" rel="noopener" aria-label="Ver versão de Sheepy World para Windows (abre num novo separador)" data-i18n-aria-label="aria_sheepy_windows">
-              <span data-i18n="windows_release">Versão Windows</span><svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            <a class="tech-cta" href="https://github.com/goncaloterroso25-create/Sheepy-World/releases/tag/SheepyWorldV1" target="_blank" rel="noopener" aria-label="Experimentar a versão pública de Sheepy World para Windows (abre a página de download no GitHub num novo separador)" data-i18n-aria-label="aria_sheepy_windows">
+              <span data-i18n="windows_release">Experimentar versão Windows</span><svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
             </a>
           </div>
         </div>
@@ -996,10 +1045,11 @@
       <div class="project-detail-panels">
         <section class="project-detail-panel" id="sheepy-panel-overview" role="tabpanel" aria-labelledby="sheepy-tab-overview" data-detail-panel="overview">
           <div class="project-overview-grid">
-            <article class="project-fact"><span>01</span><h3 data-i18n="sheepy_world_title">Exploração com propósito</h3><p data-i18n="sheepy_world_copy">O mundo liga Autumn Park, River Town, Vila Meow, Snow, Porto e outras regiões. As memórias avançam através de pistas, conversas e fragmentos no Scrapbook, sem uma lista tradicional de missões.</p></article>
-            <article class="project-fact"><span>02</span><h3 data-i18n="sheepy_systems_title">Personagens e sistemas</h3><p data-i18n="sheepy_systems_copy">Diálogo com escolhas, interações repetíveis, três gatos com comportamentos próprios e Together Mode após a conclusão dão vida aos espaços.</p></article>
-            <article class="project-fact"><span>03</span><h3 data-i18n="sheepy_complete_title">Experiência completa</h3><p data-i18n="sheepy_complete_copy">Suporte a teclado e comando, saves persistentes, fullscreen e distribuição nativa para Windows tornam o projeto jogável do início ao fim.</p></article>
-            <article class="project-fact"><span>04</span><h3 data-i18n="sheepy_audio_title">Som como parte do mundo</h3><p data-i18n="sheepy_audio_copy">Música original, sound design próprio para UI e interações, e direção de áudio para a restante paleta sonora.</p></article>
+            <article class="project-fact project-fact--wide"><span>01</span><h3 data-i18n="sheepy_origin_title">Uma prenda, não um produto</h3><p data-i18n="sheepy_origin_copy">Foi pensado como uma experiência pessoal e não como um jogo comercial. É daí que vêm os temas, os lugares, as memórias e as interações tão específicas que atravessam o jogo.</p></article>
+            <article class="project-fact"><span>02</span><h3 data-i18n="sheepy_world_title">Exploração com propósito</h3><p data-i18n="sheepy_world_copy">O mundo liga Autumn Park, River Town, Vila Meow, Snow, Porto e outras regiões. As memórias avançam através de pistas, conversas e fragmentos no Scrapbook, sem uma lista tradicional de missões.</p></article>
+            <article class="project-fact"><span>03</span><h3 data-i18n="sheepy_systems_title">Personagens e sistemas</h3><p data-i18n="sheepy_systems_copy">Diálogo com escolhas, interações repetíveis, três gatos com comportamentos próprios e Together Mode após a conclusão dão vida aos espaços.</p></article>
+            <article class="project-fact"><span>04</span><h3 data-i18n="sheepy_complete_title">Edição pública jogável</h3><p data-i18n="sheepy_complete_copy">Os materiais pessoais foram removidos ou substituídos por conteúdo ficcional, por isso a versão pública não inclui o conteúdo privado original. Mantém a experiência completa: teclado e comando, gravação persistente, fullscreen e instalador para Windows.</p></article>
+            <article class="project-fact"><span>05</span><h3 data-i18n="sheepy_audio_title">Som como parte do mundo</h3><p data-i18n="sheepy_audio_copy">Música original, sound design próprio para UI e interações, e direção de áudio para a restante paleta sonora.</p></article>
           </div>
         </section>
 
@@ -1027,10 +1077,10 @@
 
         <section class="project-detail-panel" id="sheepy-panel-role" role="tabpanel" aria-labelledby="sheepy-tab-role" data-detail-panel="role" hidden>
           <div class="project-process-grid">
-            <article><h3 data-i18n="sheepy_role_direction_title">Direção criativa e game design</h3><p data-i18n="sheepy_role_direction_copy">Conceito, estrutura do mundo, experiência de exploração, UI, interações e direção visual foram tratados como um sistema criativo único.</p></article>
-            <article><h3 data-i18n="sheepy_role_build_title">Iteração de sistemas</h3><p data-i18n="sheepy_role_build_copy">O desenvolvimento juntou systems design, implementação iterativa assistida por IA, testes em runtime e revisão visual manual.</p></article>
+            <article><h3 data-i18n="sheepy_role_direction_title">Direção criativa e game design</h3><p data-i18n="sheepy_role_direction_copy">Partindo da ideia de uma prenda, defini o conceito, a estrutura do mundo e a experiência de exploração, e tratei interação, UI e direção visual como um único sistema criativo.</p></article>
+            <article><h3 data-i18n="sheepy_role_build_title">Iteração de sistemas</h3><p data-i18n="sheepy_role_build_copy">Defini e iterei os sistemas do jogo. A implementação foi feita com ferramentas de IA, sob a minha direção, com testes em runtime e revisão visual manual a cada iteração.</p></article>
             <article><h3 data-i18n="sheepy_role_audio_title">Música e direção de áudio</h3><p data-i18n="sheepy_role_audio_copy">Compus a música original e criei sound design específico para o Scrapbook, inventário, portas, UI e outras interações. Também selecionei e integrei a restante paleta sonora.</p></article>
-            <article><h3 data-i18n="sheepy_role_public_title">Edição pública e QA</h3><p data-i18n="sheepy_role_public_copy">Preparei uma edição pública segura, substituindo media privado por conteúdo ficcional e validando progressão, saves, controlos, privacidade e distribuição Windows.</p></article>
+            <article><h3 data-i18n="sheepy_role_public_title">Edição pública e QA</h3><p data-i18n="sheepy_role_public_copy">Preparei a edição pública a partir do jogo original, retirando ou substituindo o conteúdo pessoal, e validei progressão, saves, controlos, privacidade e o instalador para Windows.</p></article>
           </div>
         </section>
       </div>
@@ -1038,8 +1088,8 @@
 
     <article class="project-detail project-detail--sweep" data-project-detail="sweep" hidden>
       <header class="project-detail-header">
-        <div class="project-detail-media project-detail-media--phone">
-          <img data-project-hero data-src="assets/images/creative-tech/sweep/categories-dark.png" data-flip-id="project-media-sweep" alt="Categorias de limpeza e gestão de armazenamento no Sweep" data-i18n-alt="alt_sweep_categories">
+        <div class="project-detail-media project-detail-media--logo">
+          <img data-project-hero data-src="assets/images/creative-tech/sweep/sweep-logo.webp" data-flip-id="project-media-sweep" alt="Logótipo do Sweep: três barras verde-lima sobre fundo escuro" data-i18n-alt="alt_sweep_logo">
           <span class="clip-code">CT_02 · ANDROID</span>
         </div>
         <div class="project-detail-intro">
@@ -1104,6 +1154,388 @@
         </section>
       </div>
     </article>
+
+    <!-- HORA DO SABER: internship production case study (video accent).
+         Only final public videos and process documentation are used here:
+         no episode footage. -->
+    <article class="project-detail project-detail--hora" data-project-detail="hora-do-saber" data-accent="video" hidden>
+      <header class="project-detail-header">
+        <div class="project-detail-media">
+          <img data-project-hero data-src="assets/images/posters/hora-do-saber-ep4.jpg" data-flip-id="project-media-hora" width="1280" height="720" alt="Inês Guedes e Sílvia Geraldes no estúdio do Hora do Saber, com o oráculo de identificação no ecrã" data-i18n-alt="alt_hds_ep4_still">
+          <span class="clip-code">V1_01 · VIDEOCAST</span>
+        </div>
+        <div class="project-detail-intro">
+          <div class="tech-kicker" data-i18n="hds_kicker">Videocast · Estágio CIP P.PORTO · 2026</div>
+          <h2 id="projectDialogTitleHora">Hora do Saber</h2>
+          <p class="project-detail-lead" data-i18n="hds_lead">Videocast educativo de cinco episódios, produzido no Centro de Inovação Pedagógica do Politécnico do Porto. Durante o estágio curricular participei na produção do início ao fim: preparação do estúdio, gravação, realização ao vivo dos dois últimos episódios, edição, motion graphics e pós-produção de som.</p>
+          <p class="project-detail-role" data-i18n="hds_role"><strong>O meu papel:</strong> preparação técnica, operação de câmara, realização ao vivo dos episódios 4 e 5, edição dos cinco episódios, motion graphics e tratamento de som.</p>
+          <div class="clip-tools" aria-label="Ferramentas" data-i18n-aria-label="tools_aria">
+            <span>Premiere Pro</span><span>After Effects</span><span>Illustrator</span><span>FL Studio</span><span>Adobe Podcast</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="project-detail-tabs project-detail-tabs--5" role="tablist" aria-label="Secções do projeto" data-i18n-aria-label="project_nav_aria">
+        <button type="button" role="tab" id="hds-tab-overview" aria-controls="hds-panel-overview" aria-selected="true" tabindex="0" data-detail-tab="overview"><span data-i18n="overview">Visão geral</span></button>
+        <button type="button" role="tab" id="hds-tab-production" aria-controls="hds-panel-production" aria-selected="false" tabindex="-1" data-detail-tab="production"><span data-i18n="hds_tab_production">Produção &amp; Gravação</span></button>
+        <button type="button" role="tab" id="hds-tab-motion" aria-controls="hds-panel-motion" aria-selected="false" tabindex="-1" data-detail-tab="motion"><span data-i18n="hds_tab_motion">Motion &amp; Grafismo</span></button>
+        <button type="button" role="tab" id="hds-tab-editing" aria-controls="hds-panel-editing" aria-selected="false" tabindex="-1" data-detail-tab="editing"><span data-i18n="hds_tab_editing">Edição &amp; Áudio</span></button>
+        <button type="button" role="tab" id="hds-tab-credits" aria-controls="hds-panel-credits" aria-selected="false" tabindex="-1" data-detail-tab="credits"><span data-i18n="hds_tab_credits">Papel &amp; Créditos</span></button>
+      </div>
+
+      <div class="project-detail-panels">
+        <section class="project-detail-panel" id="hds-panel-overview" role="tabpanel" aria-labelledby="hds-tab-overview" data-detail-panel="overview">
+          <dl class="hds-stats">
+            <div class="hds-stat"><dt data-i18n="hds_stat_edited">Episódios editados</dt><dd>05</dd></div>
+            <div class="hds-stat"><dt data-i18n="hds_stat_recorded">Gravações com a minha participação</dt><dd>05</dd></div>
+            <div class="hds-stat"><dt data-i18n="hds_stat_directed">Episódios finais com realização ao vivo</dt><dd>02</dd></div>
+          </dl>
+          <div class="project-overview-grid">
+            <article class="project-fact"><span>01</span><h3 data-i18n="hds_about_title">O videocast</h3><p data-i18n="hds_about_copy">Apresentado por Inês Guedes e Sílvia Geraldes, o Hora do Saber explora obras literárias portuguesas e estrangeiras em conversa com convidados, procurando desconstruir os seus conteúdos e despertar o interesse pela leitura. O primeiro episódio foi gravado a 8 de abril de 2026.</p></article>
+            <article class="project-fact"><span>02</span><h3 data-i18n="hds_scope_title">Do estúdio à entrega</h3><p data-i18n="hds_scope_copy">Acompanhei todas as fases: preparação do estúdio e gravação, realização ao vivo dos dois últimos episódios, edição, motion graphics e pós-produção de som, com orientação do tutor de estágio, João Batista, e em colaboração com a equipa do CIP.</p></article>
+          </div>
+        </section>
+
+        <section class="project-detail-panel" id="hds-panel-production" role="tabpanel" aria-labelledby="hds-tab-production" data-detail-panel="production" hidden>
+          <div class="project-process-grid">
+            <article><h3 data-i18n="hds_set_title">Cenário e preparação técnica</h3><p data-i18n="hds_set_copy">Participei na conceção e montagem do cenário dos cinco episódios, no posicionamento e enquadramento das câmaras e na preparação de câmaras, microfones e iluminação. A luz de cor do estúdio foi definida em vermelho para o videocast.</p></article>
+            <article><h3 data-i18n="hds_checks_title">Verificações antes de gravar</h3><p data-i18n="hds_checks_copy">Antes de cada gravação fiz testes técnicos de imagem e som, incluindo a verificação dos microfones dos convidados, em articulação com a equipa de produção do CIP.</p></article>
+            <article><h3 data-i18n="hds_rec_title">Gravação multicâmara</h3><p data-i18n="hds_rec_copy">Participei na gravação dos cinco episódios, com operação de câmara e apoio à captação, num estúdio multicâmara com mesa de realização ATEM.</p></article>
+            <article><h3 data-i18n="hds_live_title">Realização ao vivo: episódios 4 e 5</h3><p data-i18n="hds_live_copy">Nos dois últimos episódios assegurei de forma autónoma a realização audiovisual ao vivo, escolhendo os planos em tempo real na mesa ATEM, dentro da estrutura de produção do projeto.</p></article>
+          </div>
+          <div class="hds-kit">
+            <span class="hds-kit-label" data-i18n="hds_kit_label">Equipamento do estúdio</span>
+            <div class="clip-tools"><span>Blackmagic Studio 4K</span><span>Blackmagic ATEM</span><span>RØDE PodMic</span><span>Aputure INFINIBAR</span></div>
+          </div>
+        </section>
+
+        <section class="project-detail-panel" id="hds-panel-motion" role="tabpanel" aria-labelledby="hds-tab-motion" data-detail-panel="motion" hidden>
+          <div class="hds-videos">
+            <figure>
+              <video controls preload="none" playsinline poster="assets/images/posters/motion-horasaber-intro.jpg" aria-label="Animação de introdução de Hora do Saber" data-i18n-aria-label="aria_hds_intro_video">
+                <source src="assets/videos/motion-horasaber-intro.mp4" type="video/mp4">
+              </video>
+              <figcaption data-i18n="hds_video_intro">Introdução animada</figcaption>
+            </figure>
+            <figure>
+              <video controls preload="none" playsinline poster="assets/images/posters/motion-horasaber-credits.jpg" aria-label="Animação da ficha técnica de Hora do Saber" data-i18n-aria-label="aria_hds_credits_video">
+                <source src="assets/videos/motion-horasaber-credits.mp4" type="video/mp4">
+              </video>
+              <figcaption data-i18n="hds_video_credits">Ficha técnica animada</figcaption>
+            </figure>
+          </div>
+          <p class="hds-credit" data-i18n="hds_design_credit"><strong>Grafismo original:</strong> Diogo Costa, designer do CIP. O meu trabalho foi animar e adaptar esses elementos no After Effects: composição, timing, integração sonora e aplicação nos episódios.</p>
+
+          <div class="hds-steps">
+            <article class="hds-step">
+              <div class="hds-step-text">
+                <span class="cs-index">01</span>
+                <h3 data-i18n="hds_intro_title">Introdução animada</h3>
+                <ul>
+                  <li data-i18n="hds_intro_1">Entrada sucessiva dos elementos gráficos do Illustrator, para que cada um complemente o seguinte.</li>
+                  <li data-i18n="hds_intro_2">Expressões Wiggle na escala, na posição e na rotação evitam uma composição estática. No balão azul “DO”, aplicada à rotação, cria um balanço até à queda.</li>
+                  <li data-i18n="hds_intro_3">Trim Paths nos rabiscos simulam o desenho progressivo, sincronizado com um som de lápis no papel.</li>
+                  <li data-i18n="hds_intro_4">No final, uma mão em PNG retira de cena o último elemento: a estrela amarela com a palavra “Hora”.</li>
+                </ul>
+              </div>
+              <div class="hds-step-media hds-step-media--2">
+                <figure><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/hora-do-saber/identidade-cip.webp" width="1000" height="821" alt="Grafismo original do videocast, criado por Diogo Costa" data-i18n-alt="alt_hds_identity"><figcaption data-i18n="hds_fig_identity">Grafismo original de Diogo Costa, o ponto de partida</figcaption></figure>
+                <figure><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/hora-do-saber/wiggle-timeline.webp" width="671" height="771" alt="Expressões Wiggle na timeline do After Effects" data-i18n-alt="alt_hds_wiggle"><figcaption data-i18n="hds_fig_wiggle">Expressões Wiggle na timeline</figcaption></figure>
+              </div>
+            </article>
+
+            <article class="hds-step">
+              <div class="hds-step-text">
+                <span class="cs-index">02</span>
+                <h3 data-i18n="hds_mogrt_title">Oráculos com Motion Graphics Template</h3>
+                <ul>
+                  <li data-i18n="hds_mogrt_1">Cada episódio tinha participantes e instituições diferentes. Em vez de renderizar uma animação por pessoa, criei no After Effects um Motion Graphics Template (MOGRT) a partir do grafismo de Diogo Costa.</li>
+                  <li data-i18n="hds_mogrt_2">No Premiere Pro é possível editar o nome, a instituição, o tamanho e o tipo de letra do texto e a cor de fundo: vermelho e amarelo para as apresentadoras, azul para os convidados.</li>
+                  <li data-i18n="hds_mogrt_3">A animação tem entrada, permanência e saída, com um Wiggle subtil. O template tornou a edição mais rápida e evitou renderizar cada oráculo individualmente.</li>
+                </ul>
+              </div>
+              <div class="hds-step-media">
+                <figure><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/hora-do-saber/mogrt-parametros.webp" width="1275" height="288" alt="Parâmetros editáveis do Motion Graphics Template: nome, instituição e cor de fundo" data-i18n-alt="alt_hds_mogrt"><figcaption data-i18n="hds_fig_mogrt">Parâmetros editáveis no Premiere Pro</figcaption></figure>
+              </div>
+            </article>
+
+            <article class="hds-step">
+              <div class="hds-step-text">
+                <span class="cs-index">03</span>
+                <h3 data-i18n="hds_credits_title">Ficha técnica</h3>
+                <ul>
+                  <li data-i18n="hds_credits_1">A ficha técnica precisava de mais texto do que a introdução. Reorganizei os grafismos originais pelos cantos e laterais do ecrã e acrescentei padrões pontuados em PNG para equilibrar as áreas vazias.</li>
+                  <li data-i18n="hds_credits_2">Os rabiscos foram duplicados, adaptados e reposicionados, com o mesmo desenho progressivo da introdução. Os elementos entram em sequência: primeiro o título, depois os decorativos.</li>
+                  <li data-i18n="hds_credits_3">Uma mão em PNG traz o grafismo “Video Cast” para o plano, com uma máscara que oculta parte dos dedos durante a entrada, enquanto surgem os nomes e os cargos da equipa. Na saída, os movimentos invertem-se e o título fica para o fim.</li>
+                  <li data-i18n="hds_credits_4">A primeira proposta era demasiado simples; a versão final resultou de várias iterações com o feedback do tutor de estágio.</li>
+                </ul>
+              </div>
+              <div class="hds-step-media">
+                <figure><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/hora-do-saber/ficha-tecnica.webp" width="1400" height="787" alt="Composição final da ficha técnica do primeiro episódio" data-i18n-alt="alt_hds_credits"><figcaption data-i18n="hds_fig_credits">Composição final da ficha técnica</figcaption></figure>
+              </div>
+            </article>
+
+            <article class="hds-step hds-step--text">
+              <div class="hds-step-text">
+                <span class="cs-index">04</span>
+                <h3 data-i18n="hds_link_title">Adobe Dynamic Link</h3>
+                <p data-i18n="hds_link_copy">Inicialmente, a introdução e as fichas técnicas eram exportadas uma a uma em MP4, e cada novo convidado obrigava a renderizar outra vez. Com orientação do tutor, passei a integrar as composições do After Effects no Premiere Pro através do Adobe Dynamic Link: as alterações refletem-se automaticamente na edição, com menos renderizações e sem perder qualidade em exportações intermédias.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="project-detail-panel" id="hds-panel-editing" role="tabpanel" aria-labelledby="hds-tab-editing" data-detail-panel="editing" hidden>
+          <figure class="hds-excerpt">
+            <div class="hds-excerpt-media">
+              <video controls preload="none" playsinline width="1920" height="1080" poster="assets/images/posters/hora-do-saber-ep4.jpg" aria-label="Excerto do episódio 4 de Hora do Saber" data-i18n-aria-label="aria_hds_excerpt">
+                <source src="assets/videos/hora-do-saber-ep4-excerto.mp4" type="video/mp4">
+              </video>
+            </div>
+            <figcaption class="hds-excerpt-caption">
+              <span class="hds-excerpt-kicker"><span data-i18n="hds_excerpt_kicker">Episódio 4</span> · 0:53</span>
+              <strong class="hds-excerpt-title" data-i18n="hds_excerpt_title">Excerto do episódio 4</strong>
+              <span class="hds-excerpt-text" data-i18n="hds_excerpt_text">Excerto do quarto episódio, com a introdução, a conversa em estúdio com os oráculos de cada participante e a ficha técnica. Participei na gravação dos cinco episódios, realizei ao vivo os dois últimos e editei integralmente os cinco no Premiere Pro, incluindo o tratamento e a melhoria do áudio.</span>
+              <span class="hds-excerpt-note" data-i18n="hds_excerpt_note">Grafismo original de Diogo Costa, designer do CIP.</span>
+            </figcaption>
+          </figure>
+          <div class="project-process-grid">
+            <article><h3 data-i18n="hds_edit_title">Edição dos cinco episódios</h3><p data-i18n="hds_edit_copy">Editei de forma autónoma os cinco episódios no Premiere Pro: organizei as gravações de vídeo e som, selecionei e montei os planos de câmara, corrigi falhas de realização e de gravação quando necessário, sincronizei o material e integrei oráculos, introdução e ficha técnica, até à preparação dos ficheiros finais. O tutor de estágio acompanhou o processo com feedback.</p></article>
+            <article><h3 data-i18n="hds_dialogue_title">Diálogo mais claro</h3><p data-i18n="hds_dialogue_copy">Tratei o som das conversas com o painel Essential Sound do Premiere Pro e com o Adobe Podcast, para melhorar a inteligibilidade das vozes e limpar o áudio gravado.</p></article>
+            <article><h3 data-i18n="hds_anim_sound_title">Som das animações</h3><p data-i18n="hds_anim_sound_copy">Na introdução, editei no FL Studio um jingle de biblioteca sem direitos de autor para acompanhar o ritmo da animação e acrescentei um efeito de lápis sincronizado com o desenho dos rabiscos.</p></article>
+            <article><h3 data-i18n="hds_music_title">Música da ficha técnica</h3><p data-i18n="hds_music_copy">Para o fecho foi preparada uma versão mais calma e lenta da música da introdução. Editei essas versões no FL Studio, selecionei os excertos que melhor acompanhavam a animação e ajustei-os ao ritmo da ficha técnica.</p></article>
+          </div>
+          <div class="hds-kit">
+            <span class="hds-kit-label" data-i18n="hds_workflow_label">Fluxo de pós-produção</span>
+            <div class="clip-tools"><span>Premiere Pro</span><span>Essential Sound</span><span>Adobe Podcast</span><span>FL Studio</span><span>After Effects</span><span>Adobe Dynamic Link</span></div>
+          </div>
+        </section>
+
+        <section class="project-detail-panel" id="hds-panel-credits" role="tabpanel" aria-labelledby="hds-tab-credits" data-detail-panel="credits" hidden>
+          <div class="hds-credits-grid">
+            <div>
+              <h3 class="hds-col-title" data-i18n="hds_resp_title">As minhas responsabilidades</h3>
+              <dl class="hds-resp">
+                <div><dt data-i18n="hds_resp_pre">Pré-produção</dt><dd data-i18n="hds_resp_pre_copy">Cenário, enquadramentos, câmaras, microfones, iluminação e testes técnicos.</dd></div>
+                <div><dt data-i18n="hds_resp_rec">Gravação</dt><dd data-i18n="hds_resp_rec_copy">Participação nos cinco episódios, com operação de câmara e apoio à captação.</dd></div>
+                <div><dt data-i18n="hds_resp_live">Realização</dt><dd data-i18n="hds_resp_live_copy">Realização audiovisual ao vivo, de forma autónoma, nos episódios 4 e 5.</dd></div>
+                <div><dt data-i18n="hds_resp_edit">Edição</dt><dd data-i18n="hds_resp_edit_copy">Edição completa dos cinco episódios no Premiere Pro, até à entrega.</dd></div>
+                <div><dt>Motion graphics</dt><dd data-i18n="hds_resp_motion_copy">Introdução, oráculos (MOGRT) e ficha técnica em After Effects.</dd></div>
+                <div><dt data-i18n="hds_resp_sound">Som</dt><dd data-i18n="hds_resp_sound_copy">Tratamento de diálogo, edição de som e música, sincronização e integração final.</dd></div>
+              </dl>
+            </div>
+            <div>
+              <h3 class="hds-col-title" data-i18n="hds_team_title">Equipa e créditos</h3>
+              <dl class="hds-team">
+                <div><dt data-i18n="hds_team_hosts">Apresentação</dt><dd>Inês Guedes, Sílvia Geraldes</dd></div>
+                <div><dt data-i18n="hds_team_direction">Direção geral</dt><dd>Mário Cruz</dd></div>
+                <div><dt data-i18n="hds_team_production">Produção</dt><dd>Erika Ribeiro</dd></div>
+                <div><dt data-i18n="hds_team_design">Grafismo original</dt><dd>Diogo Costa</dd></div>
+                <div><dt data-i18n="hds_team_tutor">Tutor de estágio</dt><dd>João Batista</dd></div>
+                <div><dt data-i18n="hds_team_org">Instituição</dt><dd data-i18n="hds_team_org_name">Centro de Inovação Pedagógica, P.PORTO</dd></div>
+              </dl>
+            </div>
+          </div>
+        </section>
+      </div>
+    </article>
+
+    <!-- VISUAL DESIGN CASE STUDIES: same dialog, design accent, no tabs -->
+    <article class="project-detail project-detail--design" data-project-detail="inverno" data-accent="design" hidden>
+      <header class="project-detail-header">
+        <div class="project-detail-media project-detail-media--art">
+          <img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" data-project-hero data-src="assets/images/inverno/inverno-band-photo.jpg" width="1050" height="1400" alt="Fotografia final da INVERNØ a preto e branco, com o símbolo da banda na parede" data-i18n-alt="alt_inverno_final">
+          <span class="clip-code">DV_01 · INVERNØ</span>
+        </div>
+        <div class="project-detail-intro">
+          <div class="tech-kicker" data-i18n="inverno_cs_kicker">Processo fotográfico · Identidade visual</div>
+          <h2 id="projectDialogTitleInverno">INVERNØ</h2>
+          <p class="project-detail-lead" data-i18n="inverno_cs_lead">Fotografia da banda pensada como parte da identidade visual da INVERNØ: em vez de aplicar o logótipo por cima da imagem, o símbolo da banda foi integrado na própria parede da escadaria. Fotografei a sessão e fiz toda a edição, da composição no Photoshop ao tratamento final a preto e branco no Lightroom.</p>
+          <p class="project-detail-role" data-i18n="inverno_cs_role"><strong>O meu papel:</strong> fotografia, composição, retoque e tratamento de imagem.</p>
+          <div class="clip-tools" aria-label="Ferramentas" data-i18n-aria-label="tools_aria">
+            <span>Photoshop</span><span>Lightroom</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="cs-body">
+        <section class="cs-section" aria-labelledby="invernoProcessTitle">
+          <div class="cs-head">
+            <span class="cs-index">01</span>
+            <h3 id="invernoProcessTitle" data-i18n="processo_edicao">Processo de edição</h3>
+            <p data-i18n="inverno_process_note">Seis etapas, pela ordem em que foram feitas. As experiências que não chegaram à versão final estão assinaladas.</p>
+          </div>
+          <div class="project-gallery stage-gallery" data-project-gallery>
+            <figure class="project-gallery-stage">
+              <img class="js-lightbox" data-gallery-active role="button" tabindex="0" data-cursor="Ver" data-i18n-cursor="cursor_view" width="1050" height="1400" alt="">
+              <figcaption class="stage-caption" data-gallery-active-caption aria-live="polite"></figcaption>
+            </figure>
+            <div class="project-gallery-controls">
+              <button type="button" data-gallery-prev aria-label="Etapa anterior" data-i18n-aria-label="stage_previous"><span class="chev chev--back" aria-hidden="true"></span></button>
+              <span class="project-gallery-count" data-gallery-count></span>
+              <button type="button" data-gallery-next aria-label="Etapa seguinte" data-i18n-aria-label="stage_next"><span class="chev" aria-hidden="true"></span></button>
+            </div>
+            <div class="project-gallery-rail stage-rail" aria-label="Etapas de edição" data-i18n-aria-label="inverno_stages_aria">
+              <button type="button" data-gallery-item data-large="assets/images/inverno/process/stage-01.webp" data-full="assets/images/inverno/process/stage-01-full.webp" data-copy="inverno-s1" aria-pressed="true">
+                <img loading="lazy" decoding="async" data-src="assets/images/inverno/process/stage-01-thumb.webp" width="240" height="320" alt="Etapa 01: fotografia original a cores dos três músicos na escadaria, antes da edição" data-i18n-alt="alt_inverno_s1">
+                <span class="stage-rail-num" aria-hidden="true">01</span><span class="stage-rail-title" aria-hidden="true" data-i18n="inverno_s1_title">Fotografia original</span>
+              </button>
+              <button type="button" data-gallery-item data-large="assets/images/inverno/process/stage-02.webp" data-full="assets/images/inverno/process/stage-02-full.webp" data-copy="inverno-s2" aria-pressed="false">
+                <img loading="lazy" decoding="async" data-src="assets/images/inverno/process/stage-02-thumb.webp" width="240" height="320" alt="Etapa 02: símbolo da INVERNØ aplicado na parede do fundo, sem o corrimão dessa parede" data-i18n-alt="alt_inverno_s2">
+                <span class="stage-rail-num" aria-hidden="true">02</span><span class="stage-rail-title" aria-hidden="true" data-i18n="inverno_s2_title">Primeira composição no Photoshop</span>
+              </button>
+              <button type="button" data-gallery-item data-large="assets/images/inverno/process/stage-03.webp" data-full="assets/images/inverno/process/stage-03-full.webp" data-copy="inverno-s3" aria-pressed="false">
+                <img loading="lazy" decoding="async" data-src="assets/images/inverno/process/stage-03-thumb.webp" width="240" height="320" alt="Etapa 03: composição refinada, sem o pé no canto inferior esquerdo, com o símbolo texturado e o corrimão reposto" data-i18n-alt="alt_inverno_s3">
+                <span class="stage-rail-num" aria-hidden="true">03</span><span class="stage-rail-title" aria-hidden="true" data-i18n="inverno_s3_title">Refinamento da composição</span>
+              </button>
+              <button type="button" data-gallery-item data-large="assets/images/inverno/process/stage-04.webp" data-full="assets/images/inverno/process/stage-04-full.webp" data-copy="inverno-s4" aria-pressed="false">
+                <img loading="lazy" decoding="async" data-src="assets/images/inverno/process/stage-04-thumb.webp" width="240" height="320" alt="Etapa 04: experiência com fissuras e desgaste nas paredes da escadaria" data-i18n-alt="alt_inverno_s4">
+                <span class="stage-rail-num" aria-hidden="true">04</span><span class="stage-rail-title" aria-hidden="true" data-i18n="inverno_s4_title">Experiência com fissuras</span>
+              </button>
+              <button type="button" data-gallery-item data-large="assets/images/inverno/process/stage-05.webp" data-full="assets/images/inverno/process/stage-05-full.webp" data-copy="inverno-s5" aria-pressed="false">
+                <img loading="lazy" decoding="async" data-src="assets/images/inverno/process/stage-05-thumb.webp" width="240" height="320" alt="Etapa 05: composição final no Photoshop, sem fissuras e sem corrimão na parede do fundo" data-i18n-alt="alt_inverno_s5">
+                <span class="stage-rail-num" aria-hidden="true">05</span><span class="stage-rail-title" aria-hidden="true" data-i18n="inverno_s5_title">Composição final no Photoshop</span>
+              </button>
+              <button type="button" data-gallery-item data-large="assets/images/inverno/inverno-band-photo.jpg" data-copy="inverno-s6" aria-pressed="false">
+                <img loading="lazy" decoding="async" data-src="assets/images/inverno/process/stage-06-thumb.webp" width="240" height="320" alt="Etapa 06: fotografia final da INVERNØ a preto e branco, após o tratamento no Lightroom" data-i18n-alt="alt_inverno_s6">
+                <span class="stage-rail-num" aria-hidden="true">06</span><span class="stage-rail-title" aria-hidden="true" data-i18n="inverno_s6_title">Tratamento final no Lightroom</span>
+              </button>
+            </div>
+            <div class="stage-copies" hidden>
+              <div data-gallery-copy="inverno-s1"><span class="stage-cap-meta"><span data-i18n="etapa">Etapa</span> 01</span><strong class="stage-cap-title" data-i18n="inverno_s1_title">Fotografia original</strong><span class="stage-cap-text" data-i18n="inverno_s1_text">O ponto de partida: os três músicos na escadaria, tal como foram fotografados na sessão, antes de qualquer edição digital.</span></div>
+              <div data-gallery-copy="inverno-s2"><span class="stage-cap-meta"><span data-i18n="etapa">Etapa</span> 02</span><strong class="stage-cap-title" data-i18n="inverno_s2_title">Primeira composição no Photoshop</strong><span class="stage-cap-text" data-i18n="inverno_s2_text">O símbolo da INVERNØ entra na parede do fundo, em grande escala, e o corrimão dessa parede é retirado para lhe dar espaço. É a primeira tentativa de integrar a identidade da banda no próprio cenário.</span></div>
+              <div data-gallery-copy="inverno-s3"><span class="stage-cap-meta"><span data-i18n="etapa">Etapa</span> 03</span><strong class="stage-cap-title" data-i18n="inverno_s3_title">Refinamento da composição</strong><span class="stage-cap-text" data-i18n="inverno_s3_text">Removi o pé que aparecia atrás do Rui T, no canto inferior esquerdo, porque a sua posição era estranha na composição, e o símbolo passou a ter uma textura mais irregular. Também experimentei repor o corrimão, a passar atrás do símbolo, para tornar o espaço mais natural.</span></div>
+              <div data-gallery-copy="inverno-s4"><span class="stage-cap-meta"><span data-i18n="etapa">Etapa</span> 04<span class="stage-chip stage-chip--exp" data-i18n="flag_experiencia">Experiência</span></span><strong class="stage-cap-title" data-i18n="inverno_s4_title">Experiência com fissuras</strong><span class="stage-cap-text" data-i18n="inverno_s4_text">Testei fissuras e desgaste nas paredes, à procura de um ambiente mais áspero e deteriorado que acompanhasse a identidade da INVERNØ. Foi uma experiência e não seguiu para a versão final.</span></div>
+              <div data-gallery-copy="inverno-s5"><span class="stage-cap-meta"><span data-i18n="etapa">Etapa</span> 05</span><strong class="stage-cap-title" data-i18n="inverno_s5_title">Composição final no Photoshop</strong><span class="stage-cap-text" data-i18n="inverno_s5_text">As fissuras saíram e o corrimão reposto também ficou de fora: a parede volta a estar limpa, com o símbolo texturado integrado. Esta é a composição que seguiu para o tratamento no Lightroom.</span></div>
+              <div data-gallery-copy="inverno-s6"><span class="stage-cap-meta"><span data-i18n="etapa">Etapa</span> 06<span class="stage-chip" data-i18n="flag_final">Versão final</span></span><strong class="stage-cap-title" data-i18n="inverno_s6_title">Tratamento final no Lightroom</strong><span class="stage-cap-text" data-i18n="inverno_s6_text">A imagem passa a preto e branco, com um contraste mais marcado. O resultado reforça a atmosfera monocromática e a direção visual da banda.</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="cs-section" aria-labelledby="invernoFinalTitle">
+          <div class="cs-head">
+            <span class="cs-index">02</span>
+            <h3 id="invernoFinalTitle" data-i18n="resultado_final">Resultado final</h3>
+            <p data-i18n="inverno_final_note">Arrasta o controlo ou usa as setas do teclado para comparar a fotografia original com a versão publicada.</p>
+          </div>
+          <div class="compare" data-compare>
+            <img class="compare-img" id="invernoCompareOriginal" data-src="assets/images/inverno/process/stage-01.webp" data-full="assets/images/inverno/process/stage-01-full.webp" width="1050" height="1400" alt="Fotografia original a cores, antes da edição" data-i18n-alt="alt_inverno_original">
+            <div class="compare-top" aria-hidden="true">
+              <img class="compare-img" id="invernoCompareFinal" data-src="assets/images/inverno/inverno-band-photo.jpg" width="1050" height="1400" alt="Fotografia final da INVERNØ a preto e branco, com o símbolo da banda na parede" data-i18n-alt="alt_inverno_final">
+            </div>
+            <span class="compare-divider" aria-hidden="true"></span>
+            <span class="compare-label compare-label--a" aria-hidden="true">Original</span>
+            <span class="compare-label compare-label--b" aria-hidden="true">Final</span>
+            <input class="compare-range" type="range" min="0" max="100" step="1" value="50" data-compare-range aria-label="Comparar fotografia original e resultado final" data-i18n-aria-label="compare_aria">
+          </div>
+          <div class="compare-actions">
+            <button type="button" class="design-cta" data-lightbox-open="invernoCompareOriginal"><span data-i18n="abrir_original">Abrir original em ecrã inteiro</span></button>
+            <button type="button" class="design-cta" data-lightbox-open="invernoCompareFinal"><span data-i18n="abrir_final">Abrir final em ecrã inteiro</span></button>
+          </div>
+        </section>
+      </div>
+    </article>
+
+    <article class="project-detail project-detail--design" data-project-detail="air-jordan" data-accent="design" hidden>
+      <header class="project-detail-header">
+        <div class="project-detail-media project-detail-media--art">
+          <img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" data-project-hero data-src="assets/images/design/air-jordan.jpg" width="900" height="1273" alt="Air Jordan - composição gráfica" data-i18n-alt="alt_design_air_jordan">
+          <span class="clip-code">DV_02 · AIR JORDAN</span>
+        </div>
+        <div class="project-detail-intro">
+          <div class="tech-kicker" data-i18n="label_academico_esmad">Projeto académico · ESMAD</div>
+          <h2 id="projectDialogTitleAirJordan">Air Jordan</h2>
+          <p class="project-detail-lead" data-i18n="aj_lead">Estudo académico de comunicação visual desenvolvido a partir de um briefing para a criação de um anúncio OLX. A composição explora uma linguagem gráfica inspirada na cultura sneaker, com integração de diferentes elementos visuais e um QR code que originalmente encaminhava para o anúncio.</p>
+          <p class="project-detail-note" data-i18n="aj_qr_note"><strong>Sobre o QR code:</strong> encaminhava para o anúncio OLX original, que pode já não estar disponível. Este estudo não é uma campanha oficial da Nike, da Jordan ou da OLX.</p>
+          <p class="project-detail-context" data-i18n="course_context">Design e Comunicação Audiovisual · 1.º ano do CTeSP em Motion Design e Efeitos Visuais · ESMAD</p>
+          <div class="clip-tools" aria-label="Ferramentas" data-i18n-aria-label="tools_aria"><span>Photoshop</span></div>
+        </div>
+      </header>
+      <div class="cs-body">
+        <section class="cs-section" aria-labelledby="ajSourcesTitle">
+          <div class="cs-head">
+            <span class="cs-index">01</span>
+            <h3 id="ajSourcesTitle" data-i18n="material_origem">Material de origem</h3>
+            <p data-i18n="aj_sources_note">Seleção dos recursos de terceiros usados na montagem: fotografias, recortes, texturas e elementos de marca. Não são criação minha; o meu trabalho está na composição, na integração e no tratamento gráfico da peça final.</p>
+          </div>
+          <div class="source-grid">
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/air-jordan/background.webp" width="900" height="761" alt="Textura de fundo principal" data-i18n-alt="aj_src_background"></div><figcaption><span class="source-tag" data-i18n="recurso_terceiros">Recurso de terceiros</span><span data-i18n="aj_src_background">Textura de fundo principal</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/air-jordan/shoe.webp" width="851" height="532" alt="Air Jordan 1 recortada" data-i18n-alt="aj_src_shoe"></div><figcaption><span class="source-tag" data-i18n="recurso_terceiros">Recurso de terceiros</span><span data-i18n="aj_src_shoe">Air Jordan 1 recortada</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/air-jordan/jordan-photo.webp" width="600" height="863" alt="Fotografia recortada de Michael Jordan" data-i18n-alt="aj_src_jordan"></div><figcaption><span class="source-tag" data-i18n="recurso_terceiros">Recurso de terceiros</span><span data-i18n="aj_src_jordan">Fotografia recortada de Michael Jordan</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/air-jordan/zip-tie.webp" width="800" height="800" alt="Etiqueta zip tie; na peça final mostra o preço" data-i18n-alt="aj_src_ziptie"></div><figcaption><span class="source-tag" data-i18n="recurso_terceiros">Recurso de terceiros</span><span data-i18n="aj_src_ziptie">Etiqueta zip tie; na peça final mostra o preço</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/air-jordan/butterfly.webp" width="900" height="877" alt="Borboleta recortada" data-i18n-alt="aj_src_butterfly"></div><figcaption><span class="source-tag" data-i18n="recurso_terceiros">Recurso de terceiros</span><span data-i18n="aj_src_butterfly">Borboleta recortada</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/air-jordan/qr-frame.webp" width="300" height="373" alt="Moldura do QR code" data-i18n-alt="aj_src_qr"></div><figcaption><span class="source-tag" data-i18n="recurso_terceiros">Recurso de terceiros</span><span data-i18n="aj_src_qr">Moldura do QR code</span></figcaption></figure>
+          </div>
+        </section>
+      </div>
+    </article>
+
+    <article class="project-detail project-detail--design" data-project-detail="malignant" data-accent="design" hidden>
+      <header class="project-detail-header">
+        <div class="project-detail-media project-detail-media--art">
+          <img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" data-project-hero data-src="assets/images/design/malignant.jpg" width="900" height="1273" alt="Estudo Malignant - poster" data-i18n-alt="alt_design_malignant">
+          <span class="clip-code">DV_03 · MALIGNANT</span>
+        </div>
+        <div class="project-detail-intro">
+          <div class="tech-kicker" data-i18n="label_academico_esmad">Projeto académico · ESMAD</div>
+          <h2 id="projectDialogTitleMalignant"><span data-i18n="estudo">Estudo</span> - Malignant</h2>
+          <span class="status-chip" data-i18n="estado_inacabado">Estudo inacabado</span>
+          <p class="project-detail-lead" data-i18n="mal_lead">Estudo de composição e manipulação fotográfica inspirado no universo visual de Malignant, desenvolvido no âmbito académico. O projeto permaneceu inacabado, representando uma exploração visual que não chegou à fase final de refinamento.</p>
+          <p class="project-detail-note" data-i18n="mal_note">Não é um cartaz oficial do filme. As imagens de Malignant (2021) pertencem aos respetivos detentores de direitos; a seleção, a composição e a manipulação são minhas.</p>
+          <p class="project-detail-context" data-i18n="course_context">Design e Comunicação Audiovisual · 1.º ano do CTeSP em Motion Design e Efeitos Visuais · ESMAD</p>
+          <div class="clip-tools" aria-label="Ferramentas" data-i18n-aria-label="tools_aria"><span>Photoshop</span></div>
+        </div>
+      </header>
+      <div class="cs-body">
+        <section class="cs-section" aria-labelledby="malSourcesTitle">
+          <div class="cs-head">
+            <span class="cs-index">01</span>
+            <h3 id="malSourcesTitle" data-i18n="material_referencia">Material de referência</h3>
+            <p data-i18n="mal_sources_note">Imagens usadas na composição. As três primeiras são imagens do filme; a textura é um recurso externo e não pertence ao filme.</p>
+          </div>
+          <div class="source-grid source-grid--wide">
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/malignant/still-bedroom.webp" width="1200" height="800" alt="Imagem do filme Malignant: quarto, usada no plano de fundo" data-i18n-alt="alt_mal_bedroom"></div><figcaption><span class="source-tag" data-i18n="tag_imagem_filme">Imagem do filme</span><span data-i18n="mal_src_bedroom">Quarto, usado no plano de fundo</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/malignant/still-stairs.webp" width="1200" height="800" alt="Imagem do filme Malignant: escadas, usada na figura principal" data-i18n-alt="alt_mal_stairs"></div><figcaption><span class="source-tag" data-i18n="tag_imagem_filme">Imagem do filme</span><span data-i18n="mal_src_stairs">Escadas, usadas na figura principal</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/malignant/still-house.webp" width="1024" height="430" alt="Imagem do filme Malignant: exterior da casa, fundido na parte inferior" data-i18n-alt="alt_mal_house"></div><figcaption><span class="source-tag" data-i18n="tag_imagem_filme">Imagem do filme</span><span data-i18n="mal_src_house">Exterior da casa, fundido na parte inferior</span></figcaption></figure>
+            <figure class="source-item"><div class="source-media"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/sources/malignant/texture.webp" width="1200" height="778" alt="Textura de película com riscos e manchas de luz, recurso externo" data-i18n-alt="alt_mal_texture"></div><figcaption><span class="source-tag source-tag--alt" data-i18n="tag_recurso_externo">Recurso externo</span><span data-i18n="mal_src_texture">Textura de película (não pertence ao filme)</span></figcaption></figure>
+          </div>
+        </section>
+      </div>
+    </article>
+
+    <article class="project-detail project-detail--design" data-project-detail="reflexo" data-accent="design" hidden>
+      <header class="project-detail-header">
+        <div class="project-detail-media project-detail-media--art">
+          <img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" data-project-hero data-src="assets/images/design/personal/reflexo.webp" width="1600" height="1600" alt="Composição em tons sépia com uma casa isolada e o seu reflexo invertido" data-i18n-alt="alt_design_reflexo">
+          <span class="clip-code">DV_04 · PERSONAL</span>
+        </div>
+        <div class="project-detail-intro">
+          <div class="tech-kicker" data-i18n="label_pessoal">Estudo pessoal</div>
+          <h2 id="projectDialogTitleReflexo" data-i18n="title_reflexo">Estudo de Composição: Reflexo</h2>
+          <p class="project-detail-lead" data-i18n="reflexo_lead">Estudo visual independente, desenvolvido como exercício de exploração criativa e manipulação de imagem, sem briefing académico ou comercial.</p>
+          <p class="project-detail-note" data-i18n="reflexo_process">Parti de uma fotografia de uma casa isolada num penhasco na Islândia. Na composição, a imagem foi reenquadrada em formato quadrado, convertida para tons sépia e espelhada, criando um reflexo invertido da casa; a chaminé ganhou uma coluna de fumo e a superfície recebeu linhas concêntricas e grão.</p>
+          <div class="clip-tools" aria-label="Ferramentas" data-i18n-aria-label="tools_aria"><span>Photoshop</span></div>
+        </div>
+      </header>
+      <div class="cs-body">
+        <section class="cs-section" aria-labelledby="reflexoCompareTitle">
+          <div class="cs-head">
+            <span class="cs-index">01</span>
+            <h3 id="reflexoCompareTitle" data-i18n="original_resultado">Original e resultado</h3>
+          </div>
+          <div class="pair-grid">
+            <figure class="source-item">
+              <div class="source-media source-media--tall"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/personal/reflexo-original-pexels.webp" width="1066" height="1600" alt="Fotografia original: casa branca de telhado vermelho num penhasco verde na Islândia, sob nevoeiro" data-i18n-alt="alt_reflexo_original"></div>
+              <figcaption><span class="source-tag" data-i18n="fotografia_original">Fotografia original</span><span class="source-credit" data-i18n="credit_pexels">Fotografia: <a href="https://www.pexels.com/photo/scenic-remote-house-on-icelandic-cliff-39103201/" target="_blank" rel="noopener">Lorenzo Castellino</a>, via Pexels</span></figcaption>
+            </figure>
+            <figure class="source-item">
+              <div class="source-media source-media--tall"><img class="js-lightbox" data-cursor="Ver" data-i18n-cursor="cursor_view" loading="lazy" decoding="async" data-src="assets/images/design/personal/reflexo.webp" width="1600" height="1600" alt="Composição em tons sépia com uma casa isolada e o seu reflexo invertido" data-i18n-alt="alt_design_reflexo"></div>
+              <figcaption><span class="source-tag source-tag--alt" data-i18n="composicao_final">Composição final</span><span data-i18n="title_reflexo">Estudo de Composição: Reflexo</span></figcaption>
+            </figure>
+          </div>
+        </section>
+      </div>
+    </article>
   </div>
 </dialog>
 
@@ -1152,12 +1584,15 @@
 
 <script src="js/vendor/gsap.min.js"></script>
 <script src="js/vendor/Flip.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
 <script src="js/intro.js"></script>
-<script src="js/main.js?v=20260919-3"></script>
-<script src="js/projects.js?v=20260919-3"></script>
+<script src="js/main.js?v=20261009-2"></script>
+<script src="js/projects.js?v=20261009-2"></script>
+<script src="js/music.js?v=20261009-2"></script>
+<script src="js/motion.js?v=20261009-2"></script>
 <script src="js/mobile.js"></script>
-<script src="js/i18n.js?v=20260919-2"></script>
-<script src="js/effects.js?v=20260919-3"></script>
+<script src="js/i18n.js?v=20261009-3"></script>
+<script src="js/effects.js?v=20261009-2"></script>
 <script src="js/easter.js"></script>
 </body>
 </html>

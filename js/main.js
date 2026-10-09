@@ -24,6 +24,7 @@ function activateTrack(name){
   }
   document.querySelectorAll('video').forEach(v=>v.pause());
   scheduleSectionMeasure();
+  if(!wasActive) document.dispatchEvent(new CustomEvent('portfolio:panelchange', {detail:{name}}));
 
   // Only centre the active button when the navigation genuinely overflows.
   // The mobile layout now shows all categories in a fixed grid, so forcing
@@ -246,15 +247,22 @@ scheduleSectionMeasure();
     if(!img.hasAttribute('tabindex')) img.tabIndex = 0;
     if(!img.hasAttribute('role')) img.setAttribute('role','button');
   });
+  // data-full points at a higher-resolution file that is only fetched when
+  // the viewer is actually opened.
+  function sourceOf(img){ return img.dataset.full || img.currentSrc || img.src || img.dataset.src; }
   document.addEventListener('click', event=>{
     const img = event.target.closest && event.target.closest('img.js-lightbox');
-    if(img) openLightbox(img.currentSrc || img.src, img.alt);
+    if(img){ openLightbox(sourceOf(img), img.alt); return; }
+    // buttons that open a specific image (e.g. either side of a comparison)
+    const opener = event.target.closest && event.target.closest('[data-lightbox-open]');
+    const target = opener && document.getElementById(opener.dataset.lightboxOpen);
+    if(target) openLightbox(sourceOf(target), target.alt);
   });
   document.addEventListener('keydown', event=>{
     const img = event.target.closest && event.target.closest('img.js-lightbox');
     if(img && (event.key === 'Enter' || event.key === ' ')){
       event.preventDefault();
-      openLightbox(img.currentSrc || img.src, img.alt);
+      openLightbox(sourceOf(img), img.alt);
     }
   });
   closeBtn.addEventListener('click', closeLightbox);
@@ -456,6 +464,13 @@ scheduleSectionMeasure();
   targets.forEach(el=> io.observe(el));
 })();
 
+
+// One video at a time: starting any video pauses the others, so nothing keeps
+// playing out of sight (other cards, highlights or the case-study tabs).
+document.addEventListener('play', event=>{
+  if(!(event.target instanceof HTMLVideoElement)) return;
+  document.querySelectorAll('video').forEach(video=>{ if(video !== event.target && !video.paused) video.pause(); });
+}, true);
 
 document.querySelectorAll('.yt-facade').forEach(btn=>{
   btn.addEventListener('click', ()=>{
